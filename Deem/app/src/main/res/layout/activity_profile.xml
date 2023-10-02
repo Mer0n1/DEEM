@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_back_profile"
+                android:layout_width="44dp"
+                android:layout_height="47dp"
+                android:background="@drawable/icon_back"
+                android:text=""
+                tools:layout_editor_absoluteX="22dp"
+                tools:layout_editor_absoluteY="19dp" />
+
+            <ImageButton
+                android:id="@+id/imageButton6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="22dp"
+                tools:layout_editor_absoluteY="86dp"
+                tools:srcCompat="@tools:sample/avatars" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="id 123456789"
+                android:textSize="18dp"
+                android:gravity="center"
+                tools:layout_editor_absoluteX="219dp"
+                tools:layout_editor_absoluteY="59dp" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 курс ИХНТ"
+                android:textSize="18dp"
+                android:gravity="center"
+                tools:layout_editor_absoluteX="219dp"
+                tools:layout_editor_absoluteY="104dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ФИО"
+            android:textSize="20dp"
+            tools:layout_editor_absoluteX="43dp"
+            tools:layout_editor_absoluteY="252dp" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="#cccccc"
+            android:text="Фамилия Имя Отчество"
+            android:textSize="20dp"
+            tools:layout_editor_absoluteX="43dp"
+            tools:layout_editor_absoluteY="252dp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Группа"
+            tools:layout_editor_absoluteX="44dp"
+            tools:layout_editor_absoluteY="292dp" />
+
+        <TextView
+            android:id="@+id/textView245"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:background="#cccccc"
+            android:textSize="20dp"
+            android:text="G"
+            tools:layout_editor_absoluteX="44dp"
+            tools:layout_editor_absoluteY="292dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Электронная почта"
+            android:textSize="20dp"
+            tools:layout_editor_absoluteX="43dp"
+            tools:layout_editor_absoluteY="337dp" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="123456@gmail.com"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:background="#cccccc"
+            tools:layout_editor_absoluteX="43dp"
+            tools:layout_editor_absoluteY="337dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ВЫЙТИ" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

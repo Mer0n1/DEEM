@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_events.xml" value="0.1675929884566054" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/Deem/Deem/app/src/main/res/layout/activity_identefication_form.xml" value="0.18" />
+        <entry key="..\:/Users/user/Desktop/Deem/Deem/app/src/main/res/layout/activity_main.xml" value="0.19" />
+        <entry key="..\:/Users/user/Desktop/Deem/Deem/app/src/main/res/layout/activity_profile.xml" value="0.25" />
+        <entry key="..\:/Users/user/Desktop/Deem/Deem/app/src/main/res/layout/fragment_group.xml" value="0.22" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/drawable/layout_bg1.xml" value="0.22" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/drawable/layout_bg1_white.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/activity_identefication_form.xml" value="0.15" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/activity_profile.xml" value="0.25" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/fragment_group.xml" value="0.22" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/fragment_list_tops.xml" value="0.16673792218896966" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/fragment_list_users.xml" value="0.2" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/fragment_news.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/layout_group.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/layout_info_person.xml" value="0.5" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/layout/layout_news.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/menu/activity_main_drawer.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/Test/CorPoints/app/src/main/res/menu/main.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/drawable/anim_shape_icon.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/activity_profile.xml" value="0.25" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_events.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_first_page.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_group.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_list_groups.xml" value="0.21" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_list_tops_users.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_list_users.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/fragment_news.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/layout_group.xml" value="0.25" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/layout_info_person.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/layout_news.xml" value="0.1675929884566054" />
+        <entry key="..\:/Users/user/Desktop/Test/Deem/app/src/main/res/layout/layout_standart_icon.xml" value="0.1675929884566054" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
