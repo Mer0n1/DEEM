@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.deem.MainActivity;
 import com.example.deem.R;
 import com.example.deem.fragments.InfoFragments.ListGroupsFragment;
+import com.example.deem.fragments.InfoFragments.ListTopsFragment;
 import com.example.deem.fragments.InfoFragments.ListUsersFragment;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class InfoFragment extends Fragment {
 
     private ListUsersFragment listUsersFragment;
     private ListGroupsFragment listGroupsFragment;
+    private ListTopsFragment listTopsFragment;
 
 
     @Override
@@ -56,7 +58,7 @@ public class InfoFragment extends Fragment {
         LinearLayout layout_icons = linearLayout.findViewById(R.id.icons_toolbar);
 
         int size = linearLayout.findViewById(R.id.profile_icon).getWidth();
-        this_activity.loadIcon(layout_icons, size, R.drawable.icon_tops);
+        ImageView imgListTops = this_activity.loadIcon(layout_icons, size, R.drawable.icon_tops);
         ImageView imgListGroups = this_activity.loadIcon(layout_icons, size, R.drawable.icon_list_groups);
         ImageView imgListUsers  = this_activity.loadIcon(layout_icons, size, R.drawable.icon_list_users);
 
@@ -69,6 +71,7 @@ public class InfoFragment extends Fragment {
         //fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         listUsersFragment = new ListUsersFragment();
         listGroupsFragment = new ListGroupsFragment();
+        listTopsFragment = new ListTopsFragment();
 
         //Листенеры
         View.OnClickListener onClickListPersons = new View.OnClickListener() {
@@ -96,12 +99,13 @@ public class InfoFragment extends Fragment {
         View.OnClickListener onClickTop = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                OpenFragment(listTopsFragment, "ListTopsFragment");
             }
         };
 
         imgListUsers.setOnClickListener(onClickListPersons);
         imgListGroups.setOnClickListener(onClickListGroups);
+        imgListTops.setOnClickListener(onClickTop);
     }
 
     /*private ImageView loadIcon(LinearLayout layoutIcons, int size, int id_icon) {

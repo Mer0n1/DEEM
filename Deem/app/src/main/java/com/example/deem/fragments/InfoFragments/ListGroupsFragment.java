@@ -28,7 +28,7 @@ public class ListGroupsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_list_groups, container, false);
+        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_first, container, false);
 
         init();
 

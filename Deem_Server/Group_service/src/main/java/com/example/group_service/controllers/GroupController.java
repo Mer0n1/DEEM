@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -36,5 +38,19 @@ public class GroupController {
     @GetMapping("/getGroups")
     public List<Group> getGroups() {
         return groupService.getGroups();
+    }
+
+    @GetMapping("/getTableOfTopGroups")
+    public List<Group> getGroupsTops() {
+        List<Group> groups = groupService.getGroups();
+
+        List<Group> tops = new ArrayList<>();
+        groups.stream().sorted(Comparator.comparing(o -> o.getScore()));
+
+        int size = Math.min(groups.size(), 10);
+        for (int j = 0; j < size; j++)
+            tops.add(groups.get(j));
+
+        return tops;
     }
 }

@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/getAuth")
@@ -26,6 +29,7 @@ public class GetterController {
     public Account getMyAccount(Principal principal) {
         Account account = accountService.getAccount(principal.getName());
         account.setGroup(accountServiceClient.findGroupById(account.getGroup_id()));
+        System.out.println("++++-=-=-=");
         return account;
     }
 
@@ -45,5 +49,19 @@ public class GetterController {
             }
 
         return accounts;
+    }
+
+    @GetMapping("/getTableOfTopUsers")
+    public List<Account> getAccountsTops() {
+        List<Account> accounts = accountService.getAccounts();
+
+        List<Account> tops = new ArrayList<>();
+        accounts.stream().sorted(Comparator.comparing(o -> o.getScore()));
+
+        int size = Math.min(accounts.size(), 10);
+        for (int j = 0; j < size; j++)
+            tops.add(accounts.get(j));
+
+        return tops;
     }
 }

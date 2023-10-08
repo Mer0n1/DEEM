@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.deem.fragments.ChatsContainerFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
@@ -22,10 +23,11 @@ import com.example.deem.fragments.InfoFragment;
 public class MainActivity extends AppCompatActivity {
 
     private FragmentTransaction fragmentTransaction;
-    //private ListUsersFragment listUsersFragment;
     private GroupFragment groupFragment;
     private InfoFragment infoFragment;
     private FirstPageFragment firstPageFragment;
+    private ChatsContainerFragment chatsContainerFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /*if (v == findViewById(R.id.bottom_events))
-                    OpenFragment(listUsersFragment, R.id.fragment_main);*/
+                if (v == findViewById(R.id.bottom_first))
+                    OpenFragment(firstPageFragment, R.id.fragment_main);
 
                 if (v == findViewById(R.id.bottom_group))
                     OpenFragment(groupFragment, R.id.fragment_main);
@@ -60,9 +62,13 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                     startActivity(intent);
                 }
+
+                if (v == findViewById(R.id.bottom_message))
+                    OpenFragment(chatsContainerFragment, R.id.fragment_main);
             }
         };
 
+        findViewById(R.id.bottom_message).setOnClickListener(onClickBottom);
         findViewById(R.id.bottom_group).setOnClickListener(onClickBottom); //3
         findViewById(R.id.bottom_info).setOnClickListener(onClickBottom); //4
         findViewById(R.id.bottom_events).setOnClickListener(onClickBottom); //5
@@ -96,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         groupFragment = new GroupFragment();
         infoFragment = new InfoFragment();
         firstPageFragment = new FirstPageFragment();
-
+        chatsContainerFragment = new ChatsContainerFragment();
     }
 
     public InfoFragment getInfoFragment() {
@@ -124,10 +130,4 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-/**
- * Четче распределить ресурсы (как я понял это минус android потому что я делаю так как и нужно( )
- * Можно сделать статический класс Toolbar который будет отвечать за настройку интерфейса чтобы повторения кода не было
- * Возможно я ошибаюсь используя старую библиотеку getFragmentManager
- * Необходим подход с кэшированием данных, чтобы сервис не обращался к другому бесконечно обновляя информацию
- *
- */
+
