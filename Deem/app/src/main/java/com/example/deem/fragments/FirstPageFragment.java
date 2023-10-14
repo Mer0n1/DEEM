@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.deem.R;
+import com.example.restful.api.APIManager;
 
 public class FirstPageFragment extends Fragment {
 
@@ -22,11 +23,11 @@ public class FirstPageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_first_page, container, false);
+        main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_first, container, false);
 
-        LinearLayout layout = main_layout.findViewById(R.id.test_begin);
+        /*LinearLayout layout = main_layout.findViewById(R.id.test_begin);
         getLayoutInflater().inflate(R.layout.layout_info_person, layout);
-        getLayoutInflater().inflate(R.layout.layout_info_person, layout);
+        getLayoutInflater().inflate(R.layout.layout_info_person, layout);*/
 
         return main_layout;
     }

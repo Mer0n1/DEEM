@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import com.example.deem.MainActivity;
 import com.example.deem.R;
-import com.example.deem.layer_server.DataCash;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 
 import java.util.List;
@@ -41,7 +41,8 @@ public class ListUsersFragment extends Fragment {
 
         //Загрузим элементы layout_info_person
         LinearLayout layout = main_layout.findViewById(R.id.layout_list_users);
-        List<Account> users = DataCash.getAccounts();
+        List<Account> users = APIManager.getManager().getAccounts();
+        users = APIManager.getManager().listAccounts;
 
         for (Account user : users) {
             Space space = new Space(getActivity());

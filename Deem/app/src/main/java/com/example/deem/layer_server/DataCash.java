@@ -10,6 +10,7 @@ import java.util.List;
  * Класс, отвечающий за хранение данных и их актуальность.
  * Делает запросы через RESTful сервис к серверу и получает актуальные данные.
  */
+/*
 public class DataCash {
     private static List<Account> accounts;
     private static List<Group> groups;
@@ -51,3 +52,4 @@ public class DataCash {
     }
 
 }
+*/

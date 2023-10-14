@@ -20,7 +20,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/button_back_chat"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content" />
 
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/EditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_input"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/enter_text"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:background="@drawable/button_style_black"

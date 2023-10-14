@@ -18,6 +18,7 @@ import com.example.deem.fragments.ChatsContainerFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
+import com.example.restful.api.APIManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (v == findViewById(R.id.bottom_first))
-                    OpenFragment(firstPageFragment, R.id.fragment_main);
+                //if (v == findViewById(R.id.bottom_first))
+                //    OpenFragment(firstPageFragment, R.id.fragment_main);
 
                 if (v == findViewById(R.id.bottom_group))
                     OpenFragment(groupFragment, R.id.fragment_main);
@@ -129,5 +130,4 @@ public class MainActivity extends AppCompatActivity {
         layout_icons.removeAllViews();
     }
 }
-
 

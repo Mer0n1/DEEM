@@ -79,6 +79,7 @@ public class InfoFragment extends Fragment {
             public void onClick(View v) {
                 //Нужен для добавление фрагмента над (getFragmentManager().popBackStack())
 
+                System.out.println("0000000000000000000users");
                 OpenFragment(listUsersFragment, "ListUsers");
                 /*FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_main, listUsersFragment, "Test");
@@ -92,6 +93,7 @@ public class InfoFragment extends Fragment {
         View.OnClickListener onClickListGroups = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("0000000000000000000groups");
                 OpenFragment(listGroupsFragment, "ListGroups");
             }
         };
@@ -99,6 +101,7 @@ public class InfoFragment extends Fragment {
         View.OnClickListener onClickTop = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("0000000000000000000tops");
                 OpenFragment(listTopsFragment, "ListTopsFragment");
             }
         };

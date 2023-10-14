@@ -1,26 +1,41 @@
-package com.example.restful.models;
+package com.example.messenger_service.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import jakarta.persistence.*;
 import java.util.Date;
+import java.security.Timestamp;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name = "message")
 public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "author")
     private String author;
+
+    @Column(name = "content")
     private String text;
-    private String type; //send/receive
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "Date")
     private Date date;
 
+    @ManyToOne
+    @JoinColumn(name = "id_chat", referencedColumnName = "id")
+    @JsonIgnoreProperties("messages")
     private Chat chat;
 
     public Message() {
 
     }
 
-    public Message(String text, String type) {
+    public Message(String text) {
         this.text = text;
-        this.type = type;
     }
 
     public String getAuthor() {
@@ -39,12 +54,12 @@ public class Message {
         this.text = text;
     }
 
-    public String getType() {
-        return type;
+    public Long getId() {
+        return id;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Date getDate() {
@@ -62,4 +77,5 @@ public class Message {
     public void setChat(Chat chat) {
         this.chat = chat;
     }
+
 }

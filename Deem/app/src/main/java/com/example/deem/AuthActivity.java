@@ -5,14 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.deem.R;
-import com.example.deem.layer_server.DataCash;
-import com.example.deem.layer_server.MainAPI;
-import com.example.restful.api.GroupsAPI;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.AuthRequest;
+
+import java.util.Date;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -35,13 +33,13 @@ public class AuthActivity extends AppCompatActivity {
                 String password = ((TextView)findViewById(R.id.password_enter)).getText().toString();
 
                 AuthRequest authRequest = new AuthRequest(username, password);
+                APIManager.getManager().auth(authRequest);
 
-                if (MainAPI.authentication(authRequest))
+                if (APIManager.getManager().isAuth())
                 {
                     saveData(username, password); //save log in
-
-                    DataCash.UpdateData();
-                    DataCash.setMyAccount(MainAPI.getMyAccount());
+                    APIManager.getManager().UpdateData();
+                    APIManager.getManager().getMyAccount();
 
                     Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                     startActivity(intent);

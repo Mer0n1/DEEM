@@ -12,8 +12,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.deem.R;
-import com.example.deem.layer_server.DataCash;
-import com.example.restful.models.Account;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class ListGroupsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_first, container, false);
+        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_list_groups, container, false);
 
         init();
 
@@ -40,8 +39,7 @@ public class ListGroupsFragment extends Fragment {
 
         //Загрузим элементы layout_info_person
         LinearLayout layout = main_layout.findViewById(R.id.layout_list_groups);
-        List<Group> groups = DataCash.getGroups();
-        System.out.println("groups: " + groups);
+        List<Group> groups = APIManager.getManager().listGroups;
 
         for (Group group : groups) {
             Space space = new Space(getActivity());
