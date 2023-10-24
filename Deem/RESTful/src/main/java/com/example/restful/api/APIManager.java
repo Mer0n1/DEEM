@@ -5,6 +5,7 @@ import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
+import com.example.restful.models.News;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class APIManager {
     public List<Account> listAccounts;
     public List<Group> listGroups;
     public List<Chat> listChats;
+    public List<News> listNews;
 
     public Account myAccount;
 
@@ -42,23 +44,6 @@ public class APIManager {
     public void auth(AuthRequest authRequest) {
 
         final Call<String> str = Repository.getInstance().login(authRequest);
-        Callback<String> cl = new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println("-------------+");
-                System.out.println(response.body());
-
-                Handler.setToken(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                System.err.println("+++++++++++++++ " + t.toString());
-            }
-        };
-
-        System.out.println("_________________________");
-
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -70,10 +55,10 @@ public class APIManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("string " + stri.body());
                 itog = stri.body();
             }
         });
+
         thread.start();
         try {
             thread.join();
@@ -81,7 +66,6 @@ public class APIManager {
             e.printStackTrace();
         }
 
-        //str.enqueue(cl);
     }
 
     public void getMyAccount() {
@@ -101,19 +85,6 @@ public class APIManager {
 
             }
         };
-
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Response<Account> stri = null;
-                try {
-                    stri = str.execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("account " + stri.body().getSurname());
-            }
-        }).start();*/
 
         str.enqueue(cl);
     }
@@ -188,6 +159,19 @@ public class APIManager {
         });
     }
 
+    public void sendNewChat(Chat chat) {
+        Repository.getInstance().sendNewChat(chat).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                System.out.println("RESPONSE ");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                System.out.println("EEEEEE " + t.getMessage());
+            }
+        });
+    }
 }
 
 

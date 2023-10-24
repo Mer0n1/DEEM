@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
-    private int id;
+    private Long id;
     private String username;
     private String password;
     private String name;
@@ -16,7 +16,7 @@ public class Account {
     private Group group;
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -32,7 +32,7 @@ public class Account {
         return score;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

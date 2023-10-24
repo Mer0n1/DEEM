@@ -8,17 +8,29 @@
     <LinearLayout
         android:id="@+id/layout_chat"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="90dp"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:padding="10dp">
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon_chat"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:src="@drawable/icon_a"
-            app:civ_border_color="#FF000000" />
+            app:civ_border_color="#FF000000" />-
+        <!--<TextView
+            android:id="@+id/icon_chat_story"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/shape_icon"
+            android:text="A"
+            android:textSize="35dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            ></TextView>-->
+
 
 
         <Space
@@ -33,7 +45,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/group_name_item_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Name"

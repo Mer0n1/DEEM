@@ -1,5 +1,7 @@
 package com.example.group_service.models;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -7,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
+@Data
+@NoArgsConstructor
 public class PersonDetails implements UserDetails {
     private String username;
     private String password;
@@ -36,22 +40,5 @@ public class PersonDetails implements UserDetails {
         return null;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 

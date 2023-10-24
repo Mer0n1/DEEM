@@ -7,6 +7,7 @@ import com.example.auth_service.service.AccountServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -63,5 +64,12 @@ public class GetterController {
             tops.add(accounts.get(j));
 
         return tops;
+    }
+
+    @GetMapping("/getAccountsOfChat")
+    public List<Account> getAccountsOfChat(@RequestParam("id_chat") int id_chat) {
+
+
+        return new ArrayList<>();
     }
 }

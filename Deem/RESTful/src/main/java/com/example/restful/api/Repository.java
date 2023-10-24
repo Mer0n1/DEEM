@@ -44,4 +44,6 @@ class Repository {
     public Call<List<Chat>> getChats() { return Handler.getInstance().getApi().getChats(); }
 
     public Call<Void> sendMessage(Message message) { return Handler.getInstance().getApi().sendMessage(message); }
+
+    public Call<Void> sendNewChat(Chat chat) { return Handler.getInstance().getApi().sendNewChat(chat); }
 }

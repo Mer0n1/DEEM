@@ -1,11 +1,15 @@
 package com.example.group_service.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "di_group")
+@Data
+@NoArgsConstructor
 public class Group {
 
     @Id
@@ -28,51 +32,4 @@ public class Group {
     @Column(name = "date_create")
     private Date date_create;
 
-    public int getId() {
-        return id;
-    }
-
-    public String getFaculty() {
-        return faculty;
-    }
-
-    public int getCourse() {
-        return course;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Date getDate_create() {
-        return date_create;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-    }
-
-    public void setCourse(int course) {
-        this.course = course;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDate_create(Date date_create) {
-        this.date_create = date_create;
-    }
 }

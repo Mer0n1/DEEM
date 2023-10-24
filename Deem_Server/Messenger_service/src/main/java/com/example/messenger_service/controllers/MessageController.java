@@ -5,6 +5,9 @@ import com.example.messenger_service.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/message")
 public class MessageController {
@@ -28,6 +31,16 @@ public class MessageController {
     public Message getMessage(int id) {
         System.out.println(id);
         return messageService.getMessage(id);
+    }
+
+    /** Отправить новые сообщения. Обновление чата. Пользователь отправляет
+     * дату последнего сообщения в кэше его устройства на сервер, сервер же
+     * определяет является ли сообщение последним и если нет отправляет новые
+     * сообщения клиенту*/
+    @GetMapping("/updateMessages")
+    public List<Message> getLastMessages(String dateLastMessage, int idChat) {
+
+        return new ArrayList<>();
     }
 
 }

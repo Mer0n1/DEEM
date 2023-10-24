@@ -30,7 +30,7 @@
 
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/profile_myIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/icon_person_elon"
@@ -42,10 +42,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/profile_personalId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="id 123456789"
@@ -55,7 +56,7 @@
                 tools:layout_editor_absoluteY="59dp" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/profile_courseInf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="1 курс ИХНТ"
@@ -63,6 +64,30 @@
                 android:gravity="center"
                 tools:layout_editor_absoluteX="219dp"
                 tools:layout_editor_absoluteY="104dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></Space>
+
+            <TextView
+                android:id="@+id/text456"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Мои баллы:"
+                android:textSize="18dp"></TextView>
+            <TextView
+                android:id="@+id/myScore"
+                android:layout_weight="0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="#cccccc"
+                android:text="0"
+                android:textSize="28dp"
+                />
         </LinearLayout>
 
     </LinearLayout>
@@ -84,7 +109,7 @@
             tools:layout_editor_absoluteY="252dp" />
 
         <TextView
-            android:id="@+id/textView23"
+            android:id="@+id/profile_fullName"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center"
@@ -104,7 +129,7 @@
             tools:layout_editor_absoluteY="292dp" />
 
         <TextView
-            android:id="@+id/textView245"
+            android:id="@+id/profile_groupNumber"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center"
@@ -124,7 +149,7 @@
             tools:layout_editor_absoluteY="337dp" />
 
         <TextView
-            android:id="@+id/textView31"
+            android:id="@+id/profile_mail"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="123456@gmail.com"
@@ -146,7 +171,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button7"
+                android:id="@+id/exit_from_account"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

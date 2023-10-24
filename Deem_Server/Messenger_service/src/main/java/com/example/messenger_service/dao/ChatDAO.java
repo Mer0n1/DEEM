@@ -70,4 +70,39 @@ public class ChatDAO {
         return id;
     }
 
+    public List<Long> getIdAccountsOfChat(int id_chat) {
+        List<Long> received = new ArrayList<>();
+        try {
+            preparedStatement = connection.prepareStatement
+                    ("SELECT * FROM account_chat WHERE chat_id=?");
+            preparedStatement.setInt(1, id_chat);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+                received.add(resultSet.getLong(1));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return received;
+    }
+
+    public boolean saveInAccount_chat(Chat chat) {
+        try {
+            for (int j = 0; j < chat.getUsers().size(); j++) {
+
+                preparedStatement = connection.prepareStatement
+                        ("INSERT INTO account_chat (account_id, chat_id) VALUES (?,?)");
+                preparedStatement.setInt(1, chat.getId().intValue());
+                preparedStatement.setInt(2, chat.getUsers().get(j).intValue());
+                System.out.println("+ " + chat.getId() + " " + chat.getUsers().get(j));
+                preparedStatement.executeQuery();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
+    }
 }

@@ -7,11 +7,10 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
-    private String author;
     private String text;
     private String type; //send/receive
     private Date date;
-
+    private Long author;
     private Chat chat;
 
     public Message() {
@@ -23,16 +22,9 @@ public class Message {
         this.type = type;
     }
 
-    public String getAuthor() {
-        return author;
-    }
 
     public String getText() {
         return text;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public void setText(String text) {
@@ -61,5 +53,13 @@ public class Message {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public Long getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Long author) {
+        this.author = author;
     }
 }

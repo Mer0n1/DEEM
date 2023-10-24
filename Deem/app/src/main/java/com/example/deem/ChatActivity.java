@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.Account;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Message;
 
@@ -29,27 +30,26 @@ public class ChatActivity extends AppCompatActivity {
     private Chat currentChat;
     private List<Message> messages;
 
+    private boolean newChat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityChatBinding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(activityChatBinding.getRoot());
 
-        init(0);
+        init();
     }
 
-    private void init(int nChat) {
+    private void init() {
 
-        //loading chat
-        currentChat = APIManager.getManager().listChats.get(nChat);
-
-        if (currentChat != null) {
+        if (APIManager.getManager().listChats == null) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
             activityChatBinding.listMessages.setVisibility(View.VISIBLE);
-
-            messages = currentChat.getMessages();
-            sort();
+            return;
         }
+
+        loadChat();
 
         //init recycle
         recyclerView = findViewById(R.id.list_messages);
@@ -69,16 +69,25 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText editText = activityChatBinding.EditText;
                 String content = editText.getText().toString();
-                messages.add(new Message(content, "send"));
+                //messages.add(new Message(content, "send"));
                 chatRecycleAdapter.notifyDataSetChanged();
 
                 //Send message
                 Message message = new Message();
                 message.setText(content);
-                message.setAuthor(APIManager.getManager().myAccount.getUsername());
+                message.setAuthor(APIManager.getManager().myAccount.getId());
                 message.setChat(currentChat);
-                //message.setDate(new Date(System.currentTimeMillis()));
-                APIManager.getManager().sendMessage(message);
+                message.setType("send");
+                messages.add(message);
+                currentChat.setMessages(messages);
+
+                System.out.println(currentChat.getMessages().size() + " " + currentChat.getUsers().size());
+                System.out.println("++++++++++ " + currentChat.getMessages().get(0).getAuthor());
+
+                if (!newChat)
+                    APIManager.getManager().sendMessage(message);
+                else
+                    APIManager.getManager().sendNewChat(currentChat);
 
                 //Update Interface
                 editText.setText("");
@@ -95,11 +104,51 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    private void loadChat() {
+        //loading chat
+        String nicknamePerson = getIntent().getStringExtra("Nickname");
+        if (nicknamePerson.isEmpty()) return;
+
+        // имеем ли мы чат с этим пользователем
+        List<Chat> chats = APIManager.getManager().listChats;
+        List<Account> accounts = APIManager.getManager().listAccounts;
+
+        Account wr = null; //аккаунт собеседника
+        for (Account account : accounts)
+            if (account.getUsername().equals(nicknamePerson))
+                wr = account;
+
+
+        if (wr != null)
+            for (Chat chat : chats)
+                if (chat.getUsers().get(0) == wr.getId()) {
+                    currentChat = chat;
+                    break;
+                }
+
+        //
+        if (currentChat != null) {
+            messages = currentChat.getMessages();
+            newChat = false;
+            sort();
+        } else {
+            currentChat = new Chat();
+            messages = new ArrayList<>();
+
+            List<Long> usersOfChat = new ArrayList<>();
+            usersOfChat.add(APIManager.getManager().myAccount.getId());
+            usersOfChat.add(wr.getId());
+            currentChat.setUsers(usersOfChat);
+            currentChat.setMessages(messages);
+            newChat = true;
+        }
+    }
+
     public void sort() {
-        String myName = APIManager.getManager().myAccount.getUsername();
+        Long MyId = APIManager.getManager().myAccount.getId();
 
         for (Message message : messages) {
-            if (myName.equals(message.getAuthor())) {
+            if (MyId == message.getAuthor()) {
                 message.setType("send");
             } else
                 message.setType("receive");

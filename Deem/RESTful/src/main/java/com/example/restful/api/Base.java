@@ -34,4 +34,6 @@ public interface Base {
     Call<List<Chat>> getChats();
     @POST("/message/sendMessage")
     Call<Void> sendMessage(@Body Message message);
+    @POST("/chat/createChat")
+    Call<Void> sendNewChat(@Body Chat chat);
 }

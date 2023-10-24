@@ -3,12 +3,11 @@ package com.example.messenger_service.controllers;
 import com.example.messenger_service.dao.ChatDAO;
 import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.services.ChatService;
-import jakarta.ws.rs.GET;
+import com.example.messenger_service.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 
 import java.util.ArrayList;
@@ -21,6 +20,8 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
     @Autowired
+    private MessageService messageService;
+    @Autowired
     private ChatDAO chatDAO;
 
 
@@ -30,6 +31,7 @@ public class ChatController {
         return new Chat(); //
     }
 
+    /** Возвращает чаты текущего пользователя */
     @GetMapping("/getChats")
     public List<Chat> getChats(Principal principle) {
         System.out.println("getChats called");
@@ -37,10 +39,34 @@ public class ChatController {
         int accountId = chatDAO.getIdByAccount(principle.getName());
         List<Chat> chats = chatService.getChats(chatDAO.getChatsIdByAccountId(accountId));
 
+        for (Chat chat : chats) //получим id аккаунтов для каждого чата
+            chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId().intValue()));
+
+        System.out.println(chats);
+        System.out.println(chats.size());
         return chats;
     }
 
 
-    //@PostMapping("/createChat")
+    /** При создании чата пользователь создает всего 1 сообщение */
+    @PostMapping("/createChat")
+    public void createChat(@RequestBody Chat chat/*, @Valid BindingResult bindingResult*/) {
+
+        System.out.println(chat.toString());
+        //System.out.println(chat.getMessages().get(0).getAuthor());
+
+        
+        /*if (bindingResult.hasErrors())
+            return;*/
+
+        System.out.println("----------------");
+
+        //создание чата в таблице чатов
+        chatService.save(chat);
+        //создание сообщения в таблице сообщений
+        messageService.save(chat.getMessages().get(0));
+        //создание чата в таблице account_chat
+        chatDAO.saveInAccount_chat(chat);
+    }
 
 }

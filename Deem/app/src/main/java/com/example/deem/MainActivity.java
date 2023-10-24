@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.deem.fragments.ChatsContainerFragment;
+import com.example.deem.fragments.EventsFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private FirstPageFragment firstPageFragment;
     private ChatsContainerFragment chatsContainerFragment;
 
+    public enum FragmentType { group, info_, messenger, events }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         //
 
 
+
         View.OnClickListener onClickBottom = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,18 +57,19 @@ public class MainActivity extends AppCompatActivity {
                 //    OpenFragment(firstPageFragment, R.id.fragment_main);
 
                 if (v == findViewById(R.id.bottom_group))
-                    OpenFragment(groupFragment, R.id.fragment_main);
-
+                    OpenMenu(FragmentType.group);
                 if (v == findViewById(R.id.bottom_info))
-                    OpenFragment(infoFragment, R.id.fragment_main);
+                    OpenMenu(FragmentType.info_);
+                if (v == findViewById(R.id.bottom_message))
+                    OpenMenu(FragmentType.messenger);
+
 
                 if (v == findViewById(R.id.profile_icon)) {
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("Nickname", APIManager.getManager().myAccount.getUsername());
                     startActivity(intent);
                 }
 
-                if (v == findViewById(R.id.bottom_message))
-                    OpenFragment(chatsContainerFragment, R.id.fragment_main);
             }
         };
 
@@ -97,7 +101,31 @@ public class MainActivity extends AppCompatActivity {
         OpenFragment(fragment, id_layout, false);
     }
 
-    public void InitResource() {
+    /** Отличие от OpenFragment - более высокий уровень. Открывает фрагмент изменяя дизайн*/
+    public void OpenMenu(FragmentType fragmentType) {
+        Fragment fragment = firstPageFragment;
+        if (fragmentType == FragmentType.group)
+            fragment =  groupFragment;
+        if (fragmentType == FragmentType.messenger)
+            fragment = chatsContainerFragment;
+        if (fragmentType == FragmentType.info_)
+            fragment =  infoFragment;
+
+
+        if (fragment.getClass() == GroupFragment.class)
+            changeDesignOfIcon(R.id.bottom_group);
+        if (fragment.getClass() == EventsFragment.class)
+            changeDesignOfIcon(R.id.bottom_events);
+        if (fragment.getClass() == InfoFragment.class)
+            changeDesignOfIcon(R.id.bottom_info);
+        if (fragment.getClass() == ChatsContainerFragment.class)
+            changeDesignOfIcon(R.id.bottom_message);
+
+        OpenFragment(fragment, R.id.fragment_main, false);
+    }
+
+
+    private void InitResource() {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         //listUsersFragment = new ListUsersFragment();
         groupFragment = new GroupFragment();
@@ -106,11 +134,12 @@ public class MainActivity extends AppCompatActivity {
         chatsContainerFragment = new ChatsContainerFragment();
     }
 
+
     public InfoFragment getInfoFragment() {
         return infoFragment;
     }
 
-
+    /* Загрузить иконку в Toolbar */
     public ImageView loadIcon(LinearLayout layoutIcons, int size, int id_icon) {
         ImageView ii = new ImageView(this);
         ii.setBackgroundResource(id_icon);
@@ -123,11 +152,33 @@ public class MainActivity extends AppCompatActivity {
         return ii;
     }
 
+    /* Очистить иконки из Toolbar */
     public void ClearIcons() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         LinearLayout linearLayout = toolbar.findViewById(R.id.layout_toolbar);
         LinearLayout layout_icons = linearLayout.findViewById(R.id.icons_toolbar);
         layout_icons.removeAllViews();
+    }
+
+    /* Изменение дизайна иконок */
+    public void changeDesignOfIcon(int RId) {
+        ImageView bottom_message = findViewById(R.id.bottom_message);
+        ImageView bottom_group = findViewById(R.id.bottom_group);
+        ImageView bottom_events = findViewById(R.id.bottom_events);
+        ImageView bottom_info = findViewById(R.id.bottom_info);
+
+        bottom_message.setBackgroundResource(R.drawable.icon_messenger);
+        bottom_group.setBackgroundResource(R.drawable.icon_group);
+        bottom_events.setBackgroundResource(R.drawable.icon_events);
+        bottom_info.setBackgroundResource(R.drawable.icon_news);
+
+        switch (RId) {
+            case R.id.bottom_message: bottom_message.setBackgroundResource(R.drawable.icon_messenger_pressed); break;
+            case R.id.bottom_group: bottom_group.setBackgroundResource(R.drawable.icon_group_pressed); break;
+            case R.id.bottom_info: bottom_info.setBackgroundResource(R.drawable.icon_news_pressed); break;
+            case R.id.bottom_events: bottom_events.setBackgroundResource(R.drawable.icon_events_pressed); break;
+        }
+
     }
 }
 

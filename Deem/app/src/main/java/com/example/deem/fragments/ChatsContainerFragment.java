@@ -1,20 +1,28 @@
 package com.example.deem.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.deem.ChatActivity;
 import com.example.deem.R;
+import com.example.deem.adapters.ContainerChatsRecycleAdapter;
+import com.example.restful.api.APIManager;
+import com.example.restful.models.Chat;
+
+import java.util.List;
 
 public class ChatsContainerFragment extends Fragment {
     private FrameLayout main_layout;
+    private List<Chat> listChats;
+
+    private ContainerChatsRecycleAdapter containerChatsRecycleAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,23 +39,16 @@ public class ChatsContainerFragment extends Fragment {
     }
 
     public void init() {
-
+        //LinearLayout layout = main_layout.findViewById(R.id.container_chats);
+        listChats = APIManager.getManager().listChats;
 
         //
-        LinearLayout layout = main_layout.findViewById(R.id.container_chats);
+        recyclerView = main_layout.findViewById(R.id.list_chats);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        containerChatsRecycleAdapter = new ContainerChatsRecycleAdapter(listChats, this);
+        recyclerView.setAdapter(containerChatsRecycleAdapter);
+        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
 
-        System.out.println("Count: " + layout.getChildCount());
-
-        View.OnClickListener onClickChat = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                startActivity(intent);
-            }
-        };
-
-        for (int j = 0; j < layout.getChildCount(); j++)
-            layout.getChildAt(j).setOnClickListener(onClickChat);
+        //View.inflate(getContext(), R.layout.item_chat_story, layout);
     }
 }

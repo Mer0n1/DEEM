@@ -68,7 +68,7 @@ public class Handler {
         @Override
         public okhttp3.Response intercept(Chain chain) throws IOException {
 
-            System.out.println("_______ Запрос");
+            System.err.println("OkHTTP");
 
             Request originalRequest = chain.request();
             Request.Builder builder = originalRequest.newBuilder().header("Authorization", "Bearer " + token);

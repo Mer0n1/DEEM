@@ -16,6 +16,7 @@ public class Group {
     private String faculty;
     private Date date_create;
     private List<Account> users;
+    private List<News> news;
 
     public int getId() {
         return id;
@@ -71,5 +72,13 @@ public class Group {
 
     public void setUsers(List<Account> users) {
         this.users = users;
+    }
+
+    public List<News> getNews() {
+        return news;
+    }
+
+    public void setNews(List<News> news) {
+        this.news = news;
     }
 }

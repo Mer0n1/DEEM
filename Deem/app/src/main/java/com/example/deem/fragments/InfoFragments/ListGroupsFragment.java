@@ -1,24 +1,33 @@
 package com.example.deem.fragments.InfoFragments;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.Space;
-import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.deem.adapters.GroupsListRecycleAdapter;
+import com.example.deem.databinding.FragmentListGroupsBinding;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListGroupsFragment extends Fragment {
     private FrameLayout main_layout;
+    private FragmentListGroupsBinding binding;
+    private List<Group> groups;
+
+    private GroupsListRecycleAdapter recycleAdapterGroups;
+    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +36,7 @@ public class ListGroupsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentListGroupsBinding.inflate(getLayoutInflater());
         main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_list_groups, container, false);
 
         init();
@@ -35,27 +45,48 @@ public class ListGroupsFragment extends Fragment {
     }
 
     public void init() {
-
-
         //Загрузим элементы layout_info_person
-        LinearLayout layout = main_layout.findViewById(R.id.layout_list_groups);
-        List<Group> groups = APIManager.getManager().listGroups;
+        groups = APIManager.getManager().listGroups;
 
-        for (Group group : groups) {
-            Space space = new Space(getActivity());
-            space.setMinimumHeight(100);
+        //search
+        binding.iconSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.editTextSearch.callOnClick();
+            }
+        });
 
-            layout.addView(space);
-            LinearLayout layout1 = (LinearLayout) getLayoutInflater().inflate
-                    (R.layout.layout_group, layout);
+        EditText editText = main_layout.findViewById(R.id.editText_search);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            //init new layout
-            layout1 = (LinearLayout) layout1.getChildAt(layout1.getChildCount()-1);
-            ((TextView)(layout1.findViewById(R.id.group_course_info))).setText(String.valueOf(group.getCourse()));
-            ((TextView)(layout1.findViewById(R.id.group_institute_ingo))).setText(group.getFaculty());
-            ((TextView)(layout1.findViewById(R.id.group_word_ingo))).setText(group.getName());
-            //((TextView)(layout1.findViewById(R.id.group_hierarchy_ingo))).setText(group.getName());
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-        }
+            @Override
+            public void afterTextChanged(Editable s) {sort(s.toString());}
+        });
+
+        //test recycle
+        recycleAdapterGroups = new GroupsListRecycleAdapter(APIManager.getManager().listGroups, this);
+
+        recyclerView = main_layout.findViewById(R.id.list_groups_info);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setAdapter(recycleAdapterGroups);
+
     }
+
+    public void sort(String text) {
+        //название группы
+        List<Group> sort = new ArrayList<>();
+        for (Group group : groups)
+            if (group.getName().equals(text) ||
+                group.getName().compareTo(text) == 0 || text.equals(""))
+                sort.add(group);
+
+        recycleAdapterGroups.setList(sort);
+        recycleAdapterGroups.notifyDataSetChanged();
+    }
+
 }

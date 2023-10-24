@@ -23,6 +23,8 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_group, container, false);
 
+        init();
+        //recycle adapter for news of group
 
 
         return main_layout;

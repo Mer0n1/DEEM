@@ -12,13 +12,21 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.deem.adapters.ChatRecycleAdapter;
+import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.fragments.InfoFragments.ListGroupsFragment;
 import com.example.deem.fragments.InfoFragments.ListTopsFragment;
 import com.example.deem.fragments.InfoFragments.ListUsersFragment;
+import com.example.restful.api.APIManager;
+import com.example.restful.models.News;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +40,9 @@ public class InfoFragment extends Fragment {
     private ListUsersFragment listUsersFragment;
     private ListGroupsFragment listGroupsFragment;
     private ListTopsFragment listTopsFragment;
+
+    private NewsListRecycleAdapter newsListRecycleAdapter;
+    private RecyclerView recyclerView;
 
 
     @Override
@@ -51,10 +62,17 @@ public class InfoFragment extends Fragment {
     }
 
     public void init() {
+        //init objects
+        //fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        listUsersFragment = new ListUsersFragment();
+        listGroupsFragment = new ListGroupsFragment();
+        listTopsFragment = new ListTopsFragment();
+
+        //init toolbar
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         LinearLayout linearLayout = toolbar.findViewById(R.id.layout_toolbar);
 
-        //Добавление иконок
+        //--Добавление иконок
         LinearLayout layout_icons = linearLayout.findViewById(R.id.icons_toolbar);
 
         int size = linearLayout.findViewById(R.id.profile_icon).getWidth();
@@ -62,16 +80,24 @@ public class InfoFragment extends Fragment {
         ImageView imgListGroups = this_activity.loadIcon(layout_icons, size, R.drawable.icon_list_groups);
         ImageView imgListUsers  = this_activity.loadIcon(layout_icons, size, R.drawable.icon_list_users);
 
-
-        //Изменение титла
+        //--Изменение титла
         TextView textView = linearLayout.findViewById(R.id.text_toolbar);
         textView.setText("Новости");
 
-        //init objects
-        //fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        listUsersFragment = new ListUsersFragment();
-        listGroupsFragment = new ListGroupsFragment();
-        listTopsFragment = new ListTopsFragment();
+        //Recycle
+        //test
+        List<News> list = new ArrayList<>();
+        News news = new News();
+        news.setAuthor("Meron");
+        news.setContent("The example text");
+        news.setDate(new Date(System.currentTimeMillis()));
+        list.add(news);
+
+        //
+        recyclerView = main_layout.findViewById(R.id.news_feed);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        newsListRecycleAdapter = new NewsListRecycleAdapter(list/*APIManager.getManager().listNews*/);
+        recyclerView.setAdapter(newsListRecycleAdapter);
 
         //Листенеры
         View.OnClickListener onClickListPersons = new View.OnClickListener() {

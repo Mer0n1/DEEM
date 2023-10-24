@@ -9,6 +9,7 @@ public class Chat {
 
     private int id;
     private List<Message> messages;
+    private List<Long> users;
 
     public List<Message> getMessages() {
         return messages;
@@ -20,5 +21,17 @@ public class Chat {
 
     public int getId() {
         return id;
+    }
+
+    public List<Long> getUsers() {
+        return users;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUsers(List<Long> users) {
+        this.users = users;
     }
 }
