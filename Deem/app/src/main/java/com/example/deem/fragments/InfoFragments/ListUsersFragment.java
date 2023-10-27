@@ -58,38 +58,12 @@ public class ListUsersFragment extends Fragment {
         ((MainActivity)(getActivity())).getInfoFragment().includeButtonBack();
         users = APIManager.getManager().listAccounts;
 
-        //Загрузим элементы layout_info_person
-        /*LinearLayout layout = main_layout.findViewById(R.id.layout_list_users);
-        List<Account> users = APIManager.getManager().getAccounts();
-        users = APIManager.getManager().listAccounts;
-
-        for (Account user : users) {
-            Space space = new Space(getActivity());
-            space.setMinimumHeight(100);
-
-            layout.addView(space);
-            LinearLayout layout1 = (LinearLayout) getLayoutInflater().inflate
-                    (R.layout.item_person_info, layout);
-
-            //init new layout
-            layout1 = (LinearLayout) layout1.getChildAt(layout1.getChildCount()-1);
-            ((TextView)(layout1.findViewById(R.id.name_info))).setText(user.getName());
-            ((TextView)(layout1.findViewById(R.id.surname_info))).setText(user.getFathername() + " " + user.getSurname());
-            ((TextView)(layout1.findViewById(R.id.course_info))).setText(String.valueOf(user.getGroup().getCourse())); //user.getGroup().getCourse()
-            ((TextView)(layout1.findViewById(R.id.faculty_info))).setText(user.getGroup().getFaculty());
-            ((TextView)(layout1.findViewById(R.id.group_own_info))).setText(user.getGroup().getName());
-            ((TextView)(layout1.findViewById(R.id.typePerson_info))).setText("Студент");
-        }*/
-
-
         //recycle
         usersListRecycleAdapter = new UsersListRecycleAdapter(APIManager.getManager().listAccounts, this);
-
         recyclerView = main_layout.findViewById(R.id.list_users_info);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setAdapter(usersListRecycleAdapter);
 
-        //search
         //search
         binding.iconSearch.setOnClickListener(new View.OnClickListener() {
             @Override

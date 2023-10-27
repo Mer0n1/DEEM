@@ -14,7 +14,6 @@ spring:
          filters:
            - AuthenticationFilter
 
-
        - id: Group_service
          uri: lb://groups
          predicates:
@@ -24,6 +23,20 @@ spring:
 
        - id: Messenger_service
          uri: lb://messengers
+         predicates:
+           - Path=/**
+         filters:
+           - AuthenticationFilter
+
+       - id: News_service
+         uri: lb://newss
+         predicates:
+           - Path=/**
+         filters:
+           - AuthenticationFilter
+
+       - id: Image_service
+         uri: lb://images
          predicates:
            - Path=/**
          filters:

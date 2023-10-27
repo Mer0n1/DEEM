@@ -6,14 +6,18 @@ import com.example.restful.models.Chat;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class APIManager {
 
@@ -27,6 +31,8 @@ public class APIManager {
     public Account myAccount;
 
     private String itog;
+
+    public InputStream thes;
 
     private APIManager() {
     }
@@ -73,8 +79,6 @@ public class APIManager {
         Callback<Account> cl = new Callback<Account>() {
             @Override
             public void onResponse(Call<Account> call, Response<Account> response) {
-                System.out.println("-------------+");
-
                 if (response.body() != null)
                 System.out.println(response.body().getSurname());
                 myAccount = response.body();
@@ -143,6 +147,38 @@ public class APIManager {
             }
         });
 
+        //test (image)
+        /*Repository.getInstance().getImageTest().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    InputStream inputStream = response.body().byteStream();
+                    thes = inputStream;
+                }
+                else
+                    System.out.println("----- = null");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                System.out.println("image error");
+            }
+        });*/
+
+        //test (news)
+        listNews = new ArrayList<>();
+        Repository.getInstance().getNews().enqueue(new Callback<News>() {
+            @Override
+            public void onResponse(Call<News> call, Response<News> response) {
+                listNews.add(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<News> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public void sendMessage(Message message) {
@@ -163,15 +199,14 @@ public class APIManager {
         Repository.getInstance().sendNewChat(chat).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                System.out.println("RESPONSE ");
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                System.out.println("EEEEEE " + t.getMessage());
             }
         });
     }
+
 }
 
 

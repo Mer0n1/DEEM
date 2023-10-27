@@ -76,4 +76,6 @@ public class AuthConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+
 }

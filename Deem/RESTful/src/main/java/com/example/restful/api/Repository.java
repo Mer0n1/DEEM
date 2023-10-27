@@ -5,9 +5,11 @@ import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
+import com.example.restful.models.News;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 class Repository {
@@ -46,4 +48,9 @@ class Repository {
     public Call<Void> sendMessage(Message message) { return Handler.getInstance().getApi().sendMessage(message); }
 
     public Call<Void> sendNewChat(Chat chat) { return Handler.getInstance().getApi().sendNewChat(chat); }
+
+    public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
+
+    public Call<News> getNews() { return Handler.getInstance().getApi().getNews(); }
+
 }

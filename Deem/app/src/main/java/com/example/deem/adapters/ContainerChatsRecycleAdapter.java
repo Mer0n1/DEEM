@@ -32,8 +32,6 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
     @Override
     public ItemChat onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_story, parent, false);
-
-        System.out.println("ItemChat: " + view);
         return new ItemChat(view);
     }
 
@@ -44,6 +42,8 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
 
     @Override
     public int getItemCount() {
+        if (chats == null)
+            return -1;
         return chats.size();
     }
 
@@ -68,7 +68,13 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
 
         public void setData(Chat chat) {
             List<Account> accounts = APIManager.getManager().listAccounts;
-            Account account = accounts.stream().filter(s->s.getId() == chat.getUsers().get(0)).findAny().orElse(null);
+            Long id = chat.getUsers().get(0);
+            if (id == APIManager.getManager().myAccount.getId())
+                id = chat.getUsers().get(1);
+            Long finalId = id;
+
+            Account account = accounts.stream().filter(
+                    s->s.getId() == finalId).findAny().orElse(null);
             if (account == null) return;
 
             name.setText(String.valueOf(account.getUsername()));

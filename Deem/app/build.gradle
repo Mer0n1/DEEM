@@ -71,4 +71,5 @@ dependencies {
     implementation group: 'org.glassfish.tyrus.bundles', name: 'tyrus-standalone-client', version: '1.9'
 
 
+
 }

@@ -43,11 +43,12 @@ public class ChatActivity extends AppCompatActivity {
 
     private void init() {
 
-        if (APIManager.getManager().listChats == null) {
+        if (APIManager.getManager().listChats != null) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
             activityChatBinding.listMessages.setVisibility(View.VISIBLE);
+        } else
             return;
-        }
+
 
         loadChat();
 
@@ -60,6 +61,8 @@ public class ChatActivity extends AppCompatActivity {
 
         //
         SetListeners();
+
+        activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
     }
 
     private void SetListeners() {
@@ -69,20 +72,15 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText editText = activityChatBinding.EditText;
                 String content = editText.getText().toString();
-                //messages.add(new Message(content, "send"));
-                chatRecycleAdapter.notifyDataSetChanged();
 
                 //Send message
                 Message message = new Message();
                 message.setText(content);
                 message.setAuthor(APIManager.getManager().myAccount.getId());
-                message.setChat(currentChat);
                 message.setType("send");
-                messages.add(message);
-                currentChat.setMessages(messages);
 
-                System.out.println(currentChat.getMessages().size() + " " + currentChat.getUsers().size());
-                System.out.println("++++++++++ " + currentChat.getMessages().get(0).getAuthor());
+                messages.add(message);
+                chatRecycleAdapter.notifyDataSetChanged();
 
                 if (!newChat)
                     APIManager.getManager().sendMessage(message);
@@ -118,10 +116,10 @@ public class ChatActivity extends AppCompatActivity {
             if (account.getUsername().equals(nicknamePerson))
                 wr = account;
 
-
         if (wr != null)
             for (Chat chat : chats)
-                if (chat.getUsers().get(0) == wr.getId()) {
+                if (chat.getUsers().get(0) == wr.getId() ||
+                    chat.getUsers().get(1) == wr.getId()) {
                     currentChat = chat;
                     break;
                 }
@@ -133,13 +131,12 @@ public class ChatActivity extends AppCompatActivity {
             sort();
         } else {
             currentChat = new Chat();
-            messages = new ArrayList<>();
+            messages = currentChat.getMessages();
 
             List<Long> usersOfChat = new ArrayList<>();
             usersOfChat.add(APIManager.getManager().myAccount.getId());
             usersOfChat.add(wr.getId());
             currentChat.setUsers(usersOfChat);
-            currentChat.setMessages(messages);
             newChat = true;
         }
     }

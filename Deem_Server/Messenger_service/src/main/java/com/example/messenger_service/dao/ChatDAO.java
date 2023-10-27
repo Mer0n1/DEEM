@@ -3,8 +3,11 @@ package com.example.messenger_service.dao;
 import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.models.Message;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -24,6 +27,9 @@ public class ChatDAO {
 
     private PreparedStatement preparedStatement;
     private Connection connection;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @PostConstruct
     private void init() {
@@ -84,23 +90,15 @@ public class ChatDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return received;
     }
 
     public boolean saveInAccount_chat(Chat chat) {
-        try {
-            for (int j = 0; j < chat.getUsers().size(); j++) {
 
-                preparedStatement = connection.prepareStatement
-                        ("INSERT INTO account_chat (account_id, chat_id) VALUES (?,?)");
-                preparedStatement.setInt(1, chat.getId().intValue());
-                preparedStatement.setInt(2, chat.getUsers().get(j).intValue());
-                System.out.println("+ " + chat.getId() + " " + chat.getUsers().get(j));
-                preparedStatement.executeQuery();
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        for (int j = 0; j < chat.getUsers().size(); j++) {
+            jdbcTemplate.update("INSERT INTO account_chat (account_id, chat_id) VALUES (?,?)",
+                    chat.getUsers().get(j), chat.getId()); //chat.getId(), chat.getUsers().get(0)
         }
 
         return true;

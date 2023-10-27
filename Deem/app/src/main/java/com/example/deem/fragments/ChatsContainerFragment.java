@@ -42,6 +42,7 @@ public class ChatsContainerFragment extends Fragment {
         //LinearLayout layout = main_layout.findViewById(R.id.container_chats);
         listChats = APIManager.getManager().listChats;
 
+        System.out.println("listChats " + listChats );
         //
         recyclerView = main_layout.findViewById(R.id.list_chats);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));

@@ -1,7 +1,10 @@
 package com.example.deem;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.deem.databinding.ActivityProfileBinding;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
+import com.example.restful.models.News;
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -45,6 +49,18 @@ public class ProfileActivity extends AppCompatActivity {
         activity.profilePersonalId.setText(String.valueOf(account.getId())); //personal identifier
 
         SetListeners();
+
+        //test
+        //Bitmap bitmap = BitmapFactory.decodeStream(APIManager.getManager().thes);
+        //activity.profileMyIcon.setImageBitmap(bitmap);
+
+        //test with image + news
+        System.out.println("listNews " + APIManager.getManager().listNews.size());
+        News news = APIManager.getManager().listNews.get(0);
+        byte[] decodedBytes = Base64.decode(news.getImg(), Base64.DEFAULT);
+        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+
+        activity.profileMyIcon.setImageBitmap(decodedBitmap);
     }
 
     private void SetListeners() {

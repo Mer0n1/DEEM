@@ -42,7 +42,6 @@ public class Handler {
 
     public static synchronized void setToken(String token) {
         Handler.token = token;
-        System.out.println("SetToken " + Handler.token);
     }
 
     public static synchronized String getToken() {
@@ -67,8 +66,6 @@ public class Handler {
 
         @Override
         public okhttp3.Response intercept(Chain chain) throws IOException {
-
-            System.err.println("OkHTTP");
 
             Request originalRequest = chain.request();
             Request.Builder builder = originalRequest.newBuilder().header("Authorization", "Bearer " + token);
