@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface NewsRepository extends JpaRepository<News, Integer> {
+    List<News> findAllByFaculty(String faculty);
 }

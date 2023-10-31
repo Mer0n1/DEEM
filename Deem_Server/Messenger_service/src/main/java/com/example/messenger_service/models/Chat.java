@@ -2,6 +2,7 @@ package com.example.messenger_service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -17,12 +18,12 @@ public class Chat {
     @Column(name = "id")
     private Long id;
 
-    //@NotNull(message = "Чат не имеет сообщений")
+    @NotEmpty
     @OneToMany(mappedBy = "chat")
     @JsonIgnoreProperties("chat")
     private List<Message> messages;
 
-    //@NotNull(message = "В чате должен быть хотя бы 1 пользователь")
+    @NotEmpty
     @Transient
     private List<Long> users;
 

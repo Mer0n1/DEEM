@@ -2,7 +2,9 @@ package com.example.messenger_service.controllers;
 
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.services.MessageService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,14 +18,18 @@ public class MessageController {
     private MessageService messageService;
 
     @PostMapping("/sendMessage")
-    public void sendMessage(@RequestBody Message message) {
+    public void sendMessage(@RequestBody @Valid Message message,
+                            BindingResult bindingResult) {
         System.out.println("Message called");
         System.out.println(message.toString());
+
+        if (bindingResult.hasErrors())
+            return;
 
         messageService.save(message);
 
         //send
-        //...
+        //... push service
 
     }
 

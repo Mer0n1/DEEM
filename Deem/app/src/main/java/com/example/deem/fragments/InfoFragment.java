@@ -44,6 +44,7 @@ public class InfoFragment extends Fragment {
     private NewsListRecycleAdapter newsListRecycleAdapter;
     private RecyclerView recyclerView;
 
+    private List<News> listNews;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class InfoFragment extends Fragment {
 
     public void init() {
         //init objects
+        listNews = APIManager.getManager().listNews;
         //fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         listUsersFragment = new ListUsersFragment();
         listGroupsFragment = new ListGroupsFragment();
@@ -85,18 +87,9 @@ public class InfoFragment extends Fragment {
         textView.setText("Новости");
 
         //Recycle
-        //test
-        List<News> list = new ArrayList<>();
-        News news = new News();
-        news.setAuthor("Meron");
-        news.setContent("The example text");
-        news.setDate(new Date(System.currentTimeMillis()));
-        list.add(news);
-
-        //
         recyclerView = main_layout.findViewById(R.id.news_feed);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        newsListRecycleAdapter = new NewsListRecycleAdapter(list/*APIManager.getManager().listNews*/);
+        newsListRecycleAdapter = new NewsListRecycleAdapter(listNews);
         recyclerView.setAdapter(newsListRecycleAdapter);
 
         //Листенеры

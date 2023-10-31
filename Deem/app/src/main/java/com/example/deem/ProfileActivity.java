@@ -55,12 +55,12 @@ public class ProfileActivity extends AppCompatActivity {
         //activity.profileMyIcon.setImageBitmap(bitmap);
 
         //test with image + news
-        System.out.println("listNews " + APIManager.getManager().listNews.size());
+        /*System.out.println("listNews " + APIManager.getManager().listNews.size());
         News news = APIManager.getManager().listNews.get(0);
-        byte[] decodedBytes = Base64.decode(news.getImg(), Base64.DEFAULT);
+        byte[] decodedBytes = Base64.decode(news.getListImg().get(0), Base64.DEFAULT);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 
-        activity.profileMyIcon.setImageBitmap(decodedBitmap);
+        activity.profileMyIcon.setImageBitmap(decodedBitmap);*/
     }
 
     private void SetListeners() {

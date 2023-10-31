@@ -3,6 +3,8 @@ package com.example.messenger_service.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
@@ -17,6 +19,7 @@ public class Message {
     @Column(name = "id")
     private Long id;
 
+    @NotEmpty(message = "message must not to be empty")
     @Column(name = "content")
     private String text;
 
@@ -29,6 +32,7 @@ public class Message {
     @JsonIgnoreProperties("messages")
     private Chat chat;
 
+    @NotNull(message = "author must not to be empty")
     @Column(name = "id_account")
     private Long author;
 

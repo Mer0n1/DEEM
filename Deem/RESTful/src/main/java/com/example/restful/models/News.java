@@ -3,16 +3,17 @@ package com.example.restful.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class News {
     private String author; //this maybe a name of group
     private String content;
-
-    private Date date;
+    private String date;
+    private Long idGroup;
 
     //img
-    private String img;
+    private List<String> ListImg;
 
     public String getAuthor() {
         return author;
@@ -30,19 +31,27 @@ public class News {
         this.content = content;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public String getImg() {
-        return img;
+    public List<String> getListImg() {
+        return ListImg;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setListImg(List<String> listImg) {
+        ListImg = listImg;
+    }
+
+    public Long getIdGroup() {
+        return idGroup;
+    }
+
+    public void setIdGroup(Long idGroup) {
+        this.idGroup = idGroup;
     }
 }

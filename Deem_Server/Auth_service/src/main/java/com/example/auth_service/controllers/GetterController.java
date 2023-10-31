@@ -30,7 +30,6 @@ public class GetterController {
     public Account getMyAccount(Principal principal) {
         Account account = accountService.getAccount(principal.getName());
         account.setGroup(accountServiceClient.findGroupById(account.getGroup_id()));
-        System.out.println("++++-=-=-=");
         return account;
     }
 
@@ -41,7 +40,7 @@ public class GetterController {
     public List<Account> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
         List<Group> groups = accountServiceClient.getGroups();
-        System.out.println(groups.size());
+
         for (Account account : accounts)
             for (Group group : groups)
             if (account.getGroup_id() == group.getId()) {
@@ -54,22 +53,7 @@ public class GetterController {
 
     @GetMapping("/getTableOfTopUsers")
     public List<Account> getAccountsTops() {
-        List<Account> accounts = accountService.getAccounts();
-
-        List<Account> tops = new ArrayList<>();
-        accounts.stream().sorted(Comparator.comparing(o -> o.getScore()));
-
-        int size = Math.min(accounts.size(), 10);
-        for (int j = 0; j < size; j++)
-            tops.add(accounts.get(j));
-
-        return tops;
+        return accountService.sort(accountService.getAccounts());
     }
 
-    @GetMapping("/getAccountsOfChat")
-    public List<Account> getAccountsOfChat(@RequestParam("id_chat") int id_chat) {
-
-
-        return new ArrayList<>();
-    }
 }

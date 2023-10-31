@@ -68,13 +68,11 @@ public class ListGroupsFragment extends Fragment {
             public void afterTextChanged(Editable s) {sort(s.toString());}
         });
 
-        //test recycle
+        //recycle
         recycleAdapterGroups = new GroupsListRecycleAdapter(APIManager.getManager().listGroups, this);
-
         recyclerView = main_layout.findViewById(R.id.list_groups_info);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setAdapter(recycleAdapterGroups);
-
     }
 
     public void sort(String text) {

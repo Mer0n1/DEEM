@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,8 +34,6 @@ public class APIManager {
     public Account myAccount;
 
     private String itog;
-
-    public InputStream thes;
 
     private APIManager() {
     }
@@ -106,6 +107,30 @@ public class APIManager {
     }
 
     public void UpdateData() {
+
+        final Call<Account> str = Repository.getInstance().getMyAccount();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Response<Account> stri = null;
+                try {
+                    stri = str.execute();
+                    myAccount = stri.body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("---- " + myAccount.getUsername());
+
+
         //Update accounts
         Repository.getInstance().getAccounts()
                 .enqueue(new Callback<List<Account>>() {
@@ -120,6 +145,7 @@ public class APIManager {
                     }
                 }
         );
+
 
         //
         Repository.getInstance().getGroups().enqueue(new Callback<List<Group>>() {
@@ -166,7 +192,7 @@ public class APIManager {
         });*/
 
         //test (news)
-        listNews = new ArrayList<>();
+        /*listNews = new ArrayList<>();
         Repository.getInstance().getNews().enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
@@ -175,6 +201,17 @@ public class APIManager {
 
             @Override
             public void onFailure(Call<News> call, Throwable t) {
+
+            }
+        });*/
+        Repository.getInstance().getNews(myAccount.getGroup().getFaculty()).enqueue(new Callback<List<News>>() {
+            @Override
+            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
+                listNews = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<List<News>> call, Throwable t) {
 
             }
         });

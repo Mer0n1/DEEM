@@ -33,8 +33,6 @@ public class ChatController {
     private ChatService chatService;
     @Autowired
     private MessageService messageService;
-    @Autowired
-    private ChatDAO chatDAO;
 
 
     @GetMapping("/getChat")
@@ -47,32 +45,20 @@ public class ChatController {
     @GetMapping("/getChats")
     public List<Chat> getChats(Principal principle) {
         System.out.println("getChats called");
-
-        int accountId = chatDAO.getIdByAccount(principle.getName());
-        List<Chat> chats = chatService.getChats(chatDAO.getChatsIdByAccountId(accountId));
-
-        for (Chat chat : chats) //получим id аккаунтов для каждого чата
-            chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId().intValue()));
-
-        return chats;
+        return chatService.getListChats(principle.getName());
     }
 
 
     /** При создании чата пользователь создает всего 1 сообщение */
     @PostMapping("/createChat")
-    public void createChat(@RequestBody Chat chat/*, @Valid BindingResult bindingResult*/) {
+    public void createChat(@RequestBody @Valid Chat chat,
+                           BindingResult bindingResult) {
         System.out.println("createChat called");
 
-        /*if (bindingResult.hasErrors())
-            return;*/
+        if (bindingResult.hasErrors())
+            return;
 
-        //создание чата в таблице чатов
-        chatService.save(chat);
-        //создание сообщения в таблице сообщений
-        chat.getMessages().get(0).setChat(chat);
-        messageService.save(chat.getMessages().get(0));
-        //создание чата в таблице account_chat
-        chatDAO.saveInAccount_chat(chat);
+        chatService.CreateNewChat(chat);
     }
 
 

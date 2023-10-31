@@ -42,15 +42,6 @@ public class GroupController {
 
     @GetMapping("/getTableOfTopGroups")
     public List<Group> getGroupsTops() {
-        List<Group> groups = groupService.getGroups();
-
-        List<Group> tops = new ArrayList<>();
-        groups.stream().sorted(Comparator.comparing(o -> o.getScore()));
-
-        int size = Math.min(groups.size(), 10);
-        for (int j = 0; j < size; j++)
-            tops.add(groups.get(j));
-
-        return tops;
+        return groupService.sort(groupService.getGroups());
     }
 }

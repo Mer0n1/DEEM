@@ -51,6 +51,6 @@ class Repository {
 
     public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
 
-    public Call<News> getNews() { return Handler.getInstance().getApi().getNews(); }
+    public Call<List<News>> getNews(String faculty) { return Handler.getInstance().getApi().getNews(faculty); }
 
 }

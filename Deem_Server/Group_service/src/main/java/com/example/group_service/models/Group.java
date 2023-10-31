@@ -32,4 +32,6 @@ public class Group {
     @Column(name = "date_create")
     private Date date_create;
 
+
+    //news
 }

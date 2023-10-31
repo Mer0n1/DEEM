@@ -26,7 +26,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public String getToken(@RequestBody AuthRequest authRequest) {
-        System.out.println("-----------");
         Authentication authenticate = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
@@ -45,7 +44,6 @@ public class AuthController {
 
     @GetMapping("/test")
     public String valid() {
-        System.out.println("_----------");
         return "test";
     }
 }

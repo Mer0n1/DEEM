@@ -44,7 +44,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0 участников"
-                        android:textSize="26dp" />
+                        android:textSize="22dp" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Лидер Null"
-                        android:textSize="26dp" />
+                        android:textSize="22dp" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                         android:layout_weight="1" />
 
                     <Button
-                        android:id="@+id/button4"
+                        android:id="@+id/chat_button_group"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ЧАТ"
@@ -90,7 +90,7 @@
                 android:layout_height="5dp" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/create_news"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/layout_bg1_white"
@@ -101,45 +101,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <LinearLayout
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_news_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/layout_bg1_white"
-                android:orientation="vertical">
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                app:stackFromEnd="true"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                >
+            </androidx.recyclerview.widget.RecyclerView>
 
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <include
-                    layout="@layout/item_news"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <include
-                    layout="@layout/item_news"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <include
-                    layout="@layout/item_news"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    />
-            </LinearLayout>
 
         </LinearLayout>
+
 
     </ScrollView>
 

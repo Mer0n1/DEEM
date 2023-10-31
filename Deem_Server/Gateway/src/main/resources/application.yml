@@ -21,24 +21,31 @@ spring:
          filters:
            - AuthenticationFilter
 
-       - id: Messenger_service
+       - id: Messenger_service_chat
          uri: lb://messengers
          predicates:
-           - Path=/**
+           - Path=/chat/**
+         filters:
+           - AuthenticationFilter
+
+       - id: Messenger_service_message
+         uri: lb://messengers
+         predicates:
+           - Path=/message/**
          filters:
            - AuthenticationFilter
 
        - id: News_service
          uri: lb://newss
          predicates:
-           - Path=/**
+           - Path=/news/**
          filters:
            - AuthenticationFilter
 
        - id: Image_service
          uri: lb://images
          predicates:
-           - Path=/**
+           - Path=/image/**
          filters:
            - AuthenticationFilter
 

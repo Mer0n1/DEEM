@@ -20,10 +20,12 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface Base {
     String BASE_URL ="http://192.168.1.104:8081/";
 
+    //auth
     @POST("/auth/login")
     Call<String> getToken(@Body AuthRequest body);
     @GET("/getAuth/getMyAccount")
@@ -33,9 +35,11 @@ public interface Base {
     @GET("/getAuth/getAccounts")
     Call<List<Account>> getAccounts();
 
+    //groups
     @GET("/group/getGroups")
     Call<List<Group>> getGroups();
 
+    //chats
     @GET("/chat/getChats")
     Call<List<Chat>> getChats();
     @POST("/message/sendMessage")
@@ -51,6 +55,10 @@ public interface Base {
     Call<ResponseBody> uploadProfile(
             @Part("description") RequestBody description,
             @Part MultipartBody.Part image); //test!!!!!!
-    @GET("/news/test")
-    Call<News> getNews();
+
+    //news
+    @GET("/news/getNews")
+    Call<List<News>> getNews(@Query("faculty") String faculty);
+    @POST("/news/createNews")
+    Call<Void> createNews(@Body News news);
 }
