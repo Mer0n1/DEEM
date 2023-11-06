@@ -1,4 +1,4 @@
-package com.example.news_service.config;
+package com.example.push_notification_service.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,8 @@ class WebSecurityConfiguration {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        System.out.println("++++++++++++");
 
         http.csrf().disable().authorizeHttpRequests( (auth) -> auth
                         .requestMatchers("/**")

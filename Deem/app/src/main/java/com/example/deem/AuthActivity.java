@@ -7,28 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.restful.api.APIManager;
-import com.example.restful.api.websocket.MessageEncoder;
-import com.example.restful.api.websocket.PushClient;
 import com.example.restful.models.AuthRequest;
-import com.example.restful.models.Message;
-
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.EncodeException;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
-
-import org.glassfish.tyrus.client.ClientManager;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Scanner;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -48,6 +29,7 @@ public class AuthActivity extends AppCompatActivity {
         View.OnClickListener onClickLogIn = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String username = ((TextView)findViewById(R.id.username_enter)).getText().toString();
                 String password = ((TextView)findViewById(R.id.password_enter)).getText().toString();
 
@@ -71,10 +53,6 @@ public class AuthActivity extends AppCompatActivity {
         findViewById(R.id.login).setOnClickListener(onClickLogIn);
     }
 
-    public void validate() {
-
-    }
-
     public boolean checkRemember() {
         SharedPreferences preferences = getSharedPreferences("auth", MODE_PRIVATE);
         String str = preferences.getString("auth", "");
@@ -92,43 +70,7 @@ public class AuthActivity extends AppCompatActivity {
 
 }
 
-/*
-
-@javax.websocket.ClientEndpoint
-class ExampleClient {
-    private static Session session;
-
-    @OnOpen
-    public void onOpen(Session session) {
-        this.session = session;
-        System.out.println(format("Connection established. session id: %s", session.getId()));
-    }
-
-    @OnMessage
-    public void onMessage(String message) {
-        System.out.println(message);
-    }
-
-    public static void sendMessage(String message) {
-        if (session != null && session.isOpen()) {
-            session.getAsyncRemote().sendText(message);
-        }
-    }
 
 
-    public void start() {
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        try {
-            URI uri = new URI("ws://192.168.1.104:8025/ws/chat");
-            container.connectToServer(ExampleClient.class, uri);
-            ExampleClient.sendMessage("str");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-}
-*/
 

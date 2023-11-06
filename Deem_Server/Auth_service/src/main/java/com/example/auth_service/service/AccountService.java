@@ -22,6 +22,7 @@ public class AccountService {
         return repository.findAll();
     }
 
+
     public List<Account> sort(List<Account> accounts) {
         List<Account> tops = new ArrayList<>();
         accounts.stream().sorted(Comparator.comparing(o -> o.getScore()));

@@ -2,6 +2,7 @@ package com.example.auth_service.controllers;
 
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.AuthRequest;
+import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,8 @@ public class AuthController {
 
     @Autowired
     private AuthService service;
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -30,7 +33,8 @@ public class AuthController {
                 (new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
         if (authenticate.isAuthenticated()) {
-            return service.generateToken(authRequest.getUsername());
+            Account account = accountService.getAccount(authRequest.getUsername());
+            return service.generateToken(authRequest.getUsername(), account.getId());
         } else {
             throw new RuntimeException("invalid access");
         }

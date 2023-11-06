@@ -24,8 +24,8 @@ public class AuthService {
         return "user added to the system";
     }
 
-    public String generateToken(String username) {
-        return jwtService.generateToken(username);
+    public String generateToken(String username, Long id) {
+        return jwtService.generateToken(username, id);
     }
 
     public void validateToken(String token) {

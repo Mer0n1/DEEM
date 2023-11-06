@@ -31,15 +31,6 @@ public class ChatController {
 
     @Autowired
     private ChatService chatService;
-    @Autowired
-    private MessageService messageService;
-
-
-    @GetMapping("/getChat")
-    public Chat getChat(int id) {
-        System.out.println("called getChat " + id);
-        return new Chat(); /** */
-    }
 
     /** Возвращает чаты текущего пользователя */
     @GetMapping("/getChats")
@@ -60,7 +51,6 @@ public class ChatController {
 
         chatService.CreateNewChat(chat);
     }
-
 
 
 }

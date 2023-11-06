@@ -79,9 +79,14 @@ public class ChatActivity extends AppCompatActivity {
                 message.setAuthor(APIManager.getManager().myAccount.getId());
                 message.setType("send");
 
+                Chat chatformessage = new Chat();
+                chatformessage.setId(currentChat.getId());
+                message.setChat(chatformessage);
+
                 messages.add(message);
                 chatRecycleAdapter.notifyDataSetChanged();
 
+                System.out.println("--------- " + newChat);
                 if (!newChat)
                     APIManager.getManager().sendMessage(message);
                 else

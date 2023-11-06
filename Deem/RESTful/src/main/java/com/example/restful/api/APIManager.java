@@ -1,22 +1,17 @@
 package com.example.restful.api;
 
+import com.example.restful.api.websocket.PushClient;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +20,7 @@ import retrofit2.Response;
 public class APIManager {
 
     private static APIManager manager;
+    private static PushClient pushClient;
 
     public List<Account> listAccounts;
     public List<Group> listGroups;
@@ -33,14 +29,16 @@ public class APIManager {
 
     public Account myAccount;
 
-    private String itog;
+    private String jwtKey;
 
     private APIManager() {
     }
 
     public static APIManager getManager() {
-        if (manager == null)
+        if (manager == null) {
             manager = new APIManager();
+            pushClient = new PushClient();
+        }
         return manager;
     }
 
@@ -62,7 +60,7 @@ public class APIManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                itog = stri.body();
+                jwtKey = stri.body();
             }
         });
 
@@ -72,7 +70,8 @@ public class APIManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+System.out.println("000000 " + jwtKey);
+        pushClient.auth(jwtKey);
     }
 
     public void getMyAccount() {

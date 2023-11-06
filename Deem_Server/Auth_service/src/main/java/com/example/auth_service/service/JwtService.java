@@ -18,12 +18,13 @@ public class JwtService {
     public static String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
 
-    public String generateToken(String username) {
+    public String generateToken(String username, Long id) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
         return JWT.create()
                 .withSubject("User details")
                 .withClaim("username", username)
+                .withClaim("id", id)
                 .withIssuedAt(new Date())
                 .withIssuer("meroni")
                 .withExpiresAt(expirationDate)

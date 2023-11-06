@@ -2,6 +2,8 @@ package com.example.messenger_service.controllers;
 
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.services.MessageService;
+import com.example.messenger_service.services.MessengerServiceClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -16,21 +18,22 @@ public class MessageController {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private MessengerServiceClient messengerServiceClient;
 
     @PostMapping("/sendMessage")
     public void sendMessage(@RequestBody @Valid Message message,
-                            BindingResult bindingResult) {
+                            BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("Message called");
         System.out.println(message.toString());
 
         if (bindingResult.hasErrors())
             return;
 
-        messageService.save(message);
+        //messageService.save(message);
 
         //send
-        //... push service
-
+        messengerServiceClient.pushMessageTo(message);
     }
 
     @GetMapping("/getMessage")

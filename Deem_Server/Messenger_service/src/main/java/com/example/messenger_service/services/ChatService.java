@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,8 +25,11 @@ public class ChatService {
         return chatRepository.findAllByIdIn(chatIds);
     }
 
-    public Chat getChat(int id) {
-        return chatRepository.findChatById(id);
+    public Chat getChat(Long id) {
+        Chat chat = chatRepository.findChatById(id);
+        chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId()));
+
+        return chat;
     }
 
     @Transactional
@@ -34,11 +38,11 @@ public class ChatService {
     }
 
     public List<Chat> getListChats(String nameAccount) {
-        int accountId = chatDAO.getIdByAccount(nameAccount);
+        int accountId = chatDAO.getIdAccount(nameAccount);
         List<Chat> chats = getChats(chatDAO.getChatsIdByAccountId(accountId));
 
         for (Chat chat : chats) //получим id аккаунтов для каждого чата
-            chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId().intValue()));
+            chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId()));
 
         return chats;
     }
@@ -53,4 +57,6 @@ public class ChatService {
         //создание чата в таблице account_chat
         chatDAO.saveInAccount_chat(chat);
     }
+
+
 }
