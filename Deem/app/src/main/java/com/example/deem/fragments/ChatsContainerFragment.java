@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.deem.Toolbar;
 import com.example.deem.adapters.ContainerChatsRecycleAdapter;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Chat;
@@ -33,6 +34,7 @@ public class ChatsContainerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_messenger, container, false);
 
+        Toolbar.getInstance().setTitle("Чаты");
         init();
 
         return main_layout;

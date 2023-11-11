@@ -6,6 +6,9 @@ import com.example.messenger_service.services.MessengerServiceClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,18 +25,19 @@ public class MessageController {
     private MessengerServiceClient messengerServiceClient;
 
     @PostMapping("/sendMessage")
-    public void sendMessage(@RequestBody @Valid Message message,
-                            BindingResult bindingResult) throws JsonProcessingException {
+    public ResponseEntity<Void> sendMessage(@RequestBody @Valid Message message,
+                                      BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("Message called");
-        System.out.println(message.toString());
 
         if (bindingResult.hasErrors())
-            return;
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 
-        //messageService.save(message);
+        messageService.save(message);
 
         //send
         messengerServiceClient.pushMessageTo(message);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @GetMapping("/getMessage")

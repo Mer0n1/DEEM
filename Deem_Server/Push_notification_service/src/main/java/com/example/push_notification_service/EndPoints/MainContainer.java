@@ -19,7 +19,9 @@ import java.util.Set;
 
 import static java.lang.String.format;
 
-/** Класс для идентификации пользователя. */
+/** Класс для идентификации пользователя.
+ * Пока нет пинговщика для проверки открытости сессии используется
+ * система в которой новые сессии заменяют предыдущие с таким же id */
 @javax.websocket.server.ServerEndpoint(value = "/login")
 @Component
 public class MainContainer {
@@ -46,7 +48,12 @@ public class MainContainer {
             //проверим ключ и создадим Principle
             PersonDetails personDetails = JWTFilter.createPersonDetails(auth);
 
-            //
+            /**Временная система для замены. Удаляем клиента с похожим id */
+            for (Client client : clients)
+                if (client.getPersonDetails().getId() == personDetails.getId())
+                    clients.remove(client);
+
+            //Добавим в список
             Optional<Client> client = findInQueue(session);
             if (!client.isEmpty()) {
                 client.get().setPersonDetails(personDetails);
@@ -56,7 +63,7 @@ public class MainContainer {
         }
     }
 
-    @javax.websocket.OnClose //dont work
+    @javax.websocket.OnClose
     public void onClose(Session session) {
         clients.remove(findInClientsList(session));
         queue  .remove(findInQueue(session));

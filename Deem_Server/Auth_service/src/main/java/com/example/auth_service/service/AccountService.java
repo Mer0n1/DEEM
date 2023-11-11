@@ -4,10 +4,12 @@ import com.example.auth_service.models.Account;
 import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountService {
@@ -31,5 +33,15 @@ public class AccountService {
         for (int j = 0; j < size; j++)
             tops.add(accounts.get(j));
         return tops;
+    }
+
+    @Transactional
+    public void sendScore(Long idAccount, int score) {
+        Optional<Account> accountOpt = repository.findById(idAccount);
+
+        if (!accountOpt.isEmpty()) {
+            Account account = accountOpt.get();
+            account.addScore(score);
+        }
     }
 }

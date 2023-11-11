@@ -39,21 +39,15 @@ public class PushClient {
                 JsonObject jsonObject = JsonParser.parseString(text).getAsJsonObject();
                 String protocol = jsonObject.get("Protocol").toString();
 
-                System.out.println(protocol);
-
                 if (protocol.equals("\"Message\"")) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
                         Message message = objectMapper.readValue(jsonObject.get("Type").toString(), Message.class);
-                        System.out.println(jsonObject.get("Type") + " " + message);
                         if (message != null) {
-                            System.out.println("message != null");
                             int id = message.getChat().getId();
                             List<Chat> chats = APIManager.getManager().listChats;
                             Chat chat = chats.stream().filter(s -> s.getId() == id).findAny().orElse(null);
                             chat.getMessages().add(message);
-                            System.out.println(chat);
-
                         }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();

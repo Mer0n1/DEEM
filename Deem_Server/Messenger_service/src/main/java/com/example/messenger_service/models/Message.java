@@ -27,6 +27,7 @@ public class Message {
     @Column(name = "Date")
     private Date date;
 
+    @NotNull(message = "author must not to be empty")
     @ManyToOne
     @JoinColumn(name = "id_chat", referencedColumnName = "id")
     @JsonIgnoreProperties("messages")

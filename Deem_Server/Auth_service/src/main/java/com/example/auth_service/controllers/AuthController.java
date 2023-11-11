@@ -34,7 +34,7 @@ public class AuthController {
 
         if (authenticate.isAuthenticated()) {
             Account account = accountService.getAccount(authRequest.getUsername());
-            return service.generateToken(authRequest.getUsername(), account.getId());
+            return service.generateToken(account);
         } else {
             throw new RuntimeException("invalid access");
         }
@@ -46,8 +46,4 @@ public class AuthController {
         return "Token is valid";
     }
 
-    @GetMapping("/test")
-    public String valid() {
-        return "test";
-    }
 }

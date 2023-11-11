@@ -1,6 +1,7 @@
 package com.example.deem;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 
@@ -32,6 +33,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private boolean newChat;
 
+    private Handler handler;
+    private Runnable updateRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +43,12 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(activityChatBinding.getRoot());
 
         init();
+
     }
 
     private void init() {
+
+        activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
         if (APIManager.getManager().listChats != null) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
@@ -62,7 +69,18 @@ public class ChatActivity extends AppCompatActivity {
         //
         SetListeners();
 
-        activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
+        //
+        handler = new Handler();
+        updateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Обновить RecycleView
+                chatRecycleAdapter.notifyDataSetChanged();
+                // Запустить этот Runnable снова через некоторое время
+                handler.postDelayed(this, 1000);
+            }
+        };
+        updateRunnable.run();
     }
 
     private void SetListeners() {
@@ -77,7 +95,6 @@ public class ChatActivity extends AppCompatActivity {
                 Message message = new Message();
                 message.setText(content);
                 message.setAuthor(APIManager.getManager().myAccount.getId());
-                message.setType("send");
 
                 Chat chatformessage = new Chat();
                 chatformessage.setId(currentChat.getId());
@@ -86,12 +103,13 @@ public class ChatActivity extends AppCompatActivity {
                 messages.add(message);
                 chatRecycleAdapter.notifyDataSetChanged();
 
-                System.out.println("--------- " + newChat);
                 if (!newChat)
                     APIManager.getManager().sendMessage(message);
                 else
                     APIManager.getManager().sendNewChat(currentChat);
 
+                message.setChat(currentChat)
+                ;
                 //Update Interface
                 editText.setText("");
                 recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
@@ -147,18 +165,15 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void sort() {
-        Long MyId = APIManager.getManager().myAccount.getId();
-
-        for (Message message : messages) {
-            if (MyId == message.getAuthor()) {
-                message.setType("send");
-            } else
-                message.setType("receive");
-
-        }
         //Возможно сортировка по времени
         //Date.before
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(updateRunnable);
     }
 
 }

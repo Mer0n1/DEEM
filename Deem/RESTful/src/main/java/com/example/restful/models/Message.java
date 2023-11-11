@@ -8,7 +8,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
     private String text;
-    private String type; //send/receive
     private Date date;
     private Long author;
     private Chat chat;
@@ -17,9 +16,8 @@ public class Message {
 
     }
 
-    public Message(String text, String type) {
+    public Message(String text) {
         this.text = text;
-        this.type = type;
     }
 
 
@@ -29,14 +27,6 @@ public class Message {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Date getDate() {

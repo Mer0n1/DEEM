@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.deem.CreateNewsDialog;
+import com.example.deem.Toolbar;
+import com.example.deem.dialogs.CreateNewsDialog;
 import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
-import com.example.deem.databinding.DialogNewNewsBinding;
 import com.example.deem.databinding.FragmentGroupBinding;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
@@ -43,6 +43,7 @@ public class GroupFragment extends Fragment {
         fragmentGroupBinding = FragmentGroupBinding.inflate(getActivity().getLayoutInflater());
         main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_group, container, false);
 
+        Toolbar.getInstance().setTitle("Группы");
         init();
 
         return main_layout;
@@ -50,6 +51,7 @@ public class GroupFragment extends Fragment {
 
     public void init() {
         myGroup = APIManager.getManager().myAccount.getGroup();
+
         //init news
         List<News> allNews = APIManager.getManager().listNews;
         newsList = new ArrayList<>();
@@ -63,7 +65,6 @@ public class GroupFragment extends Fragment {
         recyclerView = main_layout.findViewById(R.id.list_news_group);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setAdapter(newsListRecycleAdapter);
-
 
         setListeners();
     }

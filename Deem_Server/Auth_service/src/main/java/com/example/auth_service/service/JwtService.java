@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.auth_service.models.Account;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +19,14 @@ public class JwtService {
     public static String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
 
-    public String generateToken(String username, Long id) {
+    public String generateToken(Account account) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
         return JWT.create()
                 .withSubject("User details")
-                .withClaim("username", username)
-                .withClaim("id", id)
+                .withClaim("username", account.getUsername())
+                .withClaim("id", account.getId())
+                .withClaim("ROLE", account.getROLE())
                 .withIssuedAt(new Date())
                 .withIssuer("meroni")
                 .withExpiresAt(expirationDate)

@@ -1,24 +1,25 @@
 package com.example.auth_service.controllers;
 
 import com.example.auth_service.models.Account;
+import com.example.auth_service.models.DepartureForm;
 import com.example.auth_service.models.Group;
+import com.example.auth_service.security.PersonDetails;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/getAuth")
-public class GetterController {
+public class AccountController {
 
     @Autowired
     private AccountService accountService;
@@ -54,6 +55,23 @@ public class GetterController {
     @GetMapping("/getTableOfTopUsers")
     public List<Account> getAccountsTops() {
         return accountService.sort(accountService.getAccounts());
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PostMapping("/sendScore")
+    public void sendScore(@RequestBody @Valid DepartureForm form,
+                          BindingResult bindingResult) {
+        System.out.println("sendScore");
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PersonDetails personDetails = (PersonDetails) userDetails;
+        System.out.println(personDetails.getROLE());
+
+        if (bindingResult.hasErrors())
+            return;
+
+        accountService.sendScore(form.getIdAccount(), form.getScore());
     }
 
 }

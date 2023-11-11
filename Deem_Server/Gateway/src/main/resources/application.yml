@@ -49,6 +49,13 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Administrative_service
+         uri: lb://admins
+         predicates:
+           - Path=/admin/**
+         filters:
+           - AuthenticationFilter
+
  application:
    name: Gateway
 

@@ -33,6 +33,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+
         if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
@@ -40,6 +41,8 @@ public class JWTFilter extends OncePerRequestFilter {
                 DecodedJWT jwtDec = jwtService.validateTokenAndRetrieveClaim(jwt);
 
                 PersonDetails details = new PersonDetails();
+                details.setId(jwtDec.getClaim("id").asLong());
+                details.setROLE(jwtDec.getClaim("ROLE").asString());
                 details.setUsername(jwtDec.getClaim("username").asString());
                 details.setPassword(jwtDec.getClaim("password").asString());
 

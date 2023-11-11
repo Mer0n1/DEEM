@@ -12,7 +12,7 @@ import java.util.Date;
 public class Message {
 
     private Long id;
-    private String author;
+    private Long author;
     private String text;
     private Date date;
     private Chat chat;

@@ -46,7 +46,8 @@ public class WebSocketService {
         List<Long> listId = messagePush.getReceivers();
         for (Client client : clients)
             for (Long i : listId)
-                if (client.getPersonDetails().getId() == i)
+                if (client.getPersonDetails().getId() == i &
+                    client.getPersonDetails().getId() != messagePush.getMessage().getAuthor())
                     list.add(client.getPersonDetails().getUsername());
 
         if (list.size() == 0 || messagePush.getMessage() == null)

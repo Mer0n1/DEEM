@@ -1,16 +1,19 @@
 package com.example.push_notification_service.config;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @Component
 public class PersonDetails implements UserDetails {
+    private Long id;
+    private String ROLE;
     private String username;
     private String password;
-    private Long id;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -34,7 +37,7 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singleton(new SimpleGrantedAuthority(ROLE));
     }
 
     @Override
@@ -46,6 +49,7 @@ public class PersonDetails implements UserDetails {
     public String getUsername() {
         return username;
     }
+
 
     public void setUsername(String username) {
         this.username = username;
@@ -61,6 +65,14 @@ public class PersonDetails implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getROLE() {
+        return ROLE;
+    }
+
+    public void setROLE(String ROLE) {
+        this.ROLE = ROLE;
     }
 }
 

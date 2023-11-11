@@ -1,4 +1,4 @@
-package com.example.deem;
+package com.example.deem.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.databinding.DialogNewNewsBinding;
 import com.example.deem.fragments.GroupFragment;

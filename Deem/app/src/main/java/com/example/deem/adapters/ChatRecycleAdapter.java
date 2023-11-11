@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.Message;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
     @Override
     public int getItemViewType(int position) {
-        if (list.get(position).getType().equals("send")) {
+        if (list.get(position).getAuthor() == APIManager.getManager().myAccount.getId()) {
             return 1;
         } else {
             return 2;

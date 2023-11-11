@@ -172,37 +172,7 @@ System.out.println("000000 " + jwtKey);
             }
         });
 
-        //test (image)
-        /*Repository.getInstance().getImageTest().enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    InputStream inputStream = response.body().byteStream();
-                    thes = inputStream;
-                }
-                else
-                    System.out.println("----- = null");
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                System.out.println("image error");
-            }
-        });*/
-
-        //test (news)
-        /*listNews = new ArrayList<>();
-        Repository.getInstance().getNews().enqueue(new Callback<News>() {
-            @Override
-            public void onResponse(Call<News> call, Response<News> response) {
-                listNews.add(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<News> call, Throwable t) {
-
-            }
-        });*/
         Repository.getInstance().getNews(myAccount.getGroup().getFaculty()).enqueue(new Callback<List<News>>() {
             @Override
             public void onResponse(Call<List<News>> call, Response<List<News>> response) {

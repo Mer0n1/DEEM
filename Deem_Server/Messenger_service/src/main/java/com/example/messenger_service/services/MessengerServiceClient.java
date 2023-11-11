@@ -46,7 +46,6 @@ public class MessengerServiceClient {
         MessagePush messagePush = new MessagePush();
         messagePush.setMessage(message);
         messagePush.setReceivers(chatService.getChat(message.getChat().getId()).getUsers());
-        System.out.println(messagePush.getReceivers() + " " + chatService.getChat(message.getChat().getId()).getUsers());
 
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(messagePush);

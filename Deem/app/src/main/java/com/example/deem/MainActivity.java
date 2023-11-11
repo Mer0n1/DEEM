@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -48,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         //
 
 
-
         View.OnClickListener onClickBottom = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,15 +80,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OpenFragment(Fragment fragment, int id_layout, boolean saveIcon) {
+        if (!saveIcon)
+            Toolbar.getInstance().ClearIcons();
+
         FrameLayout frameLayout = findViewById(id_layout);
         frameLayout.removeAllViews();
-
-        if (!saveIcon) {
-            Toolbar toolbar = this.findViewById(R.id.toolbar);
-            LinearLayout linearLayout = toolbar.findViewById(R.id.layout_toolbar);
-            LinearLayout layout_icons = linearLayout.findViewById(R.id.icons_toolbar);
-            layout_icons.removeAllViews();
-        }
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(id_layout, fragment);
@@ -126,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void InitResource() {
+        Toolbar.setActivity(this);
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         //listUsersFragment = new ListUsersFragment();
         groupFragment = new GroupFragment();
@@ -137,27 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
     public InfoFragment getInfoFragment() {
         return infoFragment;
-    }
-
-    /* Загрузить иконку в Toolbar */
-    public ImageView loadIcon(LinearLayout layoutIcons, int size, int id_icon) {
-        ImageView ii = new ImageView(this);
-        ii.setBackgroundResource(id_icon);
-        ii.setScaleType(ImageView.ScaleType.FIT_XY);
-        layoutIcons.addView(ii);
-
-        ii.getLayoutParams().width = ii.getLayoutParams().height = size;
-        ii.requestLayout();
-
-        return ii;
-    }
-
-    /* Очистить иконки из Toolbar */
-    public void ClearIcons() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        LinearLayout linearLayout = toolbar.findViewById(R.id.layout_toolbar);
-        LinearLayout layout_icons = linearLayout.findViewById(R.id.icons_toolbar);
-        layout_icons.removeAllViews();
     }
 
     /* Изменение дизайна иконок */

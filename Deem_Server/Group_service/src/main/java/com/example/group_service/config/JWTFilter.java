@@ -1,7 +1,6 @@
 package com.example.group_service.config;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.group_service.models.PersonDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

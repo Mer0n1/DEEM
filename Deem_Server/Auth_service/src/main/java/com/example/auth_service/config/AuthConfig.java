@@ -43,13 +43,6 @@ public class AuthConfig {
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        /*return http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/get/**","/auth/register", "/auth/login", "/auth/validate")
-                .permitAll()
-                .and()
-                .build();*/
-
         return http.build();
     }
 

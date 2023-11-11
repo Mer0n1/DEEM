@@ -39,4 +39,10 @@ public class Account {
     @Transient //ignoring object by jpa
     private Group group;
 
+    @Column(name = "ROLE")
+    private String ROLE;
+
+    public void addScore(int score) {
+        this.score += score;
+    }
 }
