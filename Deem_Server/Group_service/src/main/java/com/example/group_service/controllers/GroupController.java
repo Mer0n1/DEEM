@@ -2,12 +2,12 @@ package com.example.group_service.controllers;
 
 import com.example.group_service.models.Group;
 import com.example.group_service.services.GroupService;
+import jakarta.validation.Valid;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -21,14 +21,6 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @GetMapping("/test")
-    public String test(Principal principal, Authentication authentication) {
-        System.out.println("------");
-        System.out.println(principal);
-        System.out.println(principal.getName());
-
-        return "test";
-    }
 
     @GetMapping("/getGroup")
     public Group getGroup(@RequestParam("id") int id) {
@@ -43,5 +35,18 @@ public class GroupController {
     @GetMapping("/getTableOfTopGroups")
     public List<Group> getGroupsTops() {
         return groupService.sort(groupService.getGroups());
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/createGroup")
+    public void createGroup(@RequestBody /*@Valid*/ Group group,
+                            BindingResult bindingResult) {
+        System.out.println("createGroup");
+
+        if (bindingResult.hasErrors())
+            return;
+
+        groupService.save(group);
+
     }
 }

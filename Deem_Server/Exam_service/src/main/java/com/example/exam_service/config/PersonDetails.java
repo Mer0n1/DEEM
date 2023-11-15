@@ -1,4 +1,4 @@
-package com.example.auth_service.security;
+package com.example.exam_service.config;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

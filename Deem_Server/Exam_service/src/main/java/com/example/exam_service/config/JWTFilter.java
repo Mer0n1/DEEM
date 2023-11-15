@@ -1,4 +1,4 @@
-package com.example.news_service.config;
+package com.example.exam_service.config;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
@@ -51,4 +51,5 @@ public class JWTFilter extends OncePerRequestFilter {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
+
 }

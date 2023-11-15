@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "account")
 @Data
 @NoArgsConstructor
+@ToString
 public class Account {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -34,12 +37,12 @@ public class Account {
     private int score;
 
     @Column(name = "group_id")
-    private int group_id;
+    private Long group_id;
 
     @Transient //ignoring object by jpa
     private Group group;
 
-    @Column(name = "ROLE")
+    @Column(name = "role")
     private String ROLE;
 
     public void addScore(int score) {

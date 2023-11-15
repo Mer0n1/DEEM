@@ -23,7 +23,7 @@ public class EventsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_list_groups, container, false);
+        main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_events, container, false);
         this_activity = ((MainActivity) (getActivity()));
 
         init();
@@ -33,8 +33,6 @@ public class EventsFragment extends Fragment {
 
     private void init() {
 
-        //Создадим пару значков
-        //ImageView imgListGroups = this_activity.loadIcon(layout_icons, size, R.drawable.icon_list_groups);
 
     }
 }

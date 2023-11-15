@@ -23,7 +23,6 @@ class WebSecurityConfiguration {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        System.out.println("-----------");
 
         http.csrf().disable().authorizeHttpRequests( (auth) -> auth
                         .requestMatchers("/**")

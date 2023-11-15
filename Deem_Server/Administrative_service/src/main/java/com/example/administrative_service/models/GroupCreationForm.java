@@ -1,21 +1,20 @@
 package com.example.administrative_service.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-//@Table
+@Table(name = "group_creation_form")
 @Data
 public class GroupCreationForm {
 
     @Id
+    @Column(name = "id")
     private Long id;
 
     @Transient
     private Group group;
 
+    @Column(name = "department")
     private String department;
 }

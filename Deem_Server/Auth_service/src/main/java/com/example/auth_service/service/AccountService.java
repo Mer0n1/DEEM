@@ -16,6 +16,10 @@ public class AccountService {
     @Autowired
     private AccountRepository repository;
 
+    @Transactional
+    public void save(Account account) { repository.save(account); }
+    @Transactional
+    public void delete(Long idAccount) { repository.deleteById(idAccount); }
     public Account getAccount(String username) {
         return repository.findByUsername(username).orElse(null);
     }
@@ -42,6 +46,16 @@ public class AccountService {
         if (!accountOpt.isEmpty()) {
             Account account = accountOpt.get();
             account.addScore(score);
+        }
+    }
+
+    @Transactional
+    public void transferAccount(Long idStudent, Long idGroup) {
+        Optional<Account> account_opt = repository.findById(idStudent);
+
+        if (!account_opt.isEmpty()) {
+            Account account = account_opt.get();
+            account.setGroup_id(idGroup);
         }
     }
 }

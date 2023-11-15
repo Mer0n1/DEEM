@@ -8,12 +8,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
         android:orientation="horizontal"
         android:padding="20dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -21,22 +21,24 @@
 
             <Button
                 android:id="@+id/button_back_profile"
-                android:layout_width="44dp"
-                android:layout_height="47dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/icon_back"
-                android:text=""
-                tools:layout_editor_absoluteX="22dp"
-                tools:layout_editor_absoluteY="19dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_myIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
                 android:src="@drawable/icon_person_elon"
-                app:civ_border_color="#FF000000"/>
+                app:civ_border_color="#FF000000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,27 +51,47 @@
                 android:id="@+id/profile_personalId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="id 123456789"
                 android:textSize="18dp"
-                android:gravity="center"
                 tools:layout_editor_absoluteX="219dp"
                 tools:layout_editor_absoluteY="59dp" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="20dp">
+            </Space>
+
+            <TextView
+                android:id="@+id/profile_nicknameInf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="nickname"
+                android:textSize="18dp"
+                tools:layout_editor_absoluteX="219dp"
+                tools:layout_editor_absoluteY="104dp" />
 
             <TextView
                 android:id="@+id/profile_courseInf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="1 курс ИХНТ"
                 android:textSize="18dp"
-                android:gravity="center"
                 tools:layout_editor_absoluteX="219dp"
                 tools:layout_editor_absoluteY="104dp" />
+
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                ></Space>
+                android:layout_weight="1"></Space>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="20dp">
+            </Space>
 
             <TextView
                 android:id="@+id/text456"
@@ -78,19 +100,26 @@
                 android:layout_weight="0"
                 android:text="Мои баллы:"
                 android:textSize="18dp"></TextView>
+
             <TextView
                 android:id="@+id/myScore"
-                android:layout_weight="0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_weight="0"
                 android:background="#cccccc"
+                android:gravity="center"
                 android:text="0"
                 android:textSize="28dp"
-                />
+                android:textColor="#000000"/>
         </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@drawable/shadow"
+        ></View>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -116,6 +145,7 @@
             android:background="#cccccc"
             android:text="Фамилия Имя Отчество"
             android:textSize="20dp"
+            android:textColor="#000000"
             tools:layout_editor_absoluteX="43dp"
             tools:layout_editor_absoluteY="252dp" />
 
@@ -136,6 +166,7 @@
             android:background="#cccccc"
             android:textSize="20dp"
             android:text="G"
+            android:textColor="#000000"
             tools:layout_editor_absoluteX="44dp"
             tools:layout_editor_absoluteY="292dp" />
 
@@ -154,6 +185,7 @@
             android:layout_height="50dp"
             android:text="123456@gmail.com"
             android:textSize="20dp"
+            android:textColor="#000000"
             android:gravity="center"
             android:background="#cccccc"
             tools:layout_editor_absoluteX="43dp"
@@ -175,7 +207,53 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="ВЫЙТИ" />
+                android:background="@color/black"
+                android:text="ВЫЙТИ"
+                android:textColor="@color/white"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content">
+            </Space>
+
+            <Button
+                android:id="@+id/options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/black"
+                android:padding="10dp"
+                android:text="НАСТРОЙКИ"
+                android:textColor="@color/white"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content">
+            </Space>
+
+            <Button
+                android:id="@+id/supports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/black"
+                android:padding="10dp"
+                android:text="ПОДДЕРЖКА"
+                android:textColor="@color/white"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content">
+            </Space>
+
+            <Button
+                android:id="@+id/empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1000000"
+                android:background="@color/black"
+                android:padding="10dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

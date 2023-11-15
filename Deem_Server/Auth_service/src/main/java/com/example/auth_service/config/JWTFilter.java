@@ -1,7 +1,6 @@
 package com.example.auth_service.config;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.auth_service.security.PersonDetails;
 import com.example.auth_service.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

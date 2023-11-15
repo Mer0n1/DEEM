@@ -25,10 +25,6 @@ public class FirstPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_first, container, false);
 
-        /*LinearLayout layout = main_layout.findViewById(R.id.test_begin);
-        getLayoutInflater().inflate(R.layout.layout_info_person, layout);
-        getLayoutInflater().inflate(R.layout.layout_info_person, layout);*/
-
         return main_layout;
     }
 }

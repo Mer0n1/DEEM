@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account,Integer> {
     Optional<Account> findById(Long id);
     @Query("SELECT u.username FROM Account u WHERE u.id = :id")
     String findUsernameById(@Param("id") int id);
+
+    void deleteById(Long id);
 }

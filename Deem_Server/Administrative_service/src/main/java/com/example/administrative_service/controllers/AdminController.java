@@ -2,7 +2,7 @@ package com.example.administrative_service.controllers;
 
 import com.example.administrative_service.config.PersonDetails;
 import com.example.administrative_service.models.*;
-import com.example.administrative_service.services.RestTemplateService;
+import com.example.administrative_service.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,36 +13,71 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
-//@PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
 @RestController
 @RequestMapping("/admin")
+@PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
 public class AdminController {
 
     @Autowired
     private RestTemplateService restTemplateService;
+    @Autowired
+    private GroupCreationFormService groupCreationFormService;
+    @Autowired
+    private EnrollmentStoryService enrollmentStoryService;
+    @Autowired
+    private TransferStoryService transferStoryService;
+    @Autowired
+    private ExclusionStoryService exclusionStoryService;
 
     /** Исключение студента. Удаление из группы */
     @DeleteMapping("/expelStudent")
-    public void expelStudent(@RequestBody ExclusionForm form) {
+    public void expelStudent(@RequestBody @Valid ExclusionForm form,
+                             BindingResult bindingResult) {
+        System.out.println("expelStudent");
 
+        if (bindingResult.hasErrors())
+            return;
+
+        restTemplateService.expelStudent(form.getIdStudent());
+        exclusionStoryService.save(form);
     }
 
     @PatchMapping("/transferStudent")
-    public void transferStudent(@RequestBody TransferForm form) {
+    public void transferStudent(@RequestBody @Valid TransferForm form,
+                                BindingResult bindingResult) {
+        System.out.println("transferStudent");
 
+        if (bindingResult.hasErrors())
+            return;
+
+        restTemplateService.transferStudent(form.getIdStudent(), 1l);
+        transferStoryService.save(form);
     }
 
-    @PostMapping("/createStudent")
-    public void createStudent(@RequestBody EnrollmentForm form) {
+    @PostMapping("/createAccount")
+    public void createStudent(@RequestBody @Valid EnrollmentForm form,
+                              BindingResult bindingResult) throws JsonProcessingException {
+        System.out.println("createStudent");
 
+        if (bindingResult.hasErrors())
+            return;
+
+        restTemplateService.createStudent(form.getAccount());
+        enrollmentStoryService.save(form);
     }
 
     @PostMapping("/createGroup")
-    public void createGroup(@RequestBody GroupCreationForm form) {
+    public void createGroup(@RequestBody @Valid GroupCreationForm form,
+                            BindingResult bindingResult) throws JsonProcessingException {
+        System.out.println("createGroup");
 
+        if (bindingResult.hasErrors())
+            return;
+
+        restTemplateService.createGroup(form.getGroup());
+        groupCreationFormService.save(form); //maybe errors
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/sendScore")
     public ResponseEntity<Void> sendScore(@RequestBody @Valid DepartureForm form,
                                           BindingResult bindingResult) throws JsonProcessingException {
@@ -58,8 +93,14 @@ public class AdminController {
 
     /** Выпуск ивента (экзамена) */
     @PostMapping("/releaseEvent")
-    public void releaseEvent(@RequestBody Event event) {
+    public void releaseEvent(@RequestBody @Valid Event event,
+                             BindingResult bindingResult) throws JsonProcessingException {
+        System.out.println("releaseEvent");
 
+        if (bindingResult.hasErrors())
+            return;
+
+        restTemplateService.releaseEvent(event);
     }
 
 }

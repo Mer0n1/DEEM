@@ -28,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private InfoFragment infoFragment;
     private FirstPageFragment firstPageFragment;
     private ChatsContainerFragment chatsContainerFragment;
+    private EventsFragment eventsFragment;
 
-    public enum FragmentType { group, info_, messenger, events }
+    public enum FragmentType { first, group, info_, messenger, events }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,23 +44,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.profile_icon).startAnimation(shake);
 
         //
-        //OpenFragment(firstPageFragment, R.id.fragment_main);
-        //
+        OpenMenu(FragmentType.first);
 
 
         View.OnClickListener onClickBottom = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //if (v == findViewById(R.id.bottom_first))
-                //    OpenFragment(firstPageFragment, R.id.fragment_main);
-
+                if (v == findViewById(R.id.bottom_first))
+                    OpenMenu(FragmentType.first);
                 if (v == findViewById(R.id.bottom_group))
                     OpenMenu(FragmentType.group);
                 if (v == findViewById(R.id.bottom_info))
                     OpenMenu(FragmentType.info_);
                 if (v == findViewById(R.id.bottom_message))
                     OpenMenu(FragmentType.messenger);
+                if (v == findViewById(R.id.bottom_events))
+                    OpenMenu(FragmentType.events);
 
 
                 if (v == findViewById(R.id.profile_icon)) {
@@ -71,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        findViewById(R.id.bottom_first).setOnClickListener(onClickBottom);
         findViewById(R.id.bottom_message).setOnClickListener(onClickBottom);
-        findViewById(R.id.bottom_group).setOnClickListener(onClickBottom); //3
-        findViewById(R.id.bottom_info).setOnClickListener(onClickBottom); //4
-        findViewById(R.id.bottom_events).setOnClickListener(onClickBottom); //5
+        findViewById(R.id.bottom_group).setOnClickListener(onClickBottom);
+        findViewById(R.id.bottom_info).setOnClickListener(onClickBottom);
+        findViewById(R.id.bottom_events).setOnClickListener(onClickBottom);
 
         findViewById(R.id.profile_icon).setOnClickListener(onClickBottom);
     }
@@ -104,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
             fragment = chatsContainerFragment;
         if (fragmentType == FragmentType.info_)
             fragment =  infoFragment;
+        if (fragmentType == FragmentType.first)
+            fragment = firstPageFragment;
 
 
         if (fragment.getClass() == GroupFragment.class)
@@ -155,5 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
 
 

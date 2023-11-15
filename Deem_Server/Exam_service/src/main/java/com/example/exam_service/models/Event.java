@@ -7,11 +7,22 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "Event")
+@Table(name = "event")
 @Data
 public class Event {
     @Id
+    @Column(name = "id")
     private Long id;
+    @Column(name = "faculty")
+    private String faculty;
 
     //private Exam exam;
+
+    //Временно
+    @Column(name = "type")
+    private String type;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "description")
+    private String description;
 }

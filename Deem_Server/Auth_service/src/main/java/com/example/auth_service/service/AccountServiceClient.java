@@ -35,13 +35,13 @@ public class AccountServiceClient {
 
     AccountServiceClient() {
         headers = new LinkedMultiValueMap<>();
-        personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6Ik1lcm9uIiwiaWF0IjoxNjk1OTAzOTQzLCJpc3MiOiJtZXJvbmkiLCJleHAiOjE3Mjc0Mzk5NDN9.tROvHVIejKLtlYp5CdN7AMbQJs17THW_u91Vcmcmkzg";
+        personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiaWF0IjoxNjk5NjEzODE4LCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNTk2MTM4MTh9.lEadKCrmESKfqx2-ghLxCeJGuLC20RvB4VJMy_rNMbU";
         headers.add("Authorization", "Bearer " + personal_key);
 
         entity = new HttpEntity<>("body", headers);
     }
 
-    public Group findGroupById(int id) {
+    public Group findGroupById(Long id) {
         ResponseEntity<Group> response = restTemplate.exchange(
                 groupServiceUrl + "getGroup" + "?id=" + id, HttpMethod.GET, entity, Group.class);
 

@@ -127,7 +127,7 @@ System.out.println("000000 " + jwtKey);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("---- " + myAccount.getUsername());
+
 
 
         //Update accounts

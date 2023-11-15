@@ -1,6 +1,9 @@
 package com.example.administrative_service.services;
 
+import com.example.administrative_service.models.Account;
 import com.example.administrative_service.models.DepartureForm;
+import com.example.administrative_service.models.Event;
+import com.example.administrative_service.models.Group;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,10 @@ public class RestTemplateService {
 
     @Value("http://localhost:8082/getAuth")
     private String authServiceUrl;
+    @Value("http://localhost:8083/group")
+    private String groupServiceUrl;
+    @Value("http://localhost:8089/event")
+    private String examServiceUrl;
 
     @Value("${ADMIN_KEY}")
     private String personal_key;
@@ -47,4 +54,45 @@ public class RestTemplateService {
         restTemplate.exchange(authServiceUrl + "/sendScore", HttpMethod.POST, entity, Void.class);
     }
 
+    public void createGroup(Group group) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(group);
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(groupServiceUrl + "/createGroup", HttpMethod.POST, entity, Void.class);
+    }
+
+    public void createStudent(Account account) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(account);
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(authServiceUrl + "/createAccount", HttpMethod.POST, entity, Void.class);
+    }
+
+    public void transferStudent(Long idStudent, Long idGroup) {
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+        entity = new HttpEntity<>("idStudent="+idStudent +
+                "&idGroup="+idGroup, headers);
+
+        restTemplate.exchange(authServiceUrl + "/transferStudent",
+                HttpMethod.POST, entity, Void.class);
+    }
+
+    public void expelStudent(Long idStudent) {
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+        entity = new HttpEntity<>("idStudent="+idStudent, headers);
+
+        restTemplate.exchange(authServiceUrl + "/deleteAccount",
+                HttpMethod.POST, entity, Void.class);
+    }
+
+    public void releaseEvent(Event event) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(event);
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(examServiceUrl + "/releaseEvent", HttpMethod.POST,
+                entity, Void.class);
+    }
 }

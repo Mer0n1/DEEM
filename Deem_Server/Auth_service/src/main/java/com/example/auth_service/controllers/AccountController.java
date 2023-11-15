@@ -3,7 +3,7 @@ package com.example.auth_service.controllers;
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.DepartureForm;
 import com.example.auth_service.models.Group;
-import com.example.auth_service.security.PersonDetails;
+import com.example.auth_service.config.PersonDetails;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
@@ -58,7 +58,7 @@ public class AccountController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/sendScore")
     public void sendScore(@RequestBody @Valid DepartureForm form,
                           BindingResult bindingResult) {
@@ -73,5 +73,34 @@ public class AccountController {
 
         accountService.sendScore(form.getIdAccount(), form.getScore());
     }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/createAccount")
+    public void createAccount(@RequestBody @Valid Account account,
+                          BindingResult bindingResult) {
+        System.out.println("createAccount");
+        if (bindingResult.hasErrors())
+            return;
+
+        accountService.save(account);
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/transferStudent")
+    public void transferStudent(@RequestParam("idStudent") Long idStudent,
+                                @RequestParam("idGroup")   Long idGroup) {
+        System.out.println("transferStudent " + idStudent + " " + idGroup);
+
+        accountService.transferAccount(idStudent, idGroup);
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/deleteAccount")
+    public void deleteAccount(@RequestParam("idStudent") Long idStudent) {
+        System.out.println("deleteAccount");
+
+        accountService.delete(idStudent);
+    }
+
 
 }

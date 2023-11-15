@@ -15,6 +15,7 @@ public class GroupService {
     @Autowired
     private GroupRepository repository;
 
+    public void save(Group group) { repository.save(group); }
     public Group getGroup(int id) {
         return repository.findById(id).orElse(null);
     }

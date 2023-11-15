@@ -25,6 +25,7 @@ public class JWTFilter extends OncePerRequestFilter {
         details.setUsername(jwtDec.getClaim("username").asString());
         details.setPassword(jwtDec.getClaim("password").asString());
         details.setId(jwtDec.getClaim("id").asLong());
+        details.setROLE(jwtDec.getClaim("ROLE").asString());
 
         return details;
     }
