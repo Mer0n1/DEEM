@@ -10,9 +10,10 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.deem.databinding.ActivityProfileBinding;
+import com.example.deem.utils.GeneratorUUID;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
-import com.example.restful.models.News;
+import com.example.restful.models.ImageLoadCallback;
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -30,7 +31,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void init() {
-        //account = APIManager.getManager().myAccount;
 
         String nickname = getIntent().getStringExtra("Nickname");
         if (nickname.isEmpty())
@@ -61,6 +61,18 @@ public class ProfileActivity extends AppCompatActivity {
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 
         activity.profileMyIcon.setImageBitmap(decodedBitmap);*/
+
+        //CallBack на загрузку изображений
+        String uuid = GeneratorUUID.getInstance().generateUUIDForIcon("Meron");
+        APIManager.getManager().GetImage(uuid, new ImageLoadCallback() {
+            @Override
+            public void onImageLoaded(String decodeStr) {
+
+                byte[] decodedBytes = Base64.decode(decodeStr, Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                activity.profileMyIcon.setImageBitmap(decodedBitmap);
+            }
+        });
     }
 
     private void SetListeners() {
@@ -80,5 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 }

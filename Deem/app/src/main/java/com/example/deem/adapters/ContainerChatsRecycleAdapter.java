@@ -16,6 +16,8 @@ import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.Chat;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<ContainerChatsRecycleAdapter.ItemChat> {
@@ -50,11 +52,13 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
     class ItemChat extends RecyclerView.ViewHolder {
 
         private TextView name;
+        private TextView begin_text;
 
         public ItemChat(@NonNull View itemView) {
             super(itemView);
 
             name = itemView.findViewById(R.id.group_name_item_info);
+            begin_text = itemView.findViewById(R.id.begin_text);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -78,6 +82,7 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
             if (account == null) return;
 
             name.setText(String.valueOf(account.getUsername()));
+            begin_text.setText(chat.getMessages().get(chat.getMessages().size()-1).getText());
         }
     }
 }

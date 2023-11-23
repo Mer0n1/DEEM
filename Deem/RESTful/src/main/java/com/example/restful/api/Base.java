@@ -3,7 +3,10 @@ package com.example.restful.api;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.DataImage;
+import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.Image;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
 
@@ -46,19 +49,29 @@ public interface Base {
     Call<Void> sendMessage(@Body Message message);
     @POST("/chat/createChat")
     Call<Void> sendNewChat(@Body Chat chat);
-    @GET("/chat/getImageTest")
+    /*@GET("/chat/getImageTest")
     Call<ResponseBody> getImage(); //test
-
+    */
     //test
-    @Multipart
+    /*@Multipart
     @POST("/news/uploadProfile")
     Call<ResponseBody> uploadProfile(
             @Part("description") RequestBody description,
-            @Part MultipartBody.Part image); //test!!!!!!
+            @Part MultipartBody.Part image);*/
 
     //news
     @GET("/news/getNews")
     Call<List<News>> getNews(@Query("faculty") String faculty);
     @POST("/news/createNews")
     Call<Void> createNews(@Body News news);
+
+    //events or exams
+    @GET("/event/getEvents")
+    Call<List<Event>> getEvents();
+
+    //image
+    @GET("/image/getImage")
+    Call<Image> getImage(@Query("UUID") String UUID);
+    @POST("/image/addImages")
+    Call<Void> addImages(@Body List<DataImage> imgs);
 }

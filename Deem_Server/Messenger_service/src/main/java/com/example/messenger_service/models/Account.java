@@ -14,6 +14,4 @@ public class Account {
     private String surname;
     private String fathername;
     private int score;
-
-
 }

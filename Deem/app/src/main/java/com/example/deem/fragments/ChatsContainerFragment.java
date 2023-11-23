@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
-import com.example.deem.Toolbar;
+import com.example.deem.utils.Toolbar;
 import com.example.deem.adapters.ContainerChatsRecycleAdapter;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Chat;
@@ -25,6 +25,7 @@ public class ChatsContainerFragment extends Fragment {
     private ContainerChatsRecycleAdapter containerChatsRecycleAdapter;
     private RecyclerView recyclerView;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,24 +35,36 @@ public class ChatsContainerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_messenger, container, false);
 
-        Toolbar.getInstance().setTitle("Чаты");
         init();
 
         return main_layout;
     }
 
     public void init() {
-        //LinearLayout layout = main_layout.findViewById(R.id.container_chats);
         listChats = APIManager.getManager().listChats;
+        initToolbar();
+        initListAndRecycle();
 
-        System.out.println("listChats " + listChats );
-        //
+        //View.inflate(getContext(), R.layout.item_chat_story, layout);
+    }
+
+    public void initToolbar() {
+        Toolbar.getInstance().ClearIcons();
+        Toolbar.getInstance().setTitle("Чаты");
+    }
+
+    public void initListAndRecycle() {
+        if (listChats != null) {
+            main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.list_chats).setVisibility(View.VISIBLE);
+        } else
+            return;
+
+        //Recycle
         recyclerView = main_layout.findViewById(R.id.list_chats);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         containerChatsRecycleAdapter = new ContainerChatsRecycleAdapter(listChats, this);
         recyclerView.setAdapter(containerChatsRecycleAdapter);
         recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
-
-        //View.inflate(getContext(), R.layout.item_chat_story, layout);
     }
 }

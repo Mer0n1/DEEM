@@ -1,6 +1,7 @@
 package com.example.group_service.controllers;
 
 import com.example.group_service.models.Group;
+import com.example.group_service.models.LocationStudent;
 import com.example.group_service.services.GroupService;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -23,7 +24,7 @@ public class GroupController {
 
 
     @GetMapping("/getGroup")
-    public Group getGroup(@RequestParam("id") int id) {
+    public Group getGroup(@RequestParam("id") Long id) {
         return groupService.getGroup(id);
     }
 
@@ -39,7 +40,7 @@ public class GroupController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")
-    public void createGroup(@RequestBody /*@Valid*/ Group group,
+    public void createGroup(@RequestBody @Valid Group group,
                             BindingResult bindingResult) {
         System.out.println("createGroup");
 
@@ -47,6 +48,13 @@ public class GroupController {
             return;
 
         groupService.save(group);
-
     }
+
+    @GetMapping("/getLocationStudent")
+    public LocationStudent getLocationStudent(@RequestParam("id") Long idGroup) {
+        Group group = groupService.getGroup(idGroup);
+
+        return new LocationStudent(0l, group.getFaculty(), group.getCourse());
+    }
+
 }

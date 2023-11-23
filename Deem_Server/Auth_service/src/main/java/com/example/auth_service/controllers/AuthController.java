@@ -4,10 +4,12 @@ import com.example.auth_service.models.Account;
 import com.example.auth_service.models.AuthRequest;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,12 +25,20 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public String addNewUser(@RequestBody Account user) {
+    public String addNewUser(@RequestBody @Valid Account user,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return bindingResult.getAllErrors().toString();
+
         return service.saveUser(user);
     }
 
     @PostMapping("/login")
-    public String getToken(@RequestBody AuthRequest authRequest) {
+    public String getToken(@RequestBody @Valid AuthRequest authRequest,
+                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return bindingResult.getAllErrors().toString();
+
         Authentication authenticate = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 

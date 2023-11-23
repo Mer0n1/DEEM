@@ -7,7 +7,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -18,7 +17,16 @@ import com.example.deem.fragments.EventsFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
+import com.example.deem.utils.GeneratorUUID;
+import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.DataImage;
+import com.example.restful.models.Image;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
         //тест
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.anim_shape_icon);
         findViewById(R.id.profile_icon).startAnimation(shake);
-
         //
+
         OpenMenu(FragmentType.first);
+
 
 
         View.OnClickListener onClickBottom = new View.OnClickListener() {
@@ -108,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             fragment =  infoFragment;
         if (fragmentType == FragmentType.first)
             fragment = firstPageFragment;
+        if (fragmentType == FragmentType.events)
+            fragment = eventsFragment;
 
 
         if (fragment.getClass() == GroupFragment.class)
@@ -131,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         infoFragment = new InfoFragment();
         firstPageFragment = new FirstPageFragment();
         chatsContainerFragment = new ChatsContainerFragment();
+        eventsFragment = new EventsFragment();
     }
 
 

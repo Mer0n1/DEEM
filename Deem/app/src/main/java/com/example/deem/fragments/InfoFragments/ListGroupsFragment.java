@@ -68,11 +68,7 @@ public class ListGroupsFragment extends Fragment {
             public void afterTextChanged(Editable s) {sort(s.toString());}
         });
 
-        //recycle
-        recycleAdapterGroups = new GroupsListRecycleAdapter(APIManager.getManager().listGroups, this);
-        recyclerView = main_layout.findViewById(R.id.list_groups_info);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        recyclerView.setAdapter(recycleAdapterGroups);
+        initRecycle();
     }
 
     public void sort(String text) {
@@ -85,6 +81,20 @@ public class ListGroupsFragment extends Fragment {
 
         recycleAdapterGroups.setList(sort);
         recycleAdapterGroups.notifyDataSetChanged();
+    }
+
+    public void initRecycle() {
+        List<Group> listGroups = APIManager.getManager().listGroups;
+        if (listGroups != null) {
+            main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.list_groups_info).setVisibility(View.VISIBLE);
+        } else
+            return;
+
+        recycleAdapterGroups = new GroupsListRecycleAdapter(listGroups, this);
+        recyclerView = main_layout.findViewById(R.id.list_groups_info);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setAdapter(recycleAdapterGroups);
     }
 
 }

@@ -4,14 +4,22 @@ import com.example.restful.api.websocket.PushClient;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.DataImage;
+import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.Image;
+import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.crypto.Data;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +34,7 @@ public class APIManager {
     public List<Group> listGroups;
     public List<Chat> listChats;
     public List<News> listNews;
+    public List<Event> listEvents;
 
     public Account myAccount;
 
@@ -70,7 +79,7 @@ public class APIManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-System.out.println("000000 " + jwtKey);
+
         pushClient.auth(jwtKey);
     }
 
@@ -93,17 +102,6 @@ System.out.println("000000 " + jwtKey);
         str.enqueue(cl);
     }
 
-    public List<Account> getAccounts() {
-        return new ArrayList<>();
-    }
-
-    public List<Group> getGroups() {
-        return new ArrayList<>();
-    }
-
-    public Account getAccount(String username) {
-        return new Account();
-    }
 
     public void UpdateData() {
 
@@ -185,6 +183,19 @@ System.out.println("000000 " + jwtKey);
             }
         });
 
+
+        Repository.getInstance().getEvents().enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                listEvents = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+
+            }
+        });
+
     }
 
     public void sendMessage(Message message) {
@@ -213,6 +224,37 @@ System.out.println("000000 " + jwtKey);
         });
     }
 
+
+    public void GetImage(String UUID, ImageLoadCallback imageLoadCallback) {
+        Repository.getInstance().getImage(UUID).enqueue(new Callback<Image>() {
+            @Override
+            public void onResponse(Call<Image> call, Response<Image> response) {
+                System.err.println("RESPONSE IMAGE");
+                if (response.body() != null)
+                    imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+            }
+
+            @Override
+            public void onFailure(Call<Image> call, Throwable t) {
+                System.err.println("RESPONSE FAILURE " + t.getMessage().toString());
+
+            }
+        });
+    }
+
+    public void addImages(List<DataImage> imgs) {
+        Repository.getInstance().addImages(imgs).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                System.err.println("RESPONSE ADD_IMAGE");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                System.err.println("RESPONSE FAILURE ADD_IMAGE " + t.getMessage().toString());
+            }
+        });
+    }
 }
 
 

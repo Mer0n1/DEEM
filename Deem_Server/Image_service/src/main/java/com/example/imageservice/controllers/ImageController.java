@@ -1,5 +1,6 @@
 package com.example.imageservice.controllers;
 
+import com.example.imageservice.models.DataImage;
 import com.example.imageservice.models.Image;
 import com.example.imageservice.services.ImageService;
 import com.google.common.io.Resources;
@@ -45,30 +46,30 @@ public class ImageController {
     }
 
 
-    /** Вернуть 1 картинку (иконка аккаунта, группы, беседы)*/
-    @GetMapping("/getImage")
-    public void getImage(String name) {
-        System.out.println("getImage");
-    }
-
-    /** Вернуть изображение 1 новости */
-    @GetMapping("/getImagesNews")
-    public void getImagesNews(String nameNews) {
-    }
-
     /** Вернуть изображение 1 сообщения */
-    @GetMapping("/getImagesMessage")
-    public void getImagesMessage(String nameMessage) {
+    @GetMapping("/getImage")
+    public Image getImage(String UUID) {
+        System.out.println("getImage");
+        DataImage image = imageService.getImage(UUID);
+        Image imageResponse = null;
+
+        if (image != null)
+            imageResponse = image.getImage();
+
+        return imageResponse;
     }
 
     @PostMapping("/addImages")
-    public void addImages(@RequestBody @Valid List<Image> imgs,
-                          BindingResult bindingResult) {
+    public void addImages(@RequestBody @Valid List<DataImage> imgs,
+                          BindingResult bindingResult) throws IOException {
+        System.out.println("addImages");
 
         if (bindingResult.hasErrors())
             return;
 
         imageService.initImages(imgs);
+        for (DataImage image : imgs)
+            imageService.saveImage(image.getImage().getImgEncode(), image.getType());
         imageService.saveAll(imgs);
     }
 

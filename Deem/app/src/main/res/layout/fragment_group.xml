@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ececec">
+    android:background="#f2f2f2">
 
 
     <ScrollView
@@ -46,6 +46,7 @@
                         android:text="0 участников"
                         android:textSize="22dp" />
 
+
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -63,12 +64,28 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
 
+                    <TextView
+                        android:id="@+id/textView2345"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0 баллов"
+                        android:textSize="24dp" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
                     <Button
                         android:id="@+id/chat_button_group"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/button_style_black"
                         android:text="ЧАТ"
-                        android:textSize="26dp" />
+                        android:textSize="26dp"
+                        android:textColor="#ffffff"
+                        />
                 </LinearLayout>
 
                 <de.hdodenhof.circleimageview.CircleImageView

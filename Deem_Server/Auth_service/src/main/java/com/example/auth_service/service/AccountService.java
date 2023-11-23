@@ -24,6 +24,8 @@ public class AccountService {
         return repository.findByUsername(username).orElse(null);
     }
 
+    public Account getAccount(Long id) { return repository.findById(id).orElse(null); }
+
     public List<Account> getAccounts() {
         return repository.findAll();
     }

@@ -1,9 +1,12 @@
-package com.example.deem;
+package com.example.deem.utils;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.deem.MainActivity;
+import com.example.deem.R;
 
 /** Сингдтон. Интерфейс тулбара. */
 public class Toolbar {

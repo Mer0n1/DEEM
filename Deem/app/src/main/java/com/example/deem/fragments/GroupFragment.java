@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.deem.Toolbar;
+import com.example.deem.utils.Toolbar;
 import com.example.deem.dialogs.CreateNewsDialog;
 import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
@@ -43,14 +43,15 @@ public class GroupFragment extends Fragment {
         fragmentGroupBinding = FragmentGroupBinding.inflate(getActivity().getLayoutInflater());
         main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_group, container, false);
 
-        Toolbar.getInstance().setTitle("Группы");
         init();
 
         return main_layout;
     }
 
     public void init() {
+        initToolbar();
         myGroup = APIManager.getManager().myAccount.getGroup();
+        if (myGroup == null) return;
 
         //init news
         List<News> allNews = APIManager.getManager().listNews;
@@ -60,12 +61,8 @@ public class GroupFragment extends Fragment {
             if (news.getIdGroup() == myGroup.getId())
                 newsList.add(news);
 
-        //init recycle
-        newsListRecycleAdapter = new NewsListRecycleAdapter(newsList);
-        recyclerView = main_layout.findViewById(R.id.list_news_group);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        recyclerView.setAdapter(newsListRecycleAdapter);
 
+        initRecycle();
         setListeners();
     }
 
@@ -79,8 +76,17 @@ public class GroupFragment extends Fragment {
                 newsListRecycleAdapter.notifyDataSetChanged();
             }
         });
-
-
     }
 
+    public void initRecycle() {
+        newsListRecycleAdapter = new NewsListRecycleAdapter(newsList);
+        recyclerView = main_layout.findViewById(R.id.list_news_group);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setAdapter(newsListRecycleAdapter);
+    }
+
+    public void initToolbar() {
+        Toolbar.getInstance().ClearIcons();
+        Toolbar.getInstance().setTitle("Группы");
+    }
 }

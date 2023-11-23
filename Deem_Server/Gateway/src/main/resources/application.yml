@@ -56,6 +56,13 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Exam_service
+         uri: lb://exams
+         predicates:
+           - Path=/event/**
+         filters:
+           - AuthenticationFilter
+
  application:
    name: Gateway
 

@@ -102,5 +102,10 @@ public class AccountController {
         accountService.delete(idStudent);
     }
 
+    @PreAuthorize("hasRole('HIGH')")
+    @GetMapping ("/getIdGroupAccount")
+    public Long getIdGroupAccount(@RequestParam("id") Long idStudent) {
+        return accountService.getAccount(idStudent).getGroup_id();
+    }
 
 }

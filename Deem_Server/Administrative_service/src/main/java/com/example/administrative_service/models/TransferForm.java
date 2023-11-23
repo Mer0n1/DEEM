@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -15,13 +17,16 @@ public class TransferForm {
     @Column(name = "id")
     private Long id;
 
+    @NotEmpty(message = "Description must not be null")
     @Column(name = "description")
     private String description;
 
+    @NotNull(message = "Id Student must not be null")
     @Column(name = "idStudent")
     private Long idStudent;
 
     //группа в которую нужно перевести. Обязательно текущий факультет.
+    @NotEmpty(message = "Group must not be null")
     @Column(name = "groupTo")
     private String groupTo;
 }

@@ -50,6 +50,7 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
+        //TODO: Доделать idGroup
         restTemplateService.transferStudent(form.getIdStudent(), 1l);
         transferStoryService.save(form);
     }

@@ -58,12 +58,6 @@ public class ListUsersFragment extends Fragment {
         ((MainActivity)(getActivity())).getInfoFragment().includeButtonBack();
         users = APIManager.getManager().listAccounts;
 
-        //recycle
-        usersListRecycleAdapter = new UsersListRecycleAdapter(APIManager.getManager().listAccounts, this);
-        recyclerView = main_layout.findViewById(R.id.list_users_info);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        recyclerView.setAdapter(usersListRecycleAdapter);
-
         //search
         binding.iconSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +77,8 @@ public class ListUsersFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {sort(s.toString());}
         });
+
+        initRecycle();
     }
 
     public void sort(String text) {
@@ -97,6 +93,20 @@ public class ListUsersFragment extends Fragment {
         usersListRecycleAdapter.notifyDataSetChanged();
     }
 
+    public void initRecycle() {
 
+        List<Account> listAccounts = APIManager.getManager().listAccounts;
+
+        if (listAccounts != null) {
+            main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.list_users_info).setVisibility(View.VISIBLE);
+        } else
+            return;
+
+        usersListRecycleAdapter = new UsersListRecycleAdapter(listAccounts, this);
+        recyclerView = main_layout.findViewById(R.id.list_users_info);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setAdapter(usersListRecycleAdapter);
+    }
 
 }

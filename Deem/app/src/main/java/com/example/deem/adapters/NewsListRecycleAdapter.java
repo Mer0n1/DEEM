@@ -64,6 +64,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
             if (!group.isEmpty())
                 name_group.setText(group.get().getName());
+
         }
     }
 }

@@ -16,7 +16,7 @@ public class GroupService {
     private GroupRepository repository;
 
     public void save(Group group) { repository.save(group); }
-    public Group getGroup(int id) {
+    public Group getGroup(Long id) {
         return repository.findById(id).orElse(null);
     }
 

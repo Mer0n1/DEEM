@@ -3,7 +3,10 @@ package com.example.restful.api;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.DataImage;
+import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.Image;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
 
@@ -12,10 +15,9 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 
-class Repository {
+public class Repository {
     private static Repository Instance;
 
-    //    private ArrayList<User> dataSet =new ArrayList<User>();
     public static Repository getInstance() {
         if (Instance == null) {
             Instance = new Repository();
@@ -49,8 +51,13 @@ class Repository {
 
     public Call<Void> sendNewChat(Chat chat) { return Handler.getInstance().getApi().sendNewChat(chat); }
 
-    public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
+    //public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
 
     public Call<List<News>> getNews(String faculty) { return Handler.getInstance().getApi().getNews(faculty); }
 
+    public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
+
+    public Call<Image> getImage(String UUID) { return Handler.getInstance().getApi().getImage(UUID);}
+
+    public Call<Void> addImages(List<DataImage> imgs) { return Handler.getInstance().getApi().addImages(imgs); }
 }
