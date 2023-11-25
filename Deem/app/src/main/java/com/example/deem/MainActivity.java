@@ -17,16 +17,9 @@ import com.example.deem.fragments.EventsFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
-import com.example.deem.utils.GeneratorUUID;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
-import com.example.restful.models.DataImage;
-import com.example.restful.models.Image;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.restful.utils.GeneratorUUID;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         //
 
         OpenMenu(FragmentType.first);
-
 
 
         View.OnClickListener onClickBottom = new View.OnClickListener() {
@@ -121,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
             fragment = eventsFragment;
 
 
+        if (fragment.getClass() == FirstPageFragment.class)
+            changeDesignOfIcon(-1);
         if (fragment.getClass() == GroupFragment.class)
             changeDesignOfIcon(R.id.bottom_group);
         if (fragment.getClass() == EventsFragment.class)

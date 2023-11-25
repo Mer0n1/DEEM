@@ -7,43 +7,43 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class News {
-    private String author; //this maybe a name of group
+    private Long id;
+    //private String author; //name of group
     private String content;
-    private String date;
+    private Date date;
     private Long idGroup;
 
-    //img
-    private List<String> ListImg;
+    private List<Image> ListImg;
 
-    public String getAuthor() {
+    /*public String getAuthor() {
         return author;
-    }
+    }*/
 
     public String getContent() {
         return content;
     }
 
-    public void setAuthor(String author) {
+    /*public void setAuthor(String author) {
         this.author = author;
-    }
+    }*/
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    public List<String> getListImg() {
+    public List<Image> getListImg() {
         return ListImg;
     }
 
-    public void setListImg(List<String> listImg) {
+    public void setListImg(List<Image> listImg) {
         ListImg = listImg;
     }
 
@@ -53,5 +53,13 @@ public class News {
 
     public void setIdGroup(Long idGroup) {
         this.idGroup = idGroup;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

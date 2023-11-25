@@ -1,8 +1,7 @@
 package com.example.imageservice.services;
 
-import com.example.imageservice.models.DataImage;
-import com.example.imageservice.models.Image;
-import com.example.imageservice.repositories.ImageRepository;
+import com.example.imageservice.models.*;
+import com.example.imageservice.repositories.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,11 @@ import java.util.Optional;
 public class ImageService {
 
     @Autowired
-    private ImageRepository repository;
+    private NewsImageRepository newsImageRepository;
+    @Autowired
+    private MessageImageRepository messageImageRepository;
+    @Autowired
+    private IconImageRepository iconImageRepository;
 
     @Value("${PATH_ICONS}")
     private String PATH_ICONS;
@@ -31,67 +34,101 @@ public class ImageService {
 
 
     @Transactional
-    public void save(DataImage img) {
-        repository.save(img);
+    public void saveIcon(IconImage img) { iconImageRepository.save(img); }
+    @Transactional
+    public void saveMessageImage(MessageImage img) { messageImageRepository.save(img); }
+
+    @Transactional
+    public void saveNewsImage(NewsImage img) { newsImageRepository.save(img); }
+
+    @Transactional
+    public void saveAllNewsImages(List<NewsImage> imgs) {
+        newsImageRepository.saveAll(imgs);
     }
 
     @Transactional
-    public void saveAll(List<DataImage> imgs) {
-        repository.saveAll(imgs);
+    public void saveAllMessageImages(List<MessageImage> imgs) {
+        messageImageRepository.saveAll(imgs);
     }
+    public Image getImage(String UUID, String type) {
+        String path = "";
+        Image image = new Image();
+        PathImageProjection projection = null;
 
+        if (type.equals("news_image"))
+            projection = newsImageRepository.findByUuid(UUID);
+        if (type.equals("profile_icon"))
+            projection = iconImageRepository.findByUuid(UUID);
+        if (type.equals("message_image"))
+            projection = messageImageRepository.findByUuid(UUID);
 
-    /**Есть вариант не использовать путь: по типу и названию можно найти
-     * изображение, однако у этого метода есть минус - все изображения должны
-     * храниться только в 1 папке */
-    public DataImage getImage(String UUID) {
-        Optional<DataImage> image_opt = repository.findByUuid(UUID);
-        DataImage image = null;
+        if (projection != null)
+            path = projection.getPath();
 
-        if (!image_opt.isEmpty()) {
-            image = image_opt.get();
-            try {
-                File file = new File(image.getPath());
-                byte[] fileBytes = Files.readAllBytes(file.toPath());
+        if (!path.isEmpty())
+            image.setImgEncode(encodeImage(path));
 
-                String encodedString = Base64.toBase64String(fileBytes);
-                image.setImage(new Image());
-                image.getImage().setImgEncode(encodedString);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
         return image;
     }
 
-    public void saveImage(String img, String type) throws IOException {
+    private String encodeImage(String path) {
+        try {
+            File file = new File(path);
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
 
-        String path = PATH_ICONS;
-        if (type.equals("news_image"))
-            path = PATH_ICONS;
-        if (type.equals("message_image"))
-            path = PATH_MESSAGES;
+            String encodedString = Base64.toBase64String(fileBytes);
+            return encodedString;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveImage(String img, String path) throws IOException {
 
         byte[] decodedBytes = Base64.decode(img);
 
-        File imageFile = new File(path + "/test.png");
+        File imageFile = new File(path);
         FileOutputStream outputStream = new FileOutputStream(imageFile);
         outputStream.write(decodedBytes);
     }
 
-    public void initImages(List<DataImage> imgs) {
-        for (DataImage image : imgs)
-            initImage(image);
+    public void initNewsImages(List<NewsImage> imgs) {
+        NewsImage newsImage = newsImageRepository.findTopByOrderByIdDesc();
+        Long CurrentId = 0L;
+
+        if (newsImage != null)
+            CurrentId = newsImage.getId();
+
+        for (NewsImage image : imgs)
+            image.setPath(getPath("news_image") + ++CurrentId + ".png");
     }
 
-    public void initImage(DataImage img) {
-        if (img.getType().equals("profile_icon"))
-            img.setPath(PATH_ICONS);
-        if (img.getType().equals("news_image"))
-            img.setPath(PATH_NEWS);
-        if (img.getType().equals("message_image"))
-            img.setPath(PATH_MESSAGES);
+    public void initMessageImages(List<MessageImage> imgs) {
+        MessageImage messageImage = messageImageRepository.findTopByOrderByIdDesc();
+        Long CurrentId = 0L;
+
+        if (messageImage != null)
+            CurrentId = messageImage.getId();
+
+        for (MessageImage image : imgs)
+            image.setPath(getPath("message_image") + ++CurrentId + ".png");
     }
 
+    public String getPath(String type) {
+        String path = "";
+        if (type.equals("profile_icon"))
+            path = PATH_ICONS;
+        if (type.equals("news_image"))
+            path = PATH_NEWS;
+        if (type.equals("message_image"))
+            path = PATH_MESSAGES;
+        return path;
+    }
 
+    public int getCountImagesNews(Long idNews) {
+        return newsImageRepository.getCount(idNews);
+    }
+    public int getCountImagesMessage(Long idMessage) {
+        return messageImageRepository.getCount(idMessage);
+    }
 }

@@ -32,28 +32,10 @@ public class NewsController {
     private NewsService newsService;
 
 
-    //from
-    /*@GetMapping("/test")
-    public News getNews() throws IOException {
-        System.out.println("getNews");
-        News news = newsService.getNews();
-
-        File file = new File("");
-        byte[] fileBytes = Files.readAllBytes(file.toPath());
-
-        String encodedString = Base64.getEncoder().encodeToString(fileBytes);
-        news.setImg(encodedString);
-
-        //byte[] decodedBytes = Base64.decode(encodedString, Base64.DEFAULT);
-        //Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-
-        return news;
-    }*/
-
     @GetMapping("/getNews")
     public List<News> getNews(/*Principal principal*/
             @RequestParam("faculty") String faculty) {
-        //Узнаем факультет, чтобы отправить новости только текущего факультета
+        //TODO: Узнаем факультет, чтобы отправить новости только текущего факультета
         System.out.println("getNews");
 
         //

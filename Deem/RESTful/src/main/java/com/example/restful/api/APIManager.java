@@ -7,22 +7,30 @@ import com.example.restful.models.Chat;
 import com.example.restful.models.DataImage;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.IconImage;
 import com.example.restful.models.Image;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
+import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
+import com.example.restful.models.NewsImage;
+import com.example.restful.utils.DateUtil;
+import com.example.restful.utils.GeneratorUUID;
+import com.sun.imageio.plugins.common.ImageUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.xml.crypto.Data;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import sun.jvm.hotspot.utilities.BitMap;
 
 
 public class APIManager {
@@ -134,6 +142,22 @@ public class APIManager {
                     @Override
                     public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                         listAccounts = response.body();
+
+                        //загрузим иконки аккаунтов
+                        for (Account account : listAccounts)
+                            Repository.getInstance().getImage(
+                                    GeneratorUUID.getInstance().generateUUIDForIcon(account.getUsername()), "profile_icon")
+                                    .enqueue(new Callback<Image>() {
+                                        @Override
+                                        public void onResponse(Call<Image> call, Response<Image> response) {
+                                            account.setImageIcon(response.body());
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Image> call, Throwable t) {
+
+                                        }
+                                    });
                     }
 
                     @Override
@@ -195,7 +219,6 @@ public class APIManager {
 
             }
         });
-
     }
 
     public void sendMessage(Message message) {
@@ -225,8 +248,10 @@ public class APIManager {
     }
 
 
-    public void GetImage(String UUID, ImageLoadCallback imageLoadCallback) {
-        Repository.getInstance().getImage(UUID).enqueue(new Callback<Image>() {
+    /***** ImageService ******/
+
+    public void GetImage(String UUID, String type, ImageLoadCallback imageLoadCallback) {
+        Repository.getInstance().getImage(UUID, type).enqueue(new Callback<Image>() {
             @Override
             public void onResponse(Call<Image> call, Response<Image> response) {
                 System.err.println("RESPONSE IMAGE");
@@ -242,19 +267,97 @@ public class APIManager {
         });
     }
 
-    public void addImages(List<DataImage> imgs) {
-        Repository.getInstance().addImages(imgs).enqueue(new Callback<Void>() {
+    public void addIcon(IconImage img) {
+        Repository.getInstance().addIcon(img).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                System.err.println("RESPONSE ADD_IMAGE");
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                System.err.println("RESPONSE FAILURE ADD_IMAGE " + t.getMessage().toString());
+
             }
         });
     }
+
+    public void addNewsImages(List<NewsImage> imgs) {
+        Repository.getInstance().addNewsImages(imgs).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void addMessageImages(List<MessageImage> imgs) {
+        Repository.getInstance().addMessageImages(imgs).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
+
+    /** Lazy метод. Подгружаем картинки для новости и храним их в кэше*/
+    public void getNewsImages(News news, ImageLoadCallback imageLoadCallback) {
+
+        if (news.getListImg() == null)
+            news.setListImg(new ArrayList<>());
+        news.getListImg().clear();
+
+        Repository.getInstance().getCountImages(news.getId(), "news_image").enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Integer count = response.body();
+
+                if (count == null) return;
+
+                for (int j = 0; j < count; j++) {
+                    Group group = listGroups.stream().filter(x->x.getId()==news.getIdGroup()).findAny().orElse(null);
+                    if (group == null) return;
+                    String author = group.getName();
+                    System.err.println("++++ " + author);
+
+                    String UUID = GeneratorUUID.getInstance().generateUUIDForNews(
+                            DateUtil.getInstance().getDateToForm(news.getDate()), author);
+
+                    Repository.getInstance().getImage(UUID, "news_image").enqueue(new Callback<Image>() {
+                        @Override
+                        public void onResponse(Call<Image> call, Response<Image> response) {
+                            System.err.println(response.body());
+                            if (response.body() != null) {
+                                System.err.println(response.body().getImgEncode());
+                                news.getListImg().add(response.body());
+                                imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Image> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+
+            }
+        });
+    }
+
+    //такие же lazy методы с иконками и сообщениями
 }
 
 

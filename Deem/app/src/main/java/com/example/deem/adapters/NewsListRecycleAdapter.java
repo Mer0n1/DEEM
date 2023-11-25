@@ -3,14 +3,17 @@ package com.example.deem.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
+import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 
 import java.util.List;
@@ -46,6 +49,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         private TextView date;
         private TextView content;
         private TextView name_group;
+        private ImageView imageView;
 
         public ItemNews(@NonNull View itemView) {
             super(itemView);
@@ -53,18 +57,35 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             content = itemView.findViewById(R.id.news_content_info);
             date = itemView.findViewById(R.id.news_date_info);
             name_group = itemView.findViewById(R.id.news_namegroup_info);
+            imageView = itemView.findViewById(R.id.imageView);
         }
 
         public void setData(News news) {
-            date.setText(news.getDate());
+            date.setText(news.getDate().toString());
             content.setText(news.getContent());
 
-            Optional<Group> group = APIManager.getManager().listGroups.stream()
-                    .filter(s->s.getId() == news.getIdGroup()).findAny();
+            List<Group> listGroups = APIManager.getManager().listGroups;
+            Group group = null;
 
-            if (!group.isEmpty())
-                name_group.setText(group.get().getName());
+            if (listGroups != null)
+                group = listGroups.stream()
+                    .filter(s->s.getId() == news.getIdGroup()).findAny().orElse(null);
 
+            if (group != null)
+                name_group.setText(group.getName());
+
+            //Загрузка изображений
+            if (news.getListImg() != null) {
+                if (news.getListImg().size() != 0)
+                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(news.getListImg().get(0).getImgEncode())); //TODO
+            } else
+                APIManager.getManager().getNewsImages(news, new ImageLoadCallback() {
+                    @Override
+                    public void onImageLoaded(String decodeStr) {
+                        System.err.println("ПОБЕДА");
+                        imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
+                    }
+                });
         }
     }
 }

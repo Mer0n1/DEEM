@@ -7,31 +7,25 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
-@Table(name = "image")
+@Table(name = "image_message")
 @Data
-public class DataImage {
-
+public class MessageImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    /** Сервер самостоятельно сохраняет путь */
     @JsonIgnore
     @Column(name = "path")
     private String path;
 
-    @NotEmpty(message = "name must not be null")
-    @Column(name = "name")
-    private String name; //unique?
-
-    @NotEmpty(message = "type must not be null")
-    @Column(name = "type")
-    private String type; //icon group, profile, or usual image?
-
     @NotEmpty(message = "uuid null")
     @Column(name = "uuid")
     private String uuid;
+
+    @NotNull(message = "id news null")
+    @Column(name = "id_message")
+    private Long id_message;
 
     @NotNull(message = "image null")
     @Transient

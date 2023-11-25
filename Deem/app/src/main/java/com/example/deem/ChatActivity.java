@@ -1,8 +1,6 @@
 package com.example.deem;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -11,8 +9,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -22,7 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
-import com.example.deem.utils.GeneratorUUID;
+import com.example.restful.models.IconImage;
+import com.example.restful.models.MessageImage;
+import com.example.restful.models.NewsImage;
+import com.example.restful.utils.GeneratorUUID;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
@@ -31,14 +30,9 @@ import com.example.restful.models.DataImage;
 import com.example.restful.models.Image;
 import com.example.restful.models.Message;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -130,22 +124,14 @@ public class ChatActivity extends AppCompatActivity {
             //ImageView view = activityChatBinding.imageView;
             //view.setBackground(drawable);
 
-
             //Отправка изображения на сервер
             DataImage dataImage = new DataImage();
             dataImage.setType("message_image");
             dataImage.setName("Test");
             dataImage.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
-                    ImageUtil.getInstance().getDate(), APIManager.getManager().myAccount.getUsername()));
+                    ImageUtil.getInstance().getDate(), "Tao"/*APIManager.getManager().myAccount.getUsername()*/));
 
-            //преобразование в строку
             String str = ImageUtil.getInstance().ConvertToString(drawable);
-            /*Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] ImgEncode = stream.toByteArray();
-            String str = Base64.getEncoder().encodeToString(ImgEncode);*/
-            //-----
 
             Image image = new Image();
             image.setImgEncode(str);
@@ -154,7 +140,35 @@ public class ChatActivity extends AppCompatActivity {
             List<DataImage> imgs = new ArrayList<>();
             imgs.add(dataImage);
 
-            APIManager.getManager().addImages(imgs);
+            //APIManager.getManager().addImages(imgs);
+
+            //news
+            /*NewsImage newsImage = new NewsImage();
+            newsImage.setUuid(GeneratorUUID.getInstance().generateUUIDForNews(ImageUtil.getInstance().getDate(), "G"));
+            newsImage.setImage(image);
+            newsImage.setId_news(1L);
+            List<NewsImage> newsImages = new ArrayList<>();
+            newsImages.add(newsImage);
+            APIManager.getManager().addNewsImages(newsImages);*/
+
+            //message
+            /*MessageImage messageImage = new MessageImage();
+            messageImage.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
+                    ImageUtil.getInstance().getDate(), APIManager.getManager().myAccount.getUsername()
+            ));
+            messageImage.setImage(image);
+            messageImage.setIdMessage(18L);
+            List<MessageImage> messageImages = new ArrayList<>();
+            messageImages.add(messageImage);
+            APIManager.getManager().addMessageImages(messageImages);*/
+
+            /**
+             Полноценная lazy - система
+             Image связан четко с кэшем.
+             Имеются callback функции для загрузки.
+             Передаем калбэк функцию в getImagesNews(NewsImage img), и если
+             в кэше нет изображений отправляем запрос на сервер
+             */
         }
     }
 

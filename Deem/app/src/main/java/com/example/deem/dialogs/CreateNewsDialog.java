@@ -40,13 +40,12 @@ public class CreateNewsDialog extends DialogFragment {
         view.findViewById(R.id.editTextContentMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("++++++++++++++++");
 
                 if (newsList != null)
                 {
                     News news = new News();
                     news.setContent(((TextView)view.findViewById(R.id.editTextContentMessage)).toString());
-                    news.setDate(new Date(System.currentTimeMillis()).toString());
+                    news.setDate(new Date(System.currentTimeMillis()));
                     //news.setIdGroup();
                     newsList.add(news);
                     dismiss();

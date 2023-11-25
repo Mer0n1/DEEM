@@ -1,4 +1,4 @@
-package com.example.deem.utils;
+package com.example.restful.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

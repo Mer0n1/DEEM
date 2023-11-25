@@ -6,9 +6,12 @@ import com.example.restful.models.Chat;
 import com.example.restful.models.DataImage;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.IconImage;
 import com.example.restful.models.Image;
 import com.example.restful.models.Message;
+import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
+import com.example.restful.models.NewsImage;
 
 import java.util.List;
 
@@ -71,7 +74,13 @@ public interface Base {
 
     //image
     @GET("/image/getImage")
-    Call<Image> getImage(@Query("UUID") String UUID);
-    @POST("/image/addImages")
-    Call<Void> addImages(@Body List<DataImage> imgs);
+    Call<Image> getImage(@Query("UUID") String UUID, @Query("type") String type);
+    @GET("/image/getCount")
+    Call<Integer> getCount(@Query("id") Long id, @Query("type") String type);
+    @POST("/image/addImageIcon")
+    Call<Void> addIcon(@Body IconImage image);
+    @POST("/image/addImagesMessage")
+    Call<Void> addImagesMessage(@Body List<MessageImage> imgs);
+    @POST("/image/addImagesNews")
+    Call<Void> addImagesNews(@Body List<NewsImage> imgs);
 }

@@ -1,22 +1,14 @@
 package com.example.imageservice.controllers;
 
-import com.example.imageservice.models.DataImage;
-import com.example.imageservice.models.Image;
+import com.example.imageservice.models.*;
 import com.example.imageservice.services.ImageService;
-import com.google.common.io.Resources;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -26,7 +18,7 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @GetMapping("/getImageTest")
+    /*@GetMapping("/getImageTest")
     public ResponseEntity<byte[]> getImageTest() throws IOException {
         System.out.println("getImage");
         File imageFile = new File(Resources.getResource("").getFile());
@@ -43,35 +35,69 @@ public class ImageController {
             @RequestParam("description") String description,
             @RequestPart("image") MultipartFile image) {
         return ResponseEntity.ok("Uploaded successfully.");
-    }
+    }*/
 
+    @GetMapping("/getCount")
+    public Integer getCount(@RequestParam("type") String type,
+                            @RequestParam("id") Long id) {
+        System.out.println("getCount");
+        Integer result = -1;
+
+        if (type.equals("news_image"))
+            result = imageService.getCountImagesNews(id);
+        else if (type.equals("message_image"))
+            result = imageService.getCountImagesMessage(id);
+
+        return result;
+    }
 
     /** Вернуть изображение 1 сообщения */
     @GetMapping("/getImage")
-    public Image getImage(String UUID) {
+    public Image getImage(@RequestParam("UUID") String UUID,
+                          @RequestParam("type") String type) {
         System.out.println("getImage");
-        DataImage image = imageService.getImage(UUID);
-        Image imageResponse = null;
-
-        if (image != null)
-            imageResponse = image.getImage();
-
-        return imageResponse;
+        return imageService.getImage(UUID, type);
     }
 
-    @PostMapping("/addImages")
-    public void addImages(@RequestBody @Valid List<DataImage> imgs,
-                          BindingResult bindingResult) throws IOException {
-        System.out.println("addImages");
+    @PostMapping("/addImageIcon")
+    private void addImageIcon(@RequestBody @Valid IconImage image,
+                              BindingResult bindingResult, Principal principal) throws IOException {
+        System.out.println("addImageIcon");
 
         if (bindingResult.hasErrors())
             return;
 
-        imageService.initImages(imgs);
-        for (DataImage image : imgs)
-            imageService.saveImage(image.getImage().getImgEncode(), image.getType());
-        imageService.saveAll(imgs);
+        image.setPath(imageService.getPath("profile_icon") + principal.getName()+".png");
+        imageService.saveImage(image.getImage().getImgEncode(),  image.getPath());
+        imageService.saveIcon(image);
     }
 
+    @PostMapping("/addImagesNews")
+    private void addImagesNews(@RequestBody @Valid List<NewsImage> imgs,
+                               BindingResult bindingResult) throws IOException {
+        System.out.println("addImagesNews");
+
+        if (bindingResult.hasErrors())
+            return;
+
+        imageService.initNewsImages(imgs);
+        for (NewsImage image : imgs)
+            imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
+        imageService.saveAllNewsImages(imgs);
+    }
+
+    @PostMapping("/addImagesMessage")
+    private void addImagesMessage(@RequestBody @Valid List<MessageImage> imgs,
+                               BindingResult bindingResult) throws IOException {
+        System.out.println("addImagesMessage");
+
+        if (bindingResult.hasErrors())
+            return;
+
+        imageService.initMessageImages(imgs);
+        for (MessageImage image : imgs)
+            imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
+        imageService.saveAllMessageImages(imgs);
+    }
 
 }

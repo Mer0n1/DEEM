@@ -2,6 +2,8 @@ package com.example.restful.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.swing.ImageIcon;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 
@@ -14,6 +16,8 @@ public class Account {
     private int score;
     private int group_id;
     private Group group;
+
+    private Image imageIcon;
 
 
     public Long getId() {
@@ -86,5 +90,13 @@ public class Account {
 
     public void setGroup_id(int group_id) {
         this.group_id = group_id;
+    }
+
+    public Image getImageIcon() {
+        return imageIcon;
+    }
+
+    public void setImageIcon(Image imageIcon) {
+        this.imageIcon = imageIcon;
     }
 }

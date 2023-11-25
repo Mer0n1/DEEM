@@ -6,9 +6,12 @@ import com.example.restful.models.Chat;
 import com.example.restful.models.DataImage;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
+import com.example.restful.models.IconImage;
 import com.example.restful.models.Image;
 import com.example.restful.models.Message;
+import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
+import com.example.restful.models.NewsImage;
 
 import java.util.List;
 
@@ -57,7 +60,13 @@ public class Repository {
 
     public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
 
-    public Call<Image> getImage(String UUID) { return Handler.getInstance().getApi().getImage(UUID);}
+    public Call<Image> getImage(String UUID, String type) { return Handler.getInstance().getApi().getImage(UUID, type);}
 
-    public Call<Void> addImages(List<DataImage> imgs) { return Handler.getInstance().getApi().addImages(imgs); }
+    public Call<Void> addIcon(IconImage img) { return Handler.getInstance().getApi().addIcon(img);}
+
+    public Call<Void> addNewsImages(List<NewsImage> imgs) { return Handler.getInstance().getApi().addImagesNews(imgs);}
+
+    public Call<Void> addMessageImages(List<MessageImage> imgs) { return Handler.getInstance().getApi().addImagesMessage(imgs);}
+
+    public Call<Integer> getCountImages(Long id, String type) { return Handler.getInstance().getApi().getCount(id, type);}
 }

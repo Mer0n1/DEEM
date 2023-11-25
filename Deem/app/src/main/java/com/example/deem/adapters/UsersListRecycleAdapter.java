@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.deem.ChatActivity;
 import com.example.deem.ProfileActivity;
 import com.example.deem.R;
+import com.example.deem.utils.ImageUtil;
 import com.example.restful.models.Account;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecycleAdapter.User_Info> {
 
@@ -57,6 +60,7 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
         private TextView faculty_info;
         private TextView group_own_info;
         private TextView typePerson_info;
+        private CircleImageView icon;
 
         private Account user;
 
@@ -69,6 +73,7 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
             faculty_info    = itemView.findViewById(R.id.faculty_info);
             group_own_info  = itemView.findViewById(R.id.group_own_info);
             typePerson_info = itemView.findViewById(R.id.typePerson_info);
+            icon            = itemView.findViewById(R.id.profile_image);
 
             itemView.findViewById(R.id.OpenProfile_info).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,6 +107,12 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
             faculty_info.setText(user.getGroup().getFaculty());
             group_own_info.setText(user.getGroup().getName());
             typePerson_info.setText("Студент");
+
+            if (user.getImageIcon() != null)
+            if (user.getImageIcon().getImgEncode() != null)
+                icon.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
+                    user.getImageIcon().getImgEncode()));
+
         }
 
     }

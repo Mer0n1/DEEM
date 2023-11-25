@@ -10,7 +10,8 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.deem.databinding.ActivityProfileBinding;
-import com.example.deem.utils.GeneratorUUID;
+import com.example.deem.utils.ImageUtil;
+import com.example.restful.utils.GeneratorUUID;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.ImageLoadCallback;
@@ -62,17 +63,22 @@ public class ProfileActivity extends AppCompatActivity {
 
         activity.profileMyIcon.setImageBitmap(decodedBitmap);*/
 
-        //CallBack на загрузку изображений
-        String uuid = GeneratorUUID.getInstance().generateUUIDForIcon("Meron");
-        APIManager.getManager().GetImage(uuid, new ImageLoadCallback() {
+        //Технология CallBack на загрузку изображений
+        /*String uuid = GeneratorUUID.getInstance().generateUUIDForIcon(account.getUsername());
+        APIManager.getManager().GetImage(uuid, "profile_icon", new ImageLoadCallback() {
             @Override
             public void onImageLoaded(String decodeStr) {
-
-                byte[] decodedBytes = Base64.decode(decodeStr, Base64.DEFAULT);
-                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-                activity.profileMyIcon.setImageBitmap(decodedBitmap);
+                //byte[] decodedBytes = Base64.decode(decodeStr, Base64.DEFAULT);
+                //Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                if (bitmap != null)
+                    activity.profileMyIcon.setImageBitmap(bitmap);
             }
-        });
+        });*/
+
+        Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(account.getImageIcon().getImgEncode());
+        if (bitmap != null)
+            activity.profileMyIcon.setImageBitmap(bitmap);
     }
 
     private void SetListeners() {

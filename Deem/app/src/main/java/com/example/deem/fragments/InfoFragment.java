@@ -64,7 +64,6 @@ public class InfoFragment extends Fragment {
 
         initToolbar();
         initListAndRecycle();
-
     }
 
 
