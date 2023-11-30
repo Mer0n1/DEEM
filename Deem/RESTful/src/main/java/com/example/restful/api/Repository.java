@@ -3,7 +3,6 @@ package com.example.restful.api;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
-import com.example.restful.models.DataImage;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -15,7 +14,6 @@ import com.example.restful.models.NewsImage;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 public class Repository {
@@ -56,6 +54,8 @@ public class Repository {
 
     //public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
 
+    public Call<Void> createNews(News news) { return Handler.getInstance().getApi().createNews(news);}
+
     public Call<List<News>> getNews(String faculty) { return Handler.getInstance().getApi().getNews(faculty); }
 
     public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
@@ -63,10 +63,6 @@ public class Repository {
     public Call<Image> getImage(String UUID, String type) { return Handler.getInstance().getApi().getImage(UUID, type);}
 
     public Call<Void> addIcon(IconImage img) { return Handler.getInstance().getApi().addIcon(img);}
-
-    public Call<Void> addNewsImages(List<NewsImage> imgs) { return Handler.getInstance().getApi().addImagesNews(imgs);}
-
-    public Call<Void> addMessageImages(List<MessageImage> imgs) { return Handler.getInstance().getApi().addImagesMessage(imgs);}
 
     public Call<Integer> getCountImages(Long id, String type) { return Handler.getInstance().getApi().getCount(id, type);}
 }

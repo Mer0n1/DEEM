@@ -2,6 +2,7 @@ package com.example.restful.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +13,9 @@ public class News {
     private String content;
     private Date date;
     private Long idGroup;
+    private String faculty;
 
-    private List<Image> ListImg;
+    private List<NewsImage> images;
 
     /*public String getAuthor() {
         return author;
@@ -39,14 +41,6 @@ public class News {
         this.date = date;
     }
 
-    public List<Image> getListImg() {
-        return ListImg;
-    }
-
-    public void setListImg(List<Image> listImg) {
-        ListImg = listImg;
-    }
-
     public Long getIdGroup() {
         return idGroup;
     }
@@ -61,5 +55,21 @@ public class News {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public List<NewsImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<NewsImage> images) {
+        this.images = images;
     }
 }

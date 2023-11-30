@@ -1,5 +1,6 @@
 package com.example.deem.adapters;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 
 import java.util.List;
@@ -67,6 +70,17 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
         public void setData(Message message) {
             textMessage.setText(message.getText());
+
+
+            if (!message.isNoMessages() && (message.getImages() == null
+                    || message.getImages().size() == 0))
+                APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
+                    @Override
+                    public void onImageLoaded(String decodeStr) {
+                        Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                        System.err.println("ПОБЕДА MESSAGE ");
+                    }
+                });
         }
 
     }

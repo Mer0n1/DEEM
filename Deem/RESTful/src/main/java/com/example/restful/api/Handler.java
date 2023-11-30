@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import okhttp3.Interceptor;
@@ -21,7 +22,10 @@ public class Handler {
     private static String token;
 
     public Handler() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+
         Gson gson = new GsonBuilder()
+                .setDateFormat(dateFormat.toPattern())
                 .setLenient()
                 .create();
 

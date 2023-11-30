@@ -1,6 +1,9 @@
 package com.example.deem;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -8,10 +11,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.deem.dialogs.CreateNewsDialog;
 import com.example.deem.fragments.ChatsContainerFragment;
 import com.example.deem.fragments.EventsFragment;
 import com.example.deem.fragments.FirstPageFragment;
@@ -19,7 +25,9 @@ import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
-import com.example.restful.utils.GeneratorUUID;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EventsFragment eventsFragment;
 
     public enum FragmentType { first, group, info_, messenger, events }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,9 +171,25 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bottom_info: bottom_info.setBackgroundResource(R.drawable.icon_news_pressed); break;
             case R.id.bottom_events: bottom_events.setBackgroundResource(R.drawable.icon_events_pressed); break;
         }
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            InputStream inputStream = null;
+            try {
+                inputStream = getContentResolver().openInputStream(selectedImageUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
+            CreateNewsDialog.addDrawable(drawable);
+        }
     }
 }
-
-
 

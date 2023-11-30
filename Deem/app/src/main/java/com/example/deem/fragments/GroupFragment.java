@@ -22,6 +22,8 @@ import com.example.restful.models.News;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class GroupFragment extends Fragment {
 
     private FrameLayout main_layout;
@@ -53,8 +55,13 @@ public class GroupFragment extends Fragment {
         myGroup = APIManager.getManager().myAccount.getGroup();
         if (myGroup == null) return;
 
+        //Установим значок
+        CircleImageView circleImageView = main_layout.findViewById(R.id.icon_group_main);
+        circleImageView.setImageResource(R.drawable.icon_a); //TODO
+
         //init news
         List<News> allNews = APIManager.getManager().listNews;
+        if (allNews == null) return;
         newsList = new ArrayList<>();
 
         for (News news : allNews)
@@ -74,6 +81,13 @@ public class GroupFragment extends Fragment {
                 createNewsDialog.setNewsList(newsList);
                 createNewsDialog.show(getActivity().getSupportFragmentManager(), "creation_menu");
                 newsListRecycleAdapter.notifyDataSetChanged();
+            }
+        });
+
+        main_layout.findViewById(R.id.chat_button_group).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

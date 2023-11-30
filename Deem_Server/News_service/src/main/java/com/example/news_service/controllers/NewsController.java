@@ -2,6 +2,8 @@ package com.example.news_service.controllers;
 
 import com.example.news_service.models.News;
 import com.example.news_service.services.NewsService;
+import com.example.news_service.services.RestTemplateService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.io.Resources;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -30,6 +32,8 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
+    @Autowired
+    private RestTemplateService restTemplateService;
 
 
     @GetMapping("/getNews")
@@ -49,12 +53,19 @@ public class NewsController {
 
     @PostMapping("/createNews")
     public void createNews(@RequestBody @Valid News news,
-                           BindingResult bindingResult) {
+                           BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("createNews");
 
         if (bindingResult.hasErrors())
             return;
 
-        newsService.createNews(news);
+        Long id = newsService.createNews(news).getId();
+
+        //Сохранение изображений
+        if (news.getImages() != null)
+            if (news.getImages().size() != 0) {
+                news.getImages().forEach(x -> x.setId_news(id));
+                restTemplateService.addImagesNews(news.getImages());
+            }
     }
 }

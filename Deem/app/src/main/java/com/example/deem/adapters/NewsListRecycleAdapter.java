@@ -17,7 +17,6 @@ import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 
 import java.util.List;
-import java.util.Optional;
 
 public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycleAdapter.ItemNews> {
 
@@ -45,7 +44,10 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         return newsList.size();
     }
 
-    class ItemNews extends RecyclerView.ViewHolder {
+
+
+
+class ItemNews extends RecyclerView.ViewHolder {
         private TextView date;
         private TextView content;
         private TextView name_group;
@@ -75,14 +77,14 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 name_group.setText(group.getName());
 
             //Загрузка изображений
-            if (news.getListImg() != null) {
-                if (news.getListImg().size() != 0)
-                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(news.getListImg().get(0).getImgEncode())); //TODO
+            if (news.getImages() != null) {
+                if (news.getImages().size() != 0)
+                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
+                            news.getImages().get(0).getImage().getImgEncode())); //TODO
             } else
-                APIManager.getManager().getNewsImages(news, new ImageLoadCallback() {
+                APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
                     public void onImageLoaded(String decodeStr) {
-                        System.err.println("ПОБЕДА");
                         imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
                     }
                 });

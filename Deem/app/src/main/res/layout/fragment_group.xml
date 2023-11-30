@@ -7,7 +7,7 @@
     android:background="#f2f2f2">
 
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -88,6 +88,7 @@
                         />
                 </LinearLayout>
 
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/icon_group_main"
                     android:layout_width="100dp"
@@ -136,6 +137,6 @@
         </LinearLayout>
 
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>

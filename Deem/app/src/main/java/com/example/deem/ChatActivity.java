@@ -18,21 +18,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
-import com.example.restful.models.IconImage;
 import com.example.restful.models.MessageImage;
-import com.example.restful.models.NewsImage;
+import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.Chat;
-import com.example.restful.models.DataImage;
 import com.example.restful.models.Image;
 import com.example.restful.models.Message;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -50,6 +49,8 @@ public class ChatActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable updateRunnable;
 
+    private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void init() {
 
+        FixedImages = new ArrayList<>();
         activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
         if (APIManager.getManager().listChats != null) {
@@ -72,15 +74,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         loadChat();
-
-        //init recycle
-        recyclerView = findViewById(R.id.list_messages);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        chatRecycleAdapter = new ChatRecycleAdapter(messages);
-        recyclerView.setAdapter(chatRecycleAdapter);
-        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
-
-        //
+        initRecycle();
         SetListeners();
 
         //
@@ -96,7 +90,7 @@ public class ChatActivity extends AppCompatActivity {
         };
         updateRunnable.run();
 
-        //
+        //image loader
         activityChatBinding.imageExample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,54 +115,14 @@ public class ChatActivity extends AppCompatActivity {
             }
             Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
 
-            //ImageView view = activityChatBinding.imageView;
-            //view.setBackground(drawable);
-
-            //Отправка изображения на сервер
-            DataImage dataImage = new DataImage();
-            dataImage.setType("message_image");
-            dataImage.setName("Test");
-            dataImage.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
-                    ImageUtil.getInstance().getDate(), "Tao"/*APIManager.getManager().myAccount.getUsername()*/));
-
             String str = ImageUtil.getInstance().ConvertToString(drawable);
-
             Image image = new Image();
             image.setImgEncode(str);
-            dataImage.setImage(image);
 
-            List<DataImage> imgs = new ArrayList<>();
-            imgs.add(dataImage);
-
-            //APIManager.getManager().addImages(imgs);
-
-            //news
-            /*NewsImage newsImage = new NewsImage();
-            newsImage.setUuid(GeneratorUUID.getInstance().generateUUIDForNews(ImageUtil.getInstance().getDate(), "G"));
-            newsImage.setImage(image);
-            newsImage.setId_news(1L);
-            List<NewsImage> newsImages = new ArrayList<>();
-            newsImages.add(newsImage);
-            APIManager.getManager().addNewsImages(newsImages);*/
-
-            //message
-            /*MessageImage messageImage = new MessageImage();
-            messageImage.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
-                    ImageUtil.getInstance().getDate(), APIManager.getManager().myAccount.getUsername()
-            ));
+            MessageImage messageImage = new MessageImage();
             messageImage.setImage(image);
-            messageImage.setIdMessage(18L);
-            List<MessageImage> messageImages = new ArrayList<>();
-            messageImages.add(messageImage);
-            APIManager.getManager().addMessageImages(messageImages);*/
 
-            /**
-             Полноценная lazy - система
-             Image связан четко с кэшем.
-             Имеются callback функции для загрузки.
-             Передаем калбэк функцию в getImagesNews(NewsImage img), и если
-             в кэше нет изображений отправляем запрос на сервер
-             */
+            FixedImages.add(messageImage);
         }
     }
 
@@ -185,24 +139,32 @@ public class ChatActivity extends AppCompatActivity {
                 Message message = new Message();
                 message.setText(content);
                 message.setAuthor(APIManager.getManager().myAccount.getId());
+                message.setImages(FixedImages);
 
+                //Создание uuid
+                FixedImages.forEach(x->x.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
+                         DateUtil.getInstance().getDateToForm(new Date(System.currentTimeMillis())),
+                        APIManager.getManager().myAccount.getUsername()
+                )));
+
+                //Игнорирование рекурсии
                 Chat chatformessage = new Chat();
                 chatformessage.setId(currentChat.getId());
                 message.setChat(chatformessage);
 
                 messages.add(message);
-                chatRecycleAdapter.notifyDataSetChanged();
 
                 if (!newChat)
                     APIManager.getManager().sendMessage(message);
                 else
                     APIManager.getManager().sendNewChat(currentChat);
 
-                message.setChat(currentChat)
-                ;
+                message.setChat(currentChat);
+
                 //Update Interface
                 editText.setText("");
                 recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+                chatRecycleAdapter.notifyDataSetChanged();
             }
         });
 
@@ -213,6 +175,7 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 
     private void loadChat() {
@@ -252,6 +215,14 @@ public class ChatActivity extends AppCompatActivity {
             currentChat.setUsers(usersOfChat);
             newChat = true;
         }
+    }
+
+    private void initRecycle() {
+        recyclerView = findViewById(R.id.list_messages);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        chatRecycleAdapter = new ChatRecycleAdapter(messages);
+        recyclerView.setAdapter(chatRecycleAdapter);
+        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
     }
 
     public void sort() {

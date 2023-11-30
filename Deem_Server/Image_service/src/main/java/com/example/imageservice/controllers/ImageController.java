@@ -2,6 +2,7 @@ package com.example.imageservice.controllers;
 
 import com.example.imageservice.models.*;
 import com.example.imageservice.services.ImageService;
+import com.example.imageservice.util.Validator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,6 +19,8 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private Validator validator;
 
     /*@GetMapping("/getImageTest")
     public ResponseEntity<byte[]> getImageTest() throws IOException {
@@ -73,11 +77,10 @@ public class ImageController {
     }
 
     @PostMapping("/addImagesNews")
-    private void addImagesNews(@RequestBody @Valid List<NewsImage> imgs,
-                               BindingResult bindingResult) throws IOException {
+    private void addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
         System.out.println("addImagesNews");
 
-        if (bindingResult.hasErrors())
+        if (validator.hasErrorsNewsImages(imgs))
             return;
 
         imageService.initNewsImages(imgs);
@@ -87,11 +90,10 @@ public class ImageController {
     }
 
     @PostMapping("/addImagesMessage")
-    private void addImagesMessage(@RequestBody @Valid List<MessageImage> imgs,
-                               BindingResult bindingResult) throws IOException {
+    private void addImagesMessage(@RequestBody List<MessageImage> imgs) throws IOException {
         System.out.println("addImagesMessage");
 
-        if (bindingResult.hasErrors())
+        if (validator.hasErrorsMessageImages(imgs))
             return;
 
         imageService.initMessageImages(imgs);
@@ -100,4 +102,28 @@ public class ImageController {
         imageService.saveAllMessageImages(imgs);
     }
 
+    @PostMapping("/test")
+    private void test(@RequestBody List<Image> img,
+                      BindingResult bindingResult) {
+        System.out.println("test " + img.size());
+
+        if (bindingResult.hasErrors())
+            System.out.println(bindingResult.getAllErrors());
+    }
+
+    @GetMapping("/test1")
+    private List<Image> test1() {
+        List<Image> imgs = new ArrayList<>();
+
+        Image image = new Image();
+        image.setImgEncode("TTTT");
+
+        Image image2 = new Image();
+        image2.setImgEncode("SSSS");
+
+        imgs.add(image);
+        imgs.add(image2);
+
+        return imgs;
+    }
 }

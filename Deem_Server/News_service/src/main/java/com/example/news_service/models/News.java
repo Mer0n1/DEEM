@@ -1,5 +1,6 @@
 package com.example.news_service.models;
 
+import com.example.news_service.models.images.NewsImage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,13 +20,8 @@ public class News {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty(message = "content must not be null")
     @Column(name = "content")
     private String content;
-
-    @NotEmpty(message = "type must not be null")
-    @Column(name = "standart")
-    private String type;
 
     @NotEmpty(message = "Faculty not need be null")
     @Column(name = "faculty")
@@ -40,6 +36,5 @@ public class News {
     private Date date;
 
     @Transient
-    private List<String> pathsImg;
-
+    private List<NewsImage> images;
 }

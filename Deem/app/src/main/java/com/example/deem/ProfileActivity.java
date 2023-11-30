@@ -76,9 +76,19 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });*/
 
-        Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(account.getImageIcon().getImgEncode());
-        if (bitmap != null)
-            activity.profileMyIcon.setImageBitmap(bitmap);
+        ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
+            @Override
+            public void onImageLoaded(String decodeStr) {
+                Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                activity.profileMyIcon.setImageBitmap(bitmap);
+            }
+        };
+
+        if (account.getImageIcon() != null) {
+            imageLoadCallback.onImageLoaded(account.getImageIcon().getImgEncode());
+        } else
+            APIManager.getManager().getIconImageLazy(account, imageLoadCallback);
+
     }
 
     private void SetListeners() {

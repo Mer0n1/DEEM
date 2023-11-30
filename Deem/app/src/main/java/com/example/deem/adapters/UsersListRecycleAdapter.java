@@ -1,6 +1,7 @@
 package com.example.deem.adapters;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import com.example.deem.ChatActivity;
 import com.example.deem.ProfileActivity;
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
+import com.example.restful.models.ImageLoadCallback;
 
 import java.util.List;
 
@@ -108,10 +111,21 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
             group_own_info.setText(user.getGroup().getName());
             typePerson_info.setText("Студент");
 
-            if (user.getImageIcon() != null)
-            if (user.getImageIcon().getImgEncode() != null)
-                icon.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
-                    user.getImageIcon().getImgEncode()));
+
+            //Загрузка изображения
+            ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
+                @Override
+                public void onImageLoaded(String decodeStr) {
+                    Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                    icon.setImageBitmap(bitmap);
+                }
+            };
+
+            if (user.getImageIcon() != null) {
+                imageLoadCallback.onImageLoaded(user.getImageIcon().getImgEncode());
+            } else
+                APIManager.getManager().getIconImageLazy(user, imageLoadCallback);
+
 
         }
 

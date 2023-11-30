@@ -5,9 +5,11 @@
       <map>
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-ldpi/background_n_message.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-ldpi/background_received_message.xml" value="0.1" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-mdpi/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-v24/background_input.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-v24/button_style_black.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/background_my_message.xml" value="0.1" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/background_sent_message.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/layout_bg1.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/layout_bg1_white.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/shadow.xml" value="0.1" />
@@ -28,6 +30,7 @@
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_users.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_messenger.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_news.xml" value="0.1675929884566054" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_options.xml" value="0.2" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_chat_story.xml" value="0.25" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_event.xml" value="0.25" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_group_info.xml" value="0.33" />

@@ -19,8 +19,9 @@ public class NewsService {
         return repository.findAllByFaculty(faculty);
     }
 
+
     @Transactional
-    public void createNews(News news) {
-        repository.save(news);
+    public News createNews(News news) {
+        return repository.save(news);
     }
 }

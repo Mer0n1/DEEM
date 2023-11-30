@@ -1,5 +1,6 @@
 package com.example.messenger_service.models;
 
+import com.example.messenger_service.models.Image.MessageImage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "message")
@@ -36,4 +38,7 @@ public class Message {
     @NotNull(message = "author must not be empty")
     @Column(name = "id_account")
     private Long author;
+
+    @Transient
+    private List<MessageImage> images;
 }

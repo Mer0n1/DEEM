@@ -1,16 +1,12 @@
-package com.example.messenger_service.services;
+package com.example.news_service.services;
 
-import com.example.messenger_service.dao.ChatDAO;
-import com.example.messenger_service.models.Image.MessageImage;
-import com.example.messenger_service.models.Message;
-import com.example.messenger_service.models.MessagePush;
+import com.example.news_service.models.images.NewsImage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,17 +14,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-
 @Service
-public class MessengerServiceClient {
-
+public class RestTemplateService {
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private ChatService chatService;
 
-    @Value("http://localhost:8087/push/sendMessageToClient")
-    private String pushServiceUrl;
     @Value("http://localhost:8086/image")
     private String authServiceUrl;
 
@@ -38,34 +28,20 @@ public class MessengerServiceClient {
     private MultiValueMap<String, String> headers;
     private HttpEntity<String> entity;
 
-    MessengerServiceClient() {
+    RestTemplateService() {
         headers = new LinkedMultiValueMap<>();
         personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiaWF0IjoxNjk5NjEzODE4LCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNTk2MTM4MTh9.lEadKCrmESKfqx2-ghLxCeJGuLC20RvB4VJMy_rNMbU";
         headers.add("Authorization", "Bearer " + personal_key);
         headers.set("Content-Type", "application/json");
 
-        entity = new HttpEntity<>("body", headers);
+        entity = new HttpEntity<>("", headers);
     }
 
-    public void pushMessageTo(Message message) throws JsonProcessingException {
-        MessagePush messagePush = new MessagePush();
-        messagePush.setMessage(message);
-        messagePush.setReceivers(chatService.getChat(message.getChat().getId()).getUsers());
-
-        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
-                .writeValueAsString(messagePush);
-
-        entity = new HttpEntity<>(jsonMessage, headers);
-
-        ResponseEntity<Void> response = restTemplate.exchange(
-                pushServiceUrl, HttpMethod.POST, entity, Void.class);
-    }
-
-    public void addImagesNews(List<MessageImage> imgs) throws JsonProcessingException {
+    public void addImagesNews(List<NewsImage> imgs) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(imgs);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(authServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
+        restTemplate.exchange(authServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
     }
 }

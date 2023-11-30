@@ -5,7 +5,7 @@ package com.example.restful.models;
 public class MessageImage {
     private Long id;
     private String uuid;
-    private Long IdMessage;
+    private Long id_message;
     private Image image;
 
     public Long getId() {
@@ -14,10 +14,6 @@ public class MessageImage {
 
     public String getUuid() {
         return uuid;
-    }
-
-    public Long getIdMessage() {
-        return IdMessage;
     }
 
     public Image getImage() {
@@ -32,11 +28,15 @@ public class MessageImage {
         this.uuid = uuid;
     }
 
-    public void setIdMessage(Long idMessage) {
-        IdMessage = idMessage;
-    }
-
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public Long getId_message() {
+        return id_message;
+    }
+
+    public void setId_message(Long id_message) {
+        this.id_message = id_message;
     }
 }

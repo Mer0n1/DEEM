@@ -32,7 +32,14 @@ public class MessageController {
         if (bindingResult.hasErrors())
             return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 
-        messageService.save(message);
+        Message actualObject = messageService.save(message);
+
+        if (message.getImages() != null)
+            if (message.getImages().size() != 0) {
+                message.getImages().forEach(x -> x.setId_message(actualObject.getId()));
+                messengerServiceClient.addImagesNews(message.getImages());
+            }
+
 
         //send
         messengerServiceClient.pushMessageTo(message);
@@ -55,5 +62,6 @@ public class MessageController {
 
         return new ArrayList<>();
     }
+
 
 }

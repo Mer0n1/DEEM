@@ -9,7 +9,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group {
 
-    private int id;
+    private Long id;
     private int course;
     private int score;
     private String name;
@@ -18,7 +18,7 @@ public class Group {
     private List<Account> users;
     private List<News> news;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -42,7 +42,7 @@ public class Group {
         return date_create;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
