@@ -30,6 +30,8 @@ public class AccountService {
         return repository.findAll();
     }
 
+    public List<Long> getUsersOfGroup(Long idGroup) { return repository.findUsersOfGroup(idGroup);}
+
 
     public List<Account> sort(List<Account> accounts) {
         List<Account> tops = new ArrayList<>();

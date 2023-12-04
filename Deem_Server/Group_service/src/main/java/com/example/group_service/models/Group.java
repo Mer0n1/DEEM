@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "di_group")
@@ -17,7 +18,7 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_id")
-    private int id;
+    private Long id;
 
     @NotEmpty(message = "faculty must not be null")
     @Column(name = "faculty")
@@ -40,6 +41,9 @@ public class Group {
     @Column(name = "date_create")
     private Date date_create;
 
+    @Column(name = "chat_id")
+    private Long chat_id;
 
-    //news
+    @Transient
+    private List<Long> users;
 }

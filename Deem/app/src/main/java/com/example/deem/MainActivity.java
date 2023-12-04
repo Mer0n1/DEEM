@@ -63,14 +63,17 @@ public class MainActivity extends AppCompatActivity {
 
                 if (v == findViewById(R.id.bottom_first))
                     OpenMenu(FragmentType.first);
-                if (v == findViewById(R.id.bottom_group))
-                    OpenMenu(FragmentType.group);
                 if (v == findViewById(R.id.bottom_info))
                     OpenMenu(FragmentType.info_);
                 if (v == findViewById(R.id.bottom_message))
                     OpenMenu(FragmentType.messenger);
                 if (v == findViewById(R.id.bottom_events))
                     OpenMenu(FragmentType.events);
+                if (v == findViewById(R.id.bottom_group)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", APIManager.getManager().myAccount.getGroup().getName());
+                    OpenMenu(FragmentType.group, bundle);
+                }
 
 
                 if (v == findViewById(R.id.profile_icon)) {
@@ -108,10 +111,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Отличие от OpenFragment - более высокий уровень. Открывает фрагмент изменяя дизайн*/
-    public void OpenMenu(FragmentType fragmentType) {
+    public void OpenMenu(FragmentType fragmentType, Bundle bundle) {
         Fragment fragment = firstPageFragment;
-        if (fragmentType == FragmentType.group)
-            fragment =  groupFragment;
+        if (fragmentType == FragmentType.group) {
+            fragment = groupFragment;
+
+            //Bundle bundle = new Bundle();
+            //bundle.putString("name", APIManager.getManager().myAccount.getGroup().getName());
+            //fragment.setArguments(bundle);
+        }
         if (fragmentType == FragmentType.messenger)
             fragment = chatsContainerFragment;
         if (fragmentType == FragmentType.info_)
@@ -133,9 +141,12 @@ public class MainActivity extends AppCompatActivity {
         if (fragment.getClass() == ChatsContainerFragment.class)
             changeDesignOfIcon(R.id.bottom_message);
 
+        fragment.setArguments(bundle);
         OpenFragment(fragment, R.id.fragment_main, false);
     }
-
+    public void OpenMenu(FragmentType fragmentType) {
+        OpenMenu(fragmentType, new Bundle());
+    }
 
     private void InitResource() {
         Toolbar.setActivity(this);
@@ -192,4 +203,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+
 

@@ -127,7 +127,7 @@ public class InfoFragment extends Fragment {
         //Recycle
         recyclerView = main_layout.findViewById(R.id.news_feed);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        newsListRecycleAdapter = new NewsListRecycleAdapter(listNews);
+        newsListRecycleAdapter = new NewsListRecycleAdapter(listNews, this);
         recyclerView.setAdapter(newsListRecycleAdapter);
     }
 

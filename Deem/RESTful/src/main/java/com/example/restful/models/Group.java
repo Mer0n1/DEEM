@@ -10,13 +10,16 @@ import java.util.List;
 public class Group {
 
     private Long id;
+    private Long chat_id;
     private int course;
     private int score;
     private String name;
     private String faculty;
     private Date date_create;
-    private List<Account> users;
+    private List<Long> users;
     private List<News> news;
+
+    private List<Account> accounts; //устанавливаем после загрузки users
 
     public Long getId() {
         return id;
@@ -66,19 +69,35 @@ public class Group {
         this.date_create = date_create;
     }
 
-    public List<Account> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<Account> users) {
-        this.users = users;
-    }
-
     public List<News> getNews() {
         return news;
     }
 
     public void setNews(List<News> news) {
         this.news = news;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public void setUsers(List<Long> users) {
+        this.users = users;
+    }
+
+    public List<Long> getUsers() {
+        return users;
+    }
+
+    public Long getChat_id() {
+        return chat_id;
+    }
+
+    public void setChat_id(Long chat_id) {
+        this.chat_id = chat_id;
     }
 }

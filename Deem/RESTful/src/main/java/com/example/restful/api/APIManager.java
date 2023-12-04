@@ -19,6 +19,7 @@ import com.example.restful.utils.GeneratorUUID;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,11 +31,11 @@ public class APIManager {
     private static APIManager manager;
     private static PushClient pushClient;
 
-    public List<Account> listAccounts;
-    public List<Group> listGroups;
-    public List<Chat> listChats;
-    public List<News> listNews;
-    public List<Event> listEvents;
+    public volatile List<Account> listAccounts;
+    public volatile List<Group> listGroups;
+    public volatile List<Chat> listChats;
+    public volatile List<News> listNews;
+    public volatile List<Event> listEvents;
 
     public Account myAccount;
 
@@ -134,6 +135,7 @@ public class APIManager {
                     @Override
                     public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                         listAccounts = response.body();
+                        buildGroups();
 
                         //загрузим иконки аккаунтов standart
                         /*for (Account account : listAccounts)
@@ -165,6 +167,7 @@ public class APIManager {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                 listGroups = response.body();
+                buildGroups();
             }
 
             @Override
@@ -211,6 +214,23 @@ public class APIManager {
 
             }
         });
+    }
+
+    private void buildGroups() {
+        if (listGroups != null && listAccounts != null)
+            for (Group group : listGroups) {
+                if (group.getAccounts() != null) continue;
+                List<Account> accounts = new ArrayList<>();
+                List<Long> users = group.getUsers();
+
+                for (Long i : users) {
+                    Optional<Account> account = listAccounts.stream().filter(x->x.getId() == i).findAny();
+                    if (!account.isEmpty())
+                        accounts.add(account.get());
+                }
+
+                group.setAccounts(accounts);
+            }
     }
 
     public void sendMessage(Message message) {
@@ -373,7 +393,7 @@ public class APIManager {
                     if (account == null) return;
                     String author = account.getUsername();
 
-                    String UUID = GeneratorUUID.getInstance().generateUUIDForNews(
+                    String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
                             DateUtil.getInstance().getDateToForm(message.getDate()), author);
 
                     Repository.getInstance().getImage(UUID, "message_image").enqueue(new Callback<Image>() {

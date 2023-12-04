@@ -55,7 +55,7 @@ public class FirstPageFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.HORIZONTAL, false);
 
-        recycleAdapterNews = new NewsListRecycleAdapter(listNews);
+        recycleAdapterNews = new NewsListRecycleAdapter(listNews, this);
         recyclerView = main_layout.findViewById(R.id.news_administrative);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recycleAdapterNews);

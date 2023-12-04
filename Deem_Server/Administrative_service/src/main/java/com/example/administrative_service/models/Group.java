@@ -11,6 +11,5 @@ public class Group {
     private String name;
     private String faculty;
     private Date date_create;
-
-
+    private Long chat_id;
 }

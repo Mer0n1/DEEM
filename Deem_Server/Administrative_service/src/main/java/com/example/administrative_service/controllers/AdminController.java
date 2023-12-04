@@ -63,6 +63,7 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
+        //TODO привязка студента к чату группы
         restTemplateService.createStudent(form.getAccount());
         enrollmentStoryService.save(form);
     }
@@ -74,6 +75,8 @@ public class AdminController {
 
         if (bindingResult.hasErrors())
             return;
+
+        //TODO: сначала создадим чат
 
         restTemplateService.createGroup(form.getGroup());
         groupCreationFormService.save(form); //maybe errors

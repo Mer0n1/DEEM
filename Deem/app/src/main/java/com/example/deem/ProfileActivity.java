@@ -2,85 +2,77 @@ package com.example.deem;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.deem.databinding.ActivityProfileBinding;
+import com.example.deem.fragments.OptionsFragment;
 import com.example.deem.utils.ImageUtil;
-import com.example.restful.utils.GeneratorUUID;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.ImageLoadCallback;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
+/** Обязательное требование: Extra Nickname:название_аккаунта */
 public class ProfileActivity extends AppCompatActivity {
 
-    private ActivityProfileBinding activity;
+    private ActivityProfileBinding binding;
     private Account account;
+
+    private OptionsFragment optionsFragment;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = ActivityProfileBinding.inflate(getLayoutInflater());
-        setContentView(activity.getRoot());
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         init();
     }
 
     private void init() {
 
+        optionsFragment = new OptionsFragment();
+
         String nickname = getIntent().getStringExtra("Nickname");
         if (nickname.isEmpty())
             return;
 
-        account = APIManager.getManager().listAccounts.stream()
+        if (nickname.equals(APIManager.getManager().myAccount.getUsername()))
+            account = APIManager.getManager().myAccount;
+        else
+            account = APIManager.getManager().listAccounts.stream()
                 .filter(s->s.getUsername().equals(nickname)).findAny().orElse(null);
 
 
         //Set information
-        activity.profileFullName.setText(account.getSurname() + " " + account.getName() + " " + account.getFathername());
-        activity.profileCourseInf.setText(account.getGroup().getCourse() + " " + account.getGroup().getFaculty());
-        activity.profileGroupNumber.setText(account.getGroup().getName());
-        activity.profileMail.setText("----");
-        activity.myScore.setText(String.valueOf(account.getScore()));
-        activity.profilePersonalId.setText(String.valueOf(account.getId())); //personal identifier
+        binding.profileFullName.setText(account.getSurname() + " " + account.getName() + " " + account.getFathername());
+        binding.profileCourseInf.setText(account.getGroup().getCourse() + " " + account.getGroup().getFaculty());
+        binding.profileGroupNumber.setText(account.getGroup().getName());
+        binding.profileMail.setText("----");
+        binding.myScore.setText(String.valueOf(account.getScore()));
+        binding.profilePersonalId.setText(String.valueOf(account.getId())); //personal identifier
+        binding.profileNicknameInf.setText(account.getUsername());
 
         SetListeners();
 
-        //test
-        //Bitmap bitmap = BitmapFactory.decodeStream(APIManager.getManager().thes);
-        //activity.profileMyIcon.setImageBitmap(bitmap);
-
-        //test with image + news
-        /*System.out.println("listNews " + APIManager.getManager().listNews.size());
-        News news = APIManager.getManager().listNews.get(0);
-        byte[] decodedBytes = Base64.decode(news.getListImg().get(0), Base64.DEFAULT);
-        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-
-        activity.profileMyIcon.setImageBitmap(decodedBitmap);*/
-
-        //Технология CallBack на загрузку изображений
-        /*String uuid = GeneratorUUID.getInstance().generateUUIDForIcon(account.getUsername());
-        APIManager.getManager().GetImage(uuid, "profile_icon", new ImageLoadCallback() {
-            @Override
-            public void onImageLoaded(String decodeStr) {
-                //byte[] decodedBytes = Base64.decode(decodeStr, Base64.DEFAULT);
-                //Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-                Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
-                if (bitmap != null)
-                    activity.profileMyIcon.setImageBitmap(bitmap);
-            }
-        });*/
-
+        //Установка изображений
         ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
             @Override
             public void onImageLoaded(String decodeStr) {
                 Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
-                activity.profileMyIcon.setImageBitmap(bitmap);
+                binding.profileMyIcon.setImageBitmap(bitmap);
             }
         };
 
@@ -89,17 +81,32 @@ public class ProfileActivity extends AppCompatActivity {
         } else
             APIManager.getManager().getIconImageLazy(account, imageLoadCallback);
 
+        optionsFragment.UpdateDrawableIcon(binding.profileMyIcon.getDrawable());
+
+        //
+        if (!nickname.equals(APIManager.getManager().myAccount.getUsername()))
+            setVisibilityBottom(View.GONE);
+        else
+            setVisibilityBottom(View.VISIBLE);
+
+    }
+
+    private void setVisibilityBottom(int code) {
+        binding.exitFromAccount.setVisibility(code);
+        binding.options.setVisibility(code);
+        binding.supports.setVisibility(code);
+        binding.empty.setVisibility(code);
     }
 
     private void SetListeners() {
-        activity.buttonBackProfile.setOnClickListener( new View.OnClickListener() {
+        binding.buttonBackProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        activity.exitFromAccount.setOnClickListener(new View.OnClickListener() {
+        binding.exitFromAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, AuthActivity.class);
@@ -107,8 +114,39 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        binding.options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.profileLayout.setVisibility(View.GONE);
+
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.profile_fragment, optionsFragment);
+                fragmentTransaction.commit();
+            }
+        });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            InputStream inputStream = null;
+            try {
+                inputStream = getContentResolver().openInputStream(selectedImageUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
+            optionsFragment.UpdateDrawableIcon(drawable);
+
+        }
+
+    }
 
 
 }

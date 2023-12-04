@@ -53,7 +53,6 @@ public class ListUsersFragment extends Fragment {
         main_layout = (FrameLayout) inflater.inflate(R.layout.fragment_list_users, container, false);
 
         init();
-        System.out.println("List|Us " + getFragmentManager().getBackStackEntryCount());
 
         return main_layout;
     }

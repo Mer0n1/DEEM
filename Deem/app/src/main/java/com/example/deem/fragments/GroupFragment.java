@@ -1,35 +1,37 @@
 package com.example.deem.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.deem.ChatActivity;
 import com.example.deem.utils.Toolbar;
 import com.example.deem.dialogs.CreateNewsDialog;
 import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.databinding.FragmentGroupBinding;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.Account;
 import com.example.restful.models.Group;
 import com.example.restful.models.News;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class GroupFragment extends Fragment {
 
     private FrameLayout main_layout;
     private FragmentGroupBinding fragmentGroupBinding;
 
-    private Group myGroup;
+    private Group group;
     private List<News> newsList;
 
     private NewsListRecycleAdapter newsListRecycleAdapter;
@@ -52,23 +54,26 @@ public class GroupFragment extends Fragment {
 
     public void init() {
         initToolbar();
-        myGroup = APIManager.getManager().myAccount.getGroup();
-        if (myGroup == null) return;
+
+        if (newsList != null) { //очистим список записей группы
+            newsList.clear();
+            newsListRecycleAdapter.notifyDataSetChanged();
+        }
+
+        if (checkWorkingCondition())
+            return;
+
+        //Инициализация значений
+        ((TextView)main_layout.findViewById(R.id.quality_users)).setText(
+                String.valueOf(group.getAccounts().size()) + " участников");
+        ((TextView)main_layout.findViewById(R.id.score)).setText(String.valueOf(CountAverageValue()));
 
         //Установим значок
-        CircleImageView circleImageView = main_layout.findViewById(R.id.icon_group_main);
-        circleImageView.setImageResource(R.drawable.icon_a); //TODO
-
-        //init news
-        List<News> allNews = APIManager.getManager().listNews;
-        if (allNews == null) return;
-        newsList = new ArrayList<>();
-
-        for (News news : allNews)
-            if (news.getIdGroup() == myGroup.getId())
-                newsList.add(news);
+        TextView icon = main_layout.findViewById(R.id.icon_group_main);
+        icon.setText(group.getName());
 
 
+        initNews();
         initRecycle();
         setListeners();
     }
@@ -87,13 +92,15 @@ public class GroupFragment extends Fragment {
         main_layout.findViewById(R.id.chat_button_group).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra("Nickname", group.getName());
+                getActivity().startActivity(intent);
             }
         });
     }
 
     public void initRecycle() {
-        newsListRecycleAdapter = new NewsListRecycleAdapter(newsList);
+        newsListRecycleAdapter = new NewsListRecycleAdapter(newsList, this);
         recyclerView = main_layout.findViewById(R.id.list_news_group);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setAdapter(newsListRecycleAdapter);
@@ -102,5 +109,39 @@ public class GroupFragment extends Fragment {
     public void initToolbar() {
         Toolbar.getInstance().ClearIcons();
         Toolbar.getInstance().setTitle("Группы");
+    }
+
+    public void initNews() {
+        List<News> allNews = APIManager.getManager().listNews;
+        if (allNews == null) return;
+        newsList = new ArrayList<>();
+
+        for (News news : allNews)
+            if (news.getIdGroup() == group.getId())
+                newsList.add(news);
+    }
+
+    public boolean checkWorkingCondition() {
+        if (APIManager.getManager().listGroups == null)
+            return false;
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            String name = bundle.getString("name", null);
+
+            if (name != null)
+                group = APIManager.getManager().listGroups.stream().filter(
+                        x->x.getName().equals(name)).findAny().orElse(null);
+        }
+        if (group == null) return false;
+        return true;
+    }
+
+    private int CountAverageValue() {
+        int score = 0;
+        for (Account account : group.getAccounts())
+            score += account.getScore();
+        score /= group.getAccounts().size();
+        return score;
     }
 }

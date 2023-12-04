@@ -21,22 +21,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:padding="3dp"
         app:layout_constraintStart_toEndOf="@+id/icon_chat"
         tools:layout_editor_absoluteY="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_received_message"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="7dp"
-            android:textSize="16dp"
-            android:text="Привет. Как ты?"
-            android:textColor="@color/black"
-            android:maxWidth="260dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="3dp"
+            android:background="@drawable/background_received_message">
+
+            <TextView
+                android:id="@+id/textMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="7dp"
+                android:textSize="16dp"
+                android:text="Привет. Как ты?"
+                android:textColor="@color/black"
+                android:maxWidth="260dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:ignore="MissingConstraints"/>
+
+        </LinearLayout>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

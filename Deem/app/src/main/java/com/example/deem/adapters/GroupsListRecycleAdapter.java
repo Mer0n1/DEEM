@@ -1,5 +1,6 @@
 package com.example.deem.adapters;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
 
 import java.util.List;
@@ -62,9 +64,11 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity mainActivity = (MainActivity) fragment.getActivity();
-                    mainActivity.OpenMenu(MainActivity.FragmentType.group);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", group_name.getText().toString());
 
+                    MainActivity mainActivity = (MainActivity) fragment.getActivity();
+                    mainActivity.OpenMenu(MainActivity.FragmentType.group, bundle);
                 }
             });
         }

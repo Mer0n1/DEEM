@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +51,11 @@ public class ImageService {
     public void saveAllMessageImages(List<MessageImage> imgs) {
         messageImageRepository.saveAll(imgs);
     }
+
+    @Transactional
+    public void deleteIcon(int id) { iconImageRepository.deleteById(id);}
+    public IconImage getImageIcon(String uuid) { return iconImageRepository.findByUuid(uuid); }
+
     public Image getImage(String UUID, String type) {
         String path = "";
         Image image = new Image();
@@ -58,7 +64,7 @@ public class ImageService {
         if (type.equals("news_image"))
             projection = newsImageRepository.findByUuid(UUID);
         if (type.equals("profile_icon"))
-            projection = iconImageRepository.findByUuid(UUID);
+            projection = newProjection(UUID);
         if (type.equals("message_image"))
             projection = messageImageRepository.findByUuid(UUID);
 
@@ -68,7 +74,17 @@ public class ImageService {
         if (!path.isEmpty())
             image.setImgEncode(encodeImage(path));
 
+
         return image;
+    }
+
+    private PathImageProjection newProjection(String uuid) {
+        return new PathImageProjection() {
+            @Override
+            public String getPath() {
+                return iconImageRepository.findByUuid(uuid).getPath();
+            }
+        };
     }
 
     private String encodeImage(String path) {

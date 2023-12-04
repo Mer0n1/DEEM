@@ -71,18 +71,26 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
         }
 
         public void setData(Chat chat) {
-            List<Account> accounts = APIManager.getManager().listAccounts;
-            Long id = chat.getUsers().get(0);
-            if (id == APIManager.getManager().myAccount.getId())
-                id = chat.getUsers().get(1);
-            Long finalId = id;
+            String username = "";
 
-            Account account = accounts.stream().filter(
-                    s->s.getId() == finalId).findAny().orElse(null);
-            if (account == null) return;
+            if (chat.getUsers().size() > 2)
+                username = APIManager.getManager().myAccount.getGroup().getName();
+            else {
+                List<Account> accounts = APIManager.getManager().listAccounts;
+                Long id = chat.getUsers().get(0);
+                if (id == APIManager.getManager().myAccount.getId())
+                    id = chat.getUsers().get(1);
+                Long finalId = id;
 
-            name.setText(String.valueOf(account.getUsername()));
-            begin_text.setText(chat.getMessages().get(chat.getMessages().size()-1).getText());
+                Account account = accounts.stream().filter(
+                        s -> s.getId() == finalId).findAny().orElse(null);
+                if (account != null)
+                    username = account.getUsername();
+            }
+
+            name.setText(String.valueOf(username));
+            if (chat.getMessages().size() != 0)
+                begin_text.setText(chat.getMessages().get(chat.getMessages().size()-1).getText());
         }
     }
 }

@@ -108,4 +108,9 @@ public class AccountController {
         return accountService.getAccount(idStudent).getGroup_id();
     }
 
+    @GetMapping("/getListIdUsersGroup")
+    public List<Long> getListIdUsersGroup(@RequestParam("id") Long idGroup) {
+        return accountService.getUsersOfGroup(idGroup);
+    }
+
 }

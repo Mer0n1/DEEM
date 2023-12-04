@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
+import com.example.restful.models.Group;
 import com.example.restful.models.MessageImage;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
@@ -33,7 +34,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+/** Обязательное extra - Nickname:value. Название группы/аккаунта */
 public class ChatActivity extends AppCompatActivity {
 
     private ChatRecycleAdapter chatRecycleAdapter;
@@ -43,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private Chat currentChat;
     private List<Message> messages;
+    private Integer CurrentMessages;
 
     private boolean newChat;
 
@@ -77,13 +81,18 @@ public class ChatActivity extends AppCompatActivity {
         initRecycle();
         SetListeners();
 
-        //
+        //Хэндлер для обновления приходящих сообщений
         handler = new Handler();
         updateRunnable = new Runnable() {
             @Override
             public void run() {
                 // Обновить RecycleView
-                chatRecycleAdapter.notifyDataSetChanged();
+                //chatRecycleAdapter.notifyDataSetChanged(); //старый слабый метод
+                if (messages.size() > CurrentMessages) { //TODO: протестить
+                    for (int j = messages.size(); j < messages.size(); j++)
+                        chatRecycleAdapter.notifyItemInserted(j);
+                    CurrentMessages = messages.size();
+                }
                 // Запустить этот Runnable снова через некоторое время
                 handler.postDelayed(this, 1000);
             }
@@ -180,47 +189,72 @@ public class ChatActivity extends AppCompatActivity {
 
     private void loadChat() {
         //loading chat
-        String nicknamePerson = getIntent().getStringExtra("Nickname");
-        if (nicknamePerson.isEmpty()) return;
+        String name = getIntent().getStringExtra("Nickname");
+        if (name.isEmpty()) return;
 
         // имеем ли мы чат с этим пользователем
         List<Chat> chats = APIManager.getManager().listChats;
         List<Account> accounts = APIManager.getManager().listAccounts;
 
-        Account wr = null; //аккаунт собеседника
-        for (Account account : accounts)
-            if (account.getUsername().equals(nicknamePerson))
-                wr = account;
-
-        if (wr != null)
-            for (Chat chat : chats)
-                if (chat.getUsers().get(0) == wr.getId() ||
-                    chat.getUsers().get(1) == wr.getId()) {
-                    currentChat = chat;
-                    break;
-                }
-
         //
-        if (currentChat != null) {
-            messages = currentChat.getMessages();
+        boolean isGroup = false;
+        if (name.length() == 1)
+            isGroup = true;
+
+        if (isGroup) {
+            Optional<Group> group = APIManager.getManager().listGroups.stream().filter(x->x.getName().equals(name)).findAny();
+
+            if (group.isEmpty())
+                return;
+
+            Long chat_id = APIManager.getManager().myAccount.getGroup().getChat_id();
+            currentChat = chats.stream().filter(x->x.getId() == chat_id).findAny().orElse(null);
+
+            if (currentChat == null)
+                return;
+
             newChat = false;
-            sort();
-        } else {
-            currentChat = new Chat();
+            CurrentMessages = currentChat.getMessages().size();
             messages = currentChat.getMessages();
 
-            List<Long> usersOfChat = new ArrayList<>();
-            usersOfChat.add(APIManager.getManager().myAccount.getId());
-            usersOfChat.add(wr.getId());
-            currentChat.setUsers(usersOfChat);
-            newChat = true;
+        } else {
+
+            Account wr = null; //аккаунт собеседника
+            for (Account account : accounts)
+                if (account.getUsername().equals(name))
+                    wr = account;
+
+            if (wr != null)
+                for (Chat chat : chats)
+                    if (chat.getUsers().get(0) == wr.getId() ||
+                            chat.getUsers().get(1) == wr.getId()) {
+                        currentChat = chat;
+                        break;
+                    }
+
+            //
+            if (currentChat != null) {
+                messages = currentChat.getMessages();
+                newChat = false;
+                sort();
+            } else {
+                currentChat = new Chat();
+                messages = currentChat.getMessages();
+
+                List<Long> usersOfChat = new ArrayList<>();
+                usersOfChat.add(APIManager.getManager().myAccount.getId());
+                usersOfChat.add(wr.getId());
+                currentChat.setUsers(usersOfChat);
+                newChat = true;
+            }
+            CurrentMessages = messages.size();
         }
     }
 
     private void initRecycle() {
         recyclerView = findViewById(R.id.list_messages);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        chatRecycleAdapter = new ChatRecycleAdapter(messages);
+        chatRecycleAdapter = new ChatRecycleAdapter(messages, this);
         recyclerView.setAdapter(chatRecycleAdapter);
         recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
     }

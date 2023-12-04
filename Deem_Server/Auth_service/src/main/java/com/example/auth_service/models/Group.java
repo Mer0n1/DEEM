@@ -17,12 +17,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Group {
 
-    private int id;
+    private Long id;
+    private Long chat_id;
     private int course;
     private int score;
     private String name;
     private String faculty;
     private Date date_create;
-    private List<Account> users;
+    private List<Long> users;
+
 
 }

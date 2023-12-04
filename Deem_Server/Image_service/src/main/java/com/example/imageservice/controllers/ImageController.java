@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -72,8 +73,12 @@ public class ImageController {
             return;
 
         image.setPath(imageService.getPath("profile_icon") + principal.getName()+".png");
-        imageService.saveImage(image.getImage().getImgEncode(),  image.getPath());
-        imageService.saveIcon(image);
+
+        IconImage image1 = imageService.getImageIcon(image.getUuid());
+        if (image1 == null)  //если у пользователя нет иконки сохраняем
+            imageService.saveIcon(image);
+
+        imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
     }
 
     @PostMapping("/addImagesNews")
@@ -102,28 +107,4 @@ public class ImageController {
         imageService.saveAllMessageImages(imgs);
     }
 
-    @PostMapping("/test")
-    private void test(@RequestBody List<Image> img,
-                      BindingResult bindingResult) {
-        System.out.println("test " + img.size());
-
-        if (bindingResult.hasErrors())
-            System.out.println(bindingResult.getAllErrors());
-    }
-
-    @GetMapping("/test1")
-    private List<Image> test1() {
-        List<Image> imgs = new ArrayList<>();
-
-        Image image = new Image();
-        image.setImgEncode("TTTT");
-
-        Image image2 = new Image();
-        image2.setImgEncode("SSSS");
-
-        imgs.add(image);
-        imgs.add(image2);
-
-        return imgs;
-    }
 }

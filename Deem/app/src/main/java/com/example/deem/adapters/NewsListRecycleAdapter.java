@@ -1,5 +1,6 @@
 package com.example.deem.adapters;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
@@ -15,15 +18,19 @@ import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
+import com.example.restful.models.NewsImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycleAdapter.ItemNews> {
 
     private List<News> newsList;
+    private Fragment fragment;
 
-    public NewsListRecycleAdapter(List<News> newsList) {
+    public NewsListRecycleAdapter(List<News> newsList, Fragment fragment) {
         this.newsList = newsList;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -51,7 +58,8 @@ class ItemNews extends RecyclerView.ViewHolder {
         private TextView date;
         private TextView content;
         private TextView name_group;
-        private ImageView imageView;
+        //private ImageView imageView;
+        private RecyclerView recyclerView;
 
         public ItemNews(@NonNull View itemView) {
             super(itemView);
@@ -59,7 +67,7 @@ class ItemNews extends RecyclerView.ViewHolder {
             content = itemView.findViewById(R.id.news_content_info);
             date = itemView.findViewById(R.id.news_date_info);
             name_group = itemView.findViewById(R.id.news_namegroup_info);
-            imageView = itemView.findViewById(R.id.imageView);
+            recyclerView = itemView.findViewById(R.id.list_images);
         }
 
         public void setData(News news) {
@@ -78,16 +86,41 @@ class ItemNews extends RecyclerView.ViewHolder {
 
             //Загрузка изображений
             if (news.getImages() != null) {
-                if (news.getImages().size() != 0)
-                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
-                            news.getImages().get(0).getImage().getImgEncode())); //TODO
-            } else
+                if (news.getImages().size() != 0) {
+                    List<ImageView> imageViews = new ArrayList<>();
+
+                    for (NewsImage newsImage : news.getImages()) {
+                        ImageView imageView = new ImageView(content.getContext());
+                        imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
+                                newsImage.getImage().getImgEncode()));
+                        imageViews.add(imageView);
+                    }
+
+                    initRecycle(imageViews.size(), imageViews);
+                }
+            } else {
+                List<ImageView> imageViews = new ArrayList<>();
+                initRecycle(1, imageViews);
+
                 APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
                     public void onImageLoaded(String decodeStr) {
+                        ImageView imageView = new ImageView(fragment.getContext());
                         imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
+                        imageViews.add(imageView);
+
+                        recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
                     }
                 });
+            }
+        }
+
+        private void initRecycle(int count, List<ImageView> views) {
+            recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), count));
+            ImagesListRecycleAdapter imagesListRecycleAdapter =
+                    new ImagesListRecycleAdapter(views, fragment.getContext());
+            recyclerView.setAdapter(imagesListRecycleAdapter);
+            recyclerView.scrollToPosition(1);
         }
     }
 }

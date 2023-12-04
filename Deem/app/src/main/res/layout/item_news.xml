@@ -46,13 +46,18 @@
             app:layout_constraintTop_toBottomOf="@+id/news_namegroup_info"
             tools:layout_editor_absoluteX="-34dp" />
 
-        <ImageView
-            android:id="@+id/imageView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_images"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:padding="10dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/news_content_info"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:ignore="MissingConstraints"></androidx.recyclerview.widget.RecyclerView>
 
         <TextView
             android:id="@+id/news_date_info"
