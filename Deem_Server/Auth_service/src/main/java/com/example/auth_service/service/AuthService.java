@@ -1,6 +1,7 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.models.Account;
+import com.example.auth_service.models.LocationStudent;
 import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +25,8 @@ public class AuthService {
         return "user added to the system";
     }
 
-    public String generateToken(Account account) {
-        return jwtService.generateToken(account);
+    public String generateToken(Account account, LocationStudent locationStudent) {
+        return jwtService.generateToken(account, locationStudent);
     }
 
     public void validateToken(String token) {

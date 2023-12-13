@@ -56,6 +56,9 @@ public class InfoFragment extends Fragment {
     }
 
     public void init() {
+        if (!APIManager.getManager().statusInfo.isNewsListGot())
+            return;
+
         //init objects
         listNews = APIManager.getManager().listNews;
         listUsersFragment = new ListUsersFragment();
@@ -126,7 +129,7 @@ public class InfoFragment extends Fragment {
 
         //Recycle
         recyclerView = main_layout.findViewById(R.id.news_feed);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         newsListRecycleAdapter = new NewsListRecycleAdapter(listNews, this);
         recyclerView.setAdapter(newsListRecycleAdapter);
     }

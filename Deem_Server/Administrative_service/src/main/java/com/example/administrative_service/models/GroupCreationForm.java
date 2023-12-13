@@ -2,6 +2,7 @@ package com.example.administrative_service.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -14,7 +15,7 @@ public class GroupCreationForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Group must not be null")
+    @NotNull(message = "Group must not be null")
     @Transient
     private Group group;
 

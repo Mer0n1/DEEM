@@ -41,8 +41,12 @@ public class ChatsContainerFragment extends Fragment {
     }
 
     public void init() {
-        listChats = APIManager.getManager().listChats;
         initToolbar();
+
+        if (!APIManager.getManager().statusInfo.isChatsListGot())
+            return;
+
+        listChats = APIManager.getManager().listChats;
         initListAndRecycle();
 
         //View.inflate(getContext(), R.layout.item_chat_story, layout);

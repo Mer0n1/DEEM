@@ -1,5 +1,6 @@
 package com.example.news_service.controllers;
 
+import com.example.news_service.config.PersonDetails;
 import com.example.news_service.models.News;
 import com.example.news_service.services.NewsService;
 import com.example.news_service.services.RestTemplateService;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,13 +40,13 @@ public class NewsController {
 
 
     @GetMapping("/getNews")
-    public List<News> getNews(/*Principal principal*/
-            @RequestParam("faculty") String faculty) {
-        //TODO: Узнаем факультет, чтобы отправить новости только текущего факультета
+    public List<News> getNews(Authentication authentication) {
         System.out.println("getNews");
 
-        //
-        return newsService.getNews(faculty);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        PersonDetails personDetails = (PersonDetails) userDetails;
+
+        return newsService.getNews(personDetails.getFaculty());
     }
 
     @GetMapping("/getOneNews")

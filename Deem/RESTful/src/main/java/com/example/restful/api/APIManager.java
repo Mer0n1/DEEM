@@ -30,6 +30,7 @@ public class APIManager {
 
     private static APIManager manager;
     private static PushClient pushClient;
+    public static ServerStatusInfo statusInfo;
 
     public volatile List<Account> listAccounts;
     public volatile List<Group> listGroups;
@@ -41,13 +42,14 @@ public class APIManager {
 
     private String jwtKey;
 
-    private APIManager() {
-    }
+
+    private APIManager() {}
 
     public static APIManager getManager() {
         if (manager == null) {
             manager = new APIManager();
             pushClient = new PushClient();
+            statusInfo = new ServerStatusInfo();
         }
         return manager;
     }
@@ -136,6 +138,8 @@ public class APIManager {
                     public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                         listAccounts = response.body();
                         buildGroups();
+                        if (listAccounts != null)
+                            statusInfo.AccountListGot = true;
 
                         //загрузим иконки аккаунтов standart
                         /*for (Account account : listAccounts)
@@ -168,6 +172,9 @@ public class APIManager {
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
                 listGroups = response.body();
                 buildGroups();
+
+                if (listGroups != null)
+                    statusInfo.GroupsListGot = true;
             }
 
             @Override
@@ -181,6 +188,8 @@ public class APIManager {
             @Override
             public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
                 listChats = response.body();
+                if (listChats != null)
+                    statusInfo.ChatsListGot = true;
             }
 
             @Override
@@ -190,10 +199,12 @@ public class APIManager {
         });
 
 
-        Repository.getInstance().getNews(myAccount.getGroup().getFaculty()).enqueue(new Callback<List<News>>() {
+        Repository.getInstance().getNews().enqueue(new Callback<List<News>>() {
             @Override
             public void onResponse(Call<List<News>> call, Response<List<News>> response) {
                 listNews = response.body();
+                if (listNews != null)
+                    statusInfo.NewsListGot = true;
             }
 
             @Override
@@ -207,6 +218,9 @@ public class APIManager {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 listEvents = response.body();
+
+                if (listEvents != null)
+                    statusInfo.EventsListGot = true;
             }
 
             @Override

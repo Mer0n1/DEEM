@@ -57,7 +57,7 @@ public interface Base {
 
     //news
     @GET("/news/getNews")
-    Call<List<News>> getNews(@Query("faculty") String faculty);
+    Call<List<News>> getNews(/*@Query("faculty") String faculty*/);
     @POST("/news/createNews")
     Call<Void> createNews(@Body News news);
 

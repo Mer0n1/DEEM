@@ -45,6 +45,9 @@ public class ListGroupsFragment extends Fragment {
     }
 
     public void init() {
+        if (!APIManager.getManager().statusInfo.isGroupsListGot())
+            return;
+
         //Загрузим элементы layout_info_person
         groups = APIManager.getManager().listGroups;
 

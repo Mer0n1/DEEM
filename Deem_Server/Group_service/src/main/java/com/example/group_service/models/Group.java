@@ -36,7 +36,7 @@ public class Group {
     @Column(name = "name")
     private String name;
 
-    @NotEmpty(message = "date_create must not be null")
+    @NotNull(message = "date_create must not be null")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_create")
     private Date date_create;

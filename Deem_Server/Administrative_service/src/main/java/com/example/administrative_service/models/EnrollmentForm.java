@@ -2,6 +2,7 @@ package com.example.administrative_service.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -26,7 +27,7 @@ public class EnrollmentForm {
     @Column(name = "past_school")
     private String past_school;
 
-    @NotEmpty(message = "Account must not be null")
+    @NotNull(message = "Account must not be null")
     @Transient
     private Account account;
 }

@@ -56,7 +56,7 @@ public class Repository {
 
     public Call<Void> createNews(News news) { return Handler.getInstance().getApi().createNews(news);}
 
-    public Call<List<News>> getNews(String faculty) { return Handler.getInstance().getApi().getNews(faculty); }
+    public Call<List<News>> getNews() { return Handler.getInstance().getApi().getNews(); }
 
     public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
 

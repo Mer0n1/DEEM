@@ -3,6 +3,7 @@ package com.example.group_service.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +18,25 @@ import java.util.List;
 @Service
 public class RestTemplateClient {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final Environment environment;
 
     @Value("http://localhost:8082/getAuth/")
     private String accountServiceUrl;
 
-    @Value("${ADMIN_KEY}")
     private String personal_key;
 
     private MultiValueMap<String, String> headers;
     private HttpEntity<String> entity;
 
-    RestTemplateClient() {
+    RestTemplateClient(Environment environment, RestTemplate restTemplate) {
         headers = new LinkedMultiValueMap<>();
-        personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiaWF0IjoxNjk5NjEzODE4LCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNTk2MTM4MTh9.lEadKCrmESKfqx2-ghLxCeJGuLC20RvB4VJMy_rNMbU";
+        personal_key = environment.getProperty("ADMIN_KEY");
         headers.add("Authorization", "Bearer " + personal_key);
 
         entity = new HttpEntity<>("body", headers);
+        this.environment = environment;
+        this.restTemplate = restTemplate;
     }
 
     public List<Long> getListIdUsersOfGroup(Long idGroup) {

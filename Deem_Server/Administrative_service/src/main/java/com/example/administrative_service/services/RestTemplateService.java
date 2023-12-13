@@ -1,9 +1,6 @@
 package com.example.administrative_service.services;
 
-import com.example.administrative_service.models.Account;
-import com.example.administrative_service.models.DepartureForm;
-import com.example.administrative_service.models.Event;
-import com.example.administrative_service.models.Group;
+import com.example.administrative_service.models.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +17,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class RestTemplateService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final Environment environment;
 
     @Value("http://localhost:8082/getAuth")
     private String authServiceUrl;
@@ -29,20 +26,23 @@ public class RestTemplateService {
     private String groupServiceUrl;
     @Value("http://localhost:8089/event")
     private String examServiceUrl;
+    @Value("http://localhost:8084/chat")
+    private String chatControllerUrl;
 
-    @Value("${ADMIN_KEY}")
     private String personal_key;
 
     private MultiValueMap<String, String> headers;
     private HttpEntity<String> entity;
 
-    RestTemplateService() {
+    RestTemplateService(RestTemplate restTemplate, Environment environment) {
         headers = new LinkedMultiValueMap<>();
-        personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiaWF0IjoxNjk5NjEzODE4LCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNTk2MTM4MTh9.lEadKCrmESKfqx2-ghLxCeJGuLC20RvB4VJMy_rNMbU";
+        personal_key = environment.getProperty("ADMIN_KEY");
         headers.add("Authorization", "Bearer " + personal_key);
         headers.set("Content-Type", "application/json");
 
         entity = new HttpEntity<>("", headers);
+        this.restTemplate = restTemplate;
+        this.environment = environment;
     }
 
 
@@ -94,5 +94,26 @@ public class RestTemplateService {
 
         restTemplate.exchange(examServiceUrl + "/releaseEvent", HttpMethod.POST,
                 entity, Void.class);
+    }
+
+    public Long createChatAndGetId() throws JsonProcessingException {
+        /*String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(chat);
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(chatControllerUrl + "/createChat", HttpMethod.POST,
+                entity, Void.class);*/
+        return restTemplate.exchange(chatControllerUrl + "/createChatGroup", HttpMethod.POST,
+                entity, Long.class).getBody();
+    }
+
+    public void linkAccountToGroupChat(Chat chat) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(chat);
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(chatControllerUrl + "/linkAccountToGroupChat", HttpMethod.POST,
+                entity, Void.class);
+
     }
 }

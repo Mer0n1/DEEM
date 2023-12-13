@@ -1,6 +1,5 @@
 package com.example.deem.adapters;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,7 @@ import com.example.restful.models.NewsImage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycleAdapter.ItemNews> {
 
@@ -58,21 +58,31 @@ class ItemNews extends RecyclerView.ViewHolder {
         private TextView date;
         private TextView content;
         private TextView name_group;
-        //private ImageView imageView;
+        private TextView icon;
         private RecyclerView recyclerView;
 
         public ItemNews(@NonNull View itemView) {
             super(itemView);
 
-            content = itemView.findViewById(R.id.news_content_info);
-            date = itemView.findViewById(R.id.news_date_info);
-            name_group = itemView.findViewById(R.id.news_namegroup_info);
+            content      = itemView.findViewById(R.id.news_content_info);
+            date         = itemView.findViewById(R.id.news_date_info);
+            name_group   = itemView.findViewById(R.id.news_namegroup_info);
             recyclerView = itemView.findViewById(R.id.list_images);
+            icon         = itemView.findViewById(R.id.icon_group_main);
         }
 
         public void setData(News news) {
             date.setText(news.getDate().toString());
             content.setText(news.getContent());
+
+            if (APIManager.getManager().listGroups != null) { //установим иконку для группы
+                List<Group> list = APIManager.getManager().listGroups;
+                Long idGroup = news.getIdGroup();
+                Optional<Group> group = list.stream().filter(x->x.getId() == idGroup).findAny();
+
+                if (!group.isEmpty())
+                    icon.setText(group.get().getName());
+            }
 
             List<Group> listGroups = APIManager.getManager().listGroups;
             Group group = null;
@@ -85,6 +95,7 @@ class ItemNews extends RecyclerView.ViewHolder {
                 name_group.setText(group.getName());
 
             //Загрузка изображений
+            if (fragment != null)
             if (news.getImages() != null) {
                 if (news.getImages().size() != 0) {
                     List<ImageView> imageViews = new ArrayList<>();

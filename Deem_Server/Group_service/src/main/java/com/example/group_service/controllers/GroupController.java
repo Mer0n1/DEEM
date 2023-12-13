@@ -1,13 +1,15 @@
 package com.example.group_service.controllers;
 
+import com.example.group_service.config.PersonDetails;
 import com.example.group_service.models.Group;
 import com.example.group_service.models.LocationStudent;
 import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
 import jakarta.validation.Valid;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -34,12 +36,13 @@ public class GroupController {
     }
 
     @GetMapping("/getGroups")
-    public List<Group> getGroups(Principal principal) {
-        List<Group> groups = groupService.getGroups();
+    public List<Group> getGroups(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        List<Group> groups = groupService.getGroupsOfFaculty(((PersonDetails)userDetails).getFaculty());
         for (Group group : groups)
             group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
 
-        return groups; //TODO: узнаем факультет
+        return groups;
     }
 
     @GetMapping("/getTableOfTopGroups")
@@ -61,8 +64,8 @@ public class GroupController {
 
     @GetMapping("/getLocationStudent")
     public LocationStudent getLocationStudent(@RequestParam("id") Long idGroup) {
-        Group group = groupService.getGroup(idGroup);
 
+        Group group = groupService.getGroup(idGroup);
         return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 

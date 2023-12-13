@@ -54,9 +54,19 @@ public class EventsFragment extends Fragment {
         AllEvents = APIManager.getManager().listEvents;
         isStory = false;
         initToolbar();
-        initListAndRecycle();
 
+        if (!APIManager.getManager().statusInfo.isEventsListGot()) {
+            main_layout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+            main_layout.findViewById(R.id.list_events).setVisibility(View.GONE);
+            return;
+        } else {
+            main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.list_events).setVisibility(View.VISIBLE);
+        }
+
+        initListAndRecycle();
     }
+
     public void initToolbar() {
         Toolbar.getInstance().setTitle("Текущие экзамены");
         Toolbar.getInstance().ClearIcons();
@@ -78,12 +88,6 @@ public class EventsFragment extends Fragment {
     }
 
     public void initListAndRecycle() {
-        if (AllEvents != null) {
-            main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
-            main_layout.findViewById(R.id.list_events).setVisibility(View.VISIBLE);
-        } else
-            return;
-
         Date currentDate = new Date(System.currentTimeMillis());
         pastEvents = AllEvents.stream().filter(x->x.getStart_date().before(currentDate)).collect(Collectors.toList());
         currentEvents = AllEvents.stream().filter(x->x.getStart_date().after(currentDate)).collect(Collectors.toList());

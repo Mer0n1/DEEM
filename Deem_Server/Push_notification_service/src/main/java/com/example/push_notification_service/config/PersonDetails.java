@@ -1,5 +1,6 @@
 package com.example.push_notification_service.config;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +10,18 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Component
+@Data
 public class PersonDetails implements UserDetails {
     private Long id;
     private String ROLE;
     private String username;
     private String password;
+
+    /** Это доступ. Метка или адрес пользователя. Через эти 2 переменные
+     * сервер ориентирует и ограничивает информацию конкретно в пределах этой метки.
+     * Новости других факультетов или с других курсов не доступны.*/
+    private String faculty;
+    private Integer course;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -38,41 +46,6 @@ public class PersonDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(ROLE));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getROLE() {
-        return ROLE;
-    }
-
-    public void setROLE(String ROLE) {
-        this.ROLE = ROLE;
     }
 }
 

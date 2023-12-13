@@ -60,7 +60,7 @@ public class GroupFragment extends Fragment {
             newsListRecycleAdapter.notifyDataSetChanged();
         }
 
-        if (checkWorkingCondition())
+        if (!checkWorkingCondition())
             return;
 
         //Инициализация значений
@@ -122,8 +122,14 @@ public class GroupFragment extends Fragment {
     }
 
     public boolean checkWorkingCondition() {
-        if (APIManager.getManager().listGroups == null)
+        if (!APIManager.getManager().statusInfo.isGroupsListGot()) {
+            main_layout.findViewById(R.id.layout_progress_bar).setVisibility(View.VISIBLE);
+            main_layout.findViewById(R.id.scroll_view).setVisibility(View.GONE);
             return false;
+        } else {
+            main_layout.findViewById(R.id.layout_progress_bar).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.scroll_view).setVisibility(View.VISIBLE);
+        }
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -133,6 +139,7 @@ public class GroupFragment extends Fragment {
                 group = APIManager.getManager().listGroups.stream().filter(
                         x->x.getName().equals(name)).findAny().orElse(null);
         }
+
         if (group == null) return false;
         return true;
     }

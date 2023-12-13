@@ -1,10 +1,13 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.models.Group;
-import com.example.auth_service.repository.AccountRepository;
+import com.example.auth_service.models.LocationStudent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,40 +21,58 @@ import java.util.List;
 @Service
 public class AccountServiceClient {
 
-    @Autowired
-    private AccountRepository repository;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final Environment environment;
 
     @Value("http://localhost:8083/group/")
     private String groupServiceUrl;
 
-    @Value("${ADMIN_KEY}")
     private String personal_key;
 
     private MultiValueMap<String, String> headers;
     private HttpEntity<String> entity;
 
-    AccountServiceClient() {
+
+    AccountServiceClient(RestTemplate restTemplate, Environment environment) {
         headers = new LinkedMultiValueMap<>();
-        personal_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiaWF0IjoxNjk5NjEzODE4LCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNTk2MTM4MTh9.lEadKCrmESKfqx2-ghLxCeJGuLC20RvB4VJMy_rNMbU";
+        personal_key = environment.getProperty("ADMIN_KEY");
         headers.add("Authorization", "Bearer " + personal_key);
 
         entity = new HttpEntity<>("body", headers);
+        this.restTemplate = restTemplate;
+        this.environment = environment;
     }
 
     public Group findGroupById(Long id) {
-        ResponseEntity<Group> response = restTemplate.exchange(
-                groupServiceUrl + "getGroup" + "?id=" + id, HttpMethod.GET, entity, Group.class);
+        try {
+            ResponseEntity<Group> response = restTemplate.exchange(
+                    groupServiceUrl + "getGroup" + "?id=" + id, HttpMethod.GET, entity, Group.class);
+            return response.getBody();
 
-        return response.getBody();
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public List<Group> getGroups() {
-        ResponseEntity<List<Group>> response = restTemplate.exchange(
-                groupServiceUrl + "getGroups", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Group>>(){});
+        try {
+            ResponseEntity<List<Group>> response = restTemplate.exchange(
+                    groupServiceUrl + "getGroups", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Group>>() {});
+            return response.getBody();
 
-        return response.getBody();
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public LocationStudent getLocationStudent(Long idGroup) {
+        try {
+            ResponseEntity<LocationStudent> response = restTemplate.exchange(
+                    groupServiceUrl + "getLocationStudent" + "?id=" + idGroup, HttpMethod.GET, entity, LocationStudent.class);
+            return response.getBody();
+
+        } catch(Exception e) {
+            return null;
+        }
     }
 }

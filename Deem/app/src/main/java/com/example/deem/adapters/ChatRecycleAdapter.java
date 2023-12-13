@@ -110,7 +110,6 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                     @Override
                     public void onImageLoaded(String decodeStr) {
                         if (decodeStr == null) return;
-                        System.err.println("ПОБЕДА MESSAGE ");
                         Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
 
                         ImageView imageView = new ImageView(activity);

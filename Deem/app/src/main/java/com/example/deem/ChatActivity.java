@@ -70,7 +70,7 @@ public class ChatActivity extends AppCompatActivity {
         FixedImages = new ArrayList<>();
         activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
-        if (APIManager.getManager().listChats != null) {
+        if (APIManager.getManager().statusInfo.isChatsListGot()) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
             activityChatBinding.listMessages.setVisibility(View.VISIBLE);
         } else

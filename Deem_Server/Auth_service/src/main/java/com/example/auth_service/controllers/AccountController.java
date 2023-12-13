@@ -42,6 +42,7 @@ public class AccountController {
         List<Account> accounts = accountService.getAccounts();
         List<Group> groups = accountServiceClient.getGroups();
 
+        if (groups != null)
         for (Account account : accounts)
             for (Group group : groups)
             if (account.getGroup_id() == group.getId()) {

@@ -42,6 +42,9 @@ public class FirstPageFragment extends Fragment {
     public void init() {
         initToolbar();
 
+        if (!APIManager.getManager().statusInfo.isNewsListGot())
+            return;
+
         //...event
         List<News> listNews = APIManager.getManager().listNews;
         //возьмем только новости из особой группы

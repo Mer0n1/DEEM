@@ -22,6 +22,8 @@ public class GroupService {
 
     public List<Group> getGroups() { return repository.findAll(); }
 
+    public List<Group> getGroupsOfFaculty(String faculty) { return repository.findAllByFaculty(faculty);}
+
     public List<Group> sort(List<Group> groups) {
         List<Group> tops = new ArrayList<>();
         groups.stream().sorted(Comparator.comparing(o -> o.getScore()));

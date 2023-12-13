@@ -2,7 +2,9 @@ package com.example.auth_service.controllers;
 
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.AuthRequest;
+import com.example.auth_service.models.LocationStudent;
 import com.example.auth_service.service.AccountService;
+import com.example.auth_service.service.AccountServiceClient;
 import com.example.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class AuthController {
     private AuthService service;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private AccountServiceClient accountServiceClient;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -44,7 +48,14 @@ public class AuthController {
 
         if (authenticate.isAuthenticated()) {
             Account account = accountService.getAccount(authRequest.getUsername());
-            return service.generateToken(account);
+            LocationStudent locationStudent = //новая зависимость - локация студента
+                    accountServiceClient.getLocationStudent(account.getGroup_id());
+
+            if (locationStudent == null)
+                return null;
+            else
+                return service.generateToken(account, locationStudent);
+
         } else {
             throw new RuntimeException("invalid access");
         }

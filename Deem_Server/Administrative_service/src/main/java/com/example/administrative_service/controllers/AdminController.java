@@ -1,6 +1,5 @@
 package com.example.administrative_service.controllers;
 
-import com.example.administrative_service.config.PersonDetails;
 import com.example.administrative_service.models.*;
 import com.example.administrative_service.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 
 @RestController
@@ -50,8 +51,7 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
-        //TODO: Доделать idGroup
-        restTemplateService.transferStudent(form.getIdStudent(), 1l);
+        restTemplateService.transferStudent(form.getIdStudent(), form.getId_group());
         transferStoryService.save(form);
     }
 
@@ -63,8 +63,11 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
-        //TODO привязка студента к чату группы
         restTemplateService.createStudent(form.getAccount());
+        Chat chat = new Chat();
+        chat.setUsers(Collections.singletonList(form.getAccount().getId()));
+        restTemplateService.linkAccountToGroupChat(chat); //TODO привязка студента к чату группы - check
+
         enrollmentStoryService.save(form);
     }
 
@@ -76,8 +79,7 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
-        //TODO: сначала создадим чат
-
+        form.getGroup().setChat_id(restTemplateService.createChatAndGetId());
         restTemplateService.createGroup(form.getGroup());
         groupCreationFormService.save(form); //maybe errors
     }

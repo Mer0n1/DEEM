@@ -19,7 +19,7 @@ public class Chat {
     private Long id;
 
     @NotEmpty
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("chat")
     private List<Message> messages;
 

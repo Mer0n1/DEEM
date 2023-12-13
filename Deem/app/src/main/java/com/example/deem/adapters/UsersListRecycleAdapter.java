@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.ImageLoadCallback;
+import com.example.restful.models.MessageImage;
 
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
             faculty_info.setText(user.getGroup().getFaculty());
             group_own_info.setText(user.getGroup().getName());
             typePerson_info.setText("Студент");
-
+            icon.setImageResource(R.drawable.icon_person_elon);
 
             //Загрузка изображения
             ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
@@ -120,6 +122,7 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
                     icon.setImageBitmap(bitmap);
                 }
             };
+            System.out.println("----- " + user.getImageIcon() + " " + user.getUsername());
 
             if (user.getImageIcon() != null) {
                 imageLoadCallback.onImageLoaded(user.getImageIcon().getImgEncode());

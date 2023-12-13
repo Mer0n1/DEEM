@@ -6,19 +6,28 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class JwtUtil {
 
-    @Value("${SECRET}")
-    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    public static String secret;
 
+    @Autowired
+    private Environment environment;
+
+    @PostConstruct
+    public void init() {
+        secret = environment.getProperty("SECRET");
+    }
 
     public String validateToken(String token) throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET))
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User details")
                 .withIssuer("meroni")
                 .build();

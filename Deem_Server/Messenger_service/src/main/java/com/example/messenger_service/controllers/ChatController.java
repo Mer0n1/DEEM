@@ -1,6 +1,7 @@
 package com.example.messenger_service.controllers;
 
 import com.example.messenger_service.dao.ChatDAO;
+import com.example.messenger_service.models.Account;
 import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.services.ChatService;
@@ -9,10 +10,12 @@ import com.google.common.io.Resources;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +34,8 @@ public class ChatController {
 
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private ChatDAO chatDAO;
 
     /** Возвращает чаты текущего пользователя */
     @GetMapping("/getChats")
@@ -50,6 +55,18 @@ public class ChatController {
             return;
 
         chatService.CreateNewChat(chat);
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/linkAccountToGroupChat")
+    public void linkAccountToGroupChat(Chat chat) {
+        chatDAO.saveInAccount_chat(chat);
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/createChatGroup")
+    public Long createChatGroup() {
+        return chatService.save(new Chat());
     }
 
 

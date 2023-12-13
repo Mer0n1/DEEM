@@ -42,6 +42,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void init() {
+        if (!APIManager.getManager().statusInfo.isAccountListGot())
+            return;
 
         optionsFragment = new OptionsFragment();
 

@@ -3,6 +3,7 @@ package com.example.messenger_service.services;
 import com.example.messenger_service.dao.ChatDAO;
 import com.example.messenger_service.models.Account;
 import com.example.messenger_service.models.Chat;
+import com.example.messenger_service.models.Message;
 import com.example.messenger_service.repositories.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ public class ChatService {
     }
 
     @Transactional
-    public void save(Chat chat) {
-        chatRepository.save(chat);
+    public Long save(Chat chat) {
+        return chatRepository.save(chat).getId();
     }
 
     public List<Chat> getListChats(String nameAccount) {
@@ -57,6 +58,7 @@ public class ChatService {
         //создание чата в таблице account_chat
         chatDAO.saveInAccount_chat(chat);
     }
+
 
 
 }

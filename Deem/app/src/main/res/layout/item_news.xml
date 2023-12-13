@@ -25,7 +25,7 @@
             app:layout_constraintStart_toEndOf="@+id/icon_group_main"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <!--<de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon_group_main"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -34,7 +34,21 @@
             android:src="@drawable/icon_a"
             app:civ_border_color="#FF000000"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <TextView
+            android:id="@+id/icon_group_main"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/black_circle"
+            android:gravity="center"
+            android:text="A"
+            android:textColor="@color/white"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/news_content_info"

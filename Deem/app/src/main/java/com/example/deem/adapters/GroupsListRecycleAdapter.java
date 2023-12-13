@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,13 +54,15 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
         private TextView course;
         private TextView institute;
         private TextView group_name;
+        private TextView icon;
 
         public Group_info(@NonNull View itemView) {
             super(itemView);
 
-            course     = ((TextView)(itemView.findViewById(R.id.group_course_info)));
-            institute  = ((TextView)(itemView.findViewById(R.id.group_institute_ingo)));
-            group_name = ((TextView)(itemView.findViewById(R.id.group_word_ingo)));
+            course     = itemView.findViewById(R.id.group_course_info);
+            institute  = itemView.findViewById(R.id.group_institute_ingo);
+            group_name = itemView.findViewById(R.id.group_word_ingo);
+            icon       = itemView.findViewById(R.id.icon_group_main);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,6 +80,8 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             course.setText(String.valueOf(group.getCourse()));
             institute.setText(group.getFaculty());
             group_name.setText(group.getName());
+
+            icon.setText(group.getName());
         }
 
     }

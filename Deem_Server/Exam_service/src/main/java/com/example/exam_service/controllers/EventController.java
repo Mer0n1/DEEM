@@ -7,6 +7,8 @@ import com.example.exam_service.services.EventService;
 import com.example.exam_service.services.RestTemplateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,9 +32,9 @@ public class EventController {
     public List<Event> getEvents(@AuthenticationPrincipal UserDetails userDetails) {
 
         PersonDetails personDetails = (PersonDetails) userDetails;
-        Long idGroup = restTemplateService.getIdGroup(personDetails.getId());
-        LocationStudent locationStudent = restTemplateService.getLocationStudent(idGroup);
-        return eventService.getEvents(locationStudent.getFaculty());
+        //Long idGroup = restTemplateService.getIdGroup(personDetails.getId());
+        //LocationStudent locationStudent = restTemplateService.getLocationStudent(idGroup);
+        return eventService.getEvents(personDetails.getFaculty());
     }
 
     @PreAuthorize("hasRole('HIGH')")

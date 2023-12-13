@@ -16,8 +16,6 @@ import java.util.*;
 public class WebSocketService {
     private org.glassfish.tyrus.server.Server server;
 
-    @Autowired
-    private RestTemplateService restTemplateService;
     public WebSocketService() {
 
         new Thread(new Runnable() {
