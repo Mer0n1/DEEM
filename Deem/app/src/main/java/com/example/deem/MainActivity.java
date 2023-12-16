@@ -1,11 +1,13 @@
 package com.example.deem;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
         InitResource();
@@ -113,13 +116,8 @@ public class MainActivity extends AppCompatActivity {
     /** Отличие от OpenFragment - более высокий уровень. Открывает фрагмент изменяя дизайн*/
     public void OpenMenu(FragmentType fragmentType, Bundle bundle) {
         Fragment fragment = firstPageFragment;
-        if (fragmentType == FragmentType.group) {
+        if (fragmentType == FragmentType.group)
             fragment = groupFragment;
-
-            //Bundle bundle = new Bundle();
-            //bundle.putString("name", APIManager.getManager().myAccount.getGroup().getName());
-            //fragment.setArguments(bundle);
-        }
         if (fragmentType == FragmentType.messenger)
             fragment = chatsContainerFragment;
         if (fragmentType == FragmentType.info_)

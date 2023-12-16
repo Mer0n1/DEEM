@@ -58,6 +58,7 @@ public class EventsFragment extends Fragment {
         if (!APIManager.getManager().statusInfo.isEventsListGot()) {
             main_layout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.list_events).setVisibility(View.GONE);
+            Toolbar.getInstance().ClearIcons();
             return;
         } else {
             main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -95,7 +96,7 @@ public class EventsFragment extends Fragment {
 
         //recycle
         recyclerView = main_layout.findViewById(R.id.list_events);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this_activity.getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         eventRecycleAdapter = new EventRecycleAdapter(currentEvents);
         recyclerView.setAdapter(eventRecycleAdapter);
     }

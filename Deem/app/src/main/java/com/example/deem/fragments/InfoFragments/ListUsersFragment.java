@@ -26,6 +26,7 @@ import com.example.deem.adapters.GroupsListRecycleAdapter;
 import com.example.deem.adapters.UsersListRecycleAdapter;
 import com.example.deem.databinding.FragmentListGroupsBinding;
 import com.example.deem.databinding.FragmentListUsersBinding;
+import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.Group;
@@ -58,6 +59,8 @@ public class ListUsersFragment extends Fragment {
     }
 
     private void init() {
+        Toolbar.getInstance().setTitle("Пользователи");
+
         if (!APIManager.getManager().statusInfo.isAccountListGot())
             return;
 

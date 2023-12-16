@@ -41,6 +41,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
 
     @Override
     public void onBindViewHolder(@NonNull Group_info holder, int position) {
+        list.get(position).setRank(position+1);
         holder.setData(list.get(position));
     }
 
@@ -55,6 +56,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
         private TextView institute;
         private TextView group_name;
         private TextView icon;
+        private TextView rank;
 
         public Group_info(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +65,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             institute  = itemView.findViewById(R.id.group_institute_ingo);
             group_name = itemView.findViewById(R.id.group_word_ingo);
             icon       = itemView.findViewById(R.id.icon_group_main);
+            rank       = itemView.findViewById(R.id.group_hierarchy_ingo);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,7 +83,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             course.setText(String.valueOf(group.getCourse()));
             institute.setText(group.getFaculty());
             group_name.setText(group.getName());
-
+            rank.setText(String.valueOf(group.getRank()));
             icon.setText(group.getName());
         }
 

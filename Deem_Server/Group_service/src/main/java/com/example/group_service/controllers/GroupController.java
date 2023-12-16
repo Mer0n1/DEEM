@@ -2,6 +2,7 @@ package com.example.group_service.controllers;
 
 import com.example.group_service.config.PersonDetails;
 import com.example.group_service.models.Group;
+import com.example.group_service.models.ListLong;
 import com.example.group_service.models.LocationStudent;
 import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
@@ -16,8 +17,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/group")
@@ -38,17 +41,29 @@ public class GroupController {
     @GetMapping("/getGroups")
     public List<Group> getGroups(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        //Получим список групп для текущего факультета заявителя
         List<Group> groups = groupService.getGroupsOfFaculty(((PersonDetails)userDetails).getFaculty());
+        //Получим список учащихся групп
         for (Group group : groups)
             group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
+        //Вычислим средние значения каждой группы
+        List<ListLong> list_id = new ArrayList<>();
+        for (int j = 0; j < groups.size(); j++) {
+            list_id.add(new ListLong());
+            list_id.get(j).list = groups.get(j).getUsers();
+        }
+
+        List<Long> list_score = restTemplateClient.getListTopGroups(list_id);
+        groups.sort(Comparator.comparingInt(list_score::indexOf));
+
+        if (list_score.size() != 0)
+        for (int j = 0; j < groups.size(); j++)
+            groups.get(j).setScore(list_score.get(j).intValue());
 
         return groups;
     }
 
-    @GetMapping("/getTableOfTopGroups")
-    public List<Group> getGroupsTops() {
-        return groupService.sort(groupService.getGroups());
-    }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")

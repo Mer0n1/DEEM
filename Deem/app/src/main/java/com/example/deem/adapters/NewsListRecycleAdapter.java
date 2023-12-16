@@ -95,7 +95,7 @@ class ItemNews extends RecyclerView.ViewHolder {
                 name_group.setText(group.getName());
 
             //Загрузка изображений
-            if (fragment != null)
+            if (fragment.getContext() != null)
             if (news.getImages() != null) {
                 if (news.getImages().size() != 0) {
                     List<ImageView> imageViews = new ArrayList<>();

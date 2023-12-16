@@ -8,13 +8,15 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import com.example.deem.databinding.ActivityChatBinding;
-import com.example.deem.databinding.FragmentListTopsUsersBinding;
 import androidx.fragment.app.Fragment;
-
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.deem.utils.Toolbar;
+import com.example.restful.api.APIManager;
+import com.example.restful.models.Group;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ListTopsFragment extends Fragment {
 
@@ -37,12 +39,23 @@ public class ListTopsFragment extends Fragment {
     }
 
     public void init() {
+        Toolbar.getInstance().setTitle("Топы");
 
-        ListAdapter listAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, new String[]{"Рыжик", "Барсик", "Мурзик"});
+        /*if (APIManager.statusInfo.isGroupsListGot()) {
+            List<Group> groups = APIManager.getManager().listGroups;
 
-        ((ListView)(main_layout.findViewById(R.id.list_users_top))).setAdapter(listAdapter);
-        ((ListView)(main_layout.findViewById(R.id.list_groups_top))).setAdapter(listAdapter);
-        ((ListView)(main_layout.findViewById(R.id.list_users_top_general))).setAdapter(listAdapter);
+            String[] names = new String[groups.size()];
+            for (int j = 0; j < groups.size(); j++)
+                names[j] = groups.get(j).getName();
+
+            ListAdapter listAdapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1, names);
+
+            ((ListView)(main_layout.findViewById(R.id.list_groups_top))).setAdapter(listAdapter);
+        }*/
+
+
+        //((ListView)(main_layout.findViewById(R.id.list_users_top))).setAdapter(listAdapter);
+        //((ListView)(main_layout.findViewById(R.id.list_users_top_general))).setAdapter(listAdapter);
     }
 }

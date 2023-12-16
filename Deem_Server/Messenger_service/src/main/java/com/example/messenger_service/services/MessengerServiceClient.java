@@ -42,8 +42,8 @@ public class MessengerServiceClient {
         personal_key = environment.getProperty("ADMIN_KEY");
         headers.add("Authorization", "Bearer " + personal_key);
         headers.set("Content-Type", "application/json");
-
         entity = new HttpEntity<>("body", headers);
+
         this.restTemplate = restTemplate;
         this.environment = environment;
         this.chatService = chatService;
@@ -59,8 +59,9 @@ public class MessengerServiceClient {
 
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(
-                pushServiceUrl, HttpMethod.POST, entity, Void.class);
+        try {
+            restTemplate.exchange(pushServiceUrl, HttpMethod.POST, entity, Void.class);
+        } catch(Exception e) {}
     }
 
     public void addImagesNews(List<MessageImage> imgs) throws JsonProcessingException {
@@ -68,6 +69,10 @@ public class MessengerServiceClient {
                 .writeValueAsString(imgs);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(authServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
+        try {
+            restTemplate.exchange(authServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
+        } catch (Exception e) {
+        }
+
     }
 }

@@ -49,10 +49,6 @@ public class NewsController {
         return newsService.getNews(personDetails.getFaculty());
     }
 
-    @GetMapping("/getOneNews")
-    public News getOneNews() {
-        return new News();
-    }
 
     @PostMapping("/createNews")
     public void createNews(@RequestBody @Valid News news,

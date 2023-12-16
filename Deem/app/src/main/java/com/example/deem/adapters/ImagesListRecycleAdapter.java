@@ -50,14 +50,11 @@ public class ImagesListRecycleAdapter extends RecyclerView.Adapter<ImagesListRec
         public ItemImage(@NonNull View itemView) {
             super(itemView);
             view = (ImageView) itemView;
-
-            System.err.println("SetData " + images.size());
         }
 
         public void setData(ImageView imageView) {
             view.setImageDrawable(imageView.getDrawable());
 
-            System.err.println("Update " + images.size());
         }
     }
 }

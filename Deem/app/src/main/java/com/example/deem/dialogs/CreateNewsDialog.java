@@ -49,6 +49,7 @@ public class CreateNewsDialog extends DialogFragment {
     private ConstraintLayout main_layout;
 
     private static List<Drawable> listDrawables;
+    private static TextView imgInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +57,7 @@ public class CreateNewsDialog extends DialogFragment {
         main_layout = (ConstraintLayout)inflater.inflate(R.layout.dialog_new_news, container, false);
         listDrawables = new ArrayList<>();
         newsList = APIManager.getManager().listNews;
+        imgInfo = main_layout.findViewById(R.id.test_image_loaded);
 
         return main_layout;
     }
@@ -117,5 +119,7 @@ public class CreateNewsDialog extends DialogFragment {
         if (listDrawables == null)
             listDrawables = new ArrayList<>();
         listDrawables.add(drawable);
+
+        imgInfo.setText(String.valueOf(listDrawables.size()) + " изображений загружено");
     }
 }

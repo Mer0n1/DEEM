@@ -1,6 +1,7 @@
 package com.example.deem;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -58,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         activityChatBinding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(activityChatBinding.getRoot());
 
@@ -70,9 +72,15 @@ public class ChatActivity extends AppCompatActivity {
         FixedImages = new ArrayList<>();
         activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
+        activityChatBinding.buttonBackChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {finish();}
+        });
+
         if (APIManager.getManager().statusInfo.isChatsListGot()) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
             activityChatBinding.listMessages.setVisibility(View.VISIBLE);
+
         } else
             return;
 
@@ -87,10 +95,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Обновить RecycleView
-                //chatRecycleAdapter.notifyDataSetChanged(); //старый слабый метод
-                if (messages.size() > CurrentMessages) { //TODO: протестить
-                    for (int j = messages.size(); j < messages.size(); j++)
-                        chatRecycleAdapter.notifyItemInserted(j);
+                if (messages.size() > CurrentMessages) {
+                    chatRecycleAdapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
                     CurrentMessages = messages.size();
                 }
                 // Запустить этот Runnable снова через некоторое время
@@ -98,15 +105,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
         updateRunnable.run();
-
-        //image loader
-        activityChatBinding.imageExample.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);
-            }
-        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -149,10 +147,13 @@ public class ChatActivity extends AppCompatActivity {
                 message.setText(content);
                 message.setAuthor(APIManager.getManager().myAccount.getId());
                 message.setImages(FixedImages);
+                message.setDate(new Date(System.currentTimeMillis()));
+                message.setImages(FixedImages);
 
                 //Создание uuid
+                Date date = message.getDate();
                 FixedImages.forEach(x->x.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
-                         DateUtil.getInstance().getDateToForm(new Date(System.currentTimeMillis())),
+                         DateUtil.getInstance().getDateToForm(date),
                         APIManager.getManager().myAccount.getUsername()
                 )));
 
@@ -178,13 +179,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-        activityChatBinding.buttonBackChat.setOnClickListener(new View.OnClickListener() {
+        //image loader
+        activityChatBinding.imageExample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
             }
         });
-
     }
 
     private void loadChat() {
@@ -202,9 +204,9 @@ public class ChatActivity extends AppCompatActivity {
             isGroup = true;
 
         if (isGroup) {
-            Optional<Group> group = APIManager.getManager().listGroups.stream().filter(x->x.getName().equals(name)).findAny();
+            Group group = APIManager.getManager().listGroups.stream().filter(x->x.getName().equals(name)).findAny().orElse(null);
 
-            if (group.isEmpty())
+            if (group == null)
                 return;
 
             Long chat_id = APIManager.getManager().myAccount.getGroup().getChat_id();
@@ -268,7 +270,8 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(updateRunnable);
+        if (handler != null)
+            handler.removeCallbacks(updateRunnable);
     }
 
 }

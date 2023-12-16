@@ -19,6 +19,7 @@ public class Group {
     private List<Long> users;
     private List<News> news;
 
+    private Integer rank;
     private List<Account> accounts; //устанавливаем после загрузки users
 
     public Long getId() {
@@ -99,5 +100,13 @@ public class Group {
 
     public void setChat_id(Long chat_id) {
         this.chat_id = chat_id;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 }

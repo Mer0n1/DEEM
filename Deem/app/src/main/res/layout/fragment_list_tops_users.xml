@@ -20,6 +20,7 @@
                 android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="1dp"
                 tools:layout_editor_absoluteY="1dp"
+                android:visibility="gone"
                 android:background="@drawable/layout_bg1"
                 tools:ignore="MissingConstraints" >
 
@@ -44,7 +45,8 @@
             <ListView
                 android:id="@+id/list_users_top_general"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

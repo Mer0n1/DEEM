@@ -4,9 +4,12 @@ import static java.lang.String.format;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.AuthRequest;
@@ -16,6 +19,7 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_identefication_form);
 
 
@@ -46,6 +50,8 @@ public class AuthActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     System.out.println("non auth");
+                    Toast.makeText(getApplicationContext(), "Не удалось авторизироваться" ,
+                            Toast.LENGTH_LONG).show();
                 }
             }
         };

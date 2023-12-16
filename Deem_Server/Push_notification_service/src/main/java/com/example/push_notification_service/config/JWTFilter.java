@@ -46,6 +46,10 @@ public class JWTFilter extends OncePerRequestFilter {
                 PersonDetails details = new PersonDetails();
                 details.setUsername(jwtDec.getClaim("username").asString());
                 details.setPassword(jwtDec.getClaim("password").asString());
+                details.setId(jwtDec.getClaim("id").asLong());
+                details.setROLE(jwtDec.getClaim("ROLE").asString());
+                details.setCourse(jwtDec.getClaim("course").asInt());
+                details.setFaculty(jwtDec.getClaim("faculty").asString());
 
                 UserDetails userDetails = details;
 

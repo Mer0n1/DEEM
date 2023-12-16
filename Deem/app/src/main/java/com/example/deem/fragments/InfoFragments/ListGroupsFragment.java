@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.deem.R;
 import com.example.deem.adapters.GroupsListRecycleAdapter;
 import com.example.deem.databinding.FragmentListGroupsBinding;
+import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
 
@@ -45,6 +46,8 @@ public class ListGroupsFragment extends Fragment {
     }
 
     public void init() {
+        Toolbar.getInstance().setTitle("Группы");
+
         if (!APIManager.getManager().statusInfo.isGroupsListGot())
             return;
 

@@ -26,7 +26,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <Button
+                <ImageButton
                     android:id="@+id/button_back_profile"
                     android:layout_width="30dp"
                     android:layout_height="30dp"

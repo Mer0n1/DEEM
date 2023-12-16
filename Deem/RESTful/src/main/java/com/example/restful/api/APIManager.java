@@ -18,6 +18,7 @@ import com.example.restful.utils.GeneratorUUID;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +72,7 @@ public class APIManager {
                     Handler.setToken(stri.body());
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
                 jwtKey = stri.body();
             }
@@ -245,6 +247,14 @@ public class APIManager {
 
                 group.setAccounts(accounts);
             }
+
+        //Сортировка по баллам сразу
+        if (listGroups != null)
+            Collections.sort(listGroups, (s1, s2) -> {
+                if (s1.getScore() > s2.getScore())
+                    return -1;
+                else return 0;
+            });
     }
 
     public void sendMessage(Message message) {
@@ -409,7 +419,7 @@ public class APIManager {
 
                     String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
                             DateUtil.getInstance().getDateToForm(message.getDate()), author);
-
+System.err.println("000 " + message.getText() + " " + UUID);
                     Repository.getInstance().getImage(UUID, "message_image").enqueue(new Callback<Image>() {
                         @Override
                         public void onResponse(Call<Image> call, Response<Image> response) {

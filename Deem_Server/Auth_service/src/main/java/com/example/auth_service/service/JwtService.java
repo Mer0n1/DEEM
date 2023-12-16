@@ -30,7 +30,7 @@ public class JwtService {
     }
 
     public String generateToken(Account account, LocationStudent locationStudent) {
-        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(6000000).toInstant());
 
         return JWT.create()
                 .withSubject("User details")

@@ -2,6 +2,12 @@ package com.example.deem.adapters;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,9 +104,12 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                 for (MessageImage image : message.getImages()) {
                     Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(image.getImage().getImgEncode());
                     ImageView imageView = new ImageView(activity);
-                    imageView.setImageBitmap(bitmap);
+                    Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
+                    imageView.setImageBitmap(roundedBitmap);
+
                     views.add(imageView);
                     recyclerView.setVisibility(View.VISIBLE);
+                    imagesListRecycleAdapter.notifyDataSetChanged();
                 }
 
             //Lazy система подгрузки изображений
@@ -113,13 +122,30 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                         Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
 
                         ImageView imageView = new ImageView(activity);
-                        imageView.setImageBitmap(bitmap);
+                        Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
+                        imageView.setImageBitmap(roundedBitmap);
                         views.add(imageView);
 
                         recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size()));
                         recyclerView.setVisibility(View.VISIBLE);
                     }
                 });
+        }
+
+        public Bitmap getRoundedBitmap(Bitmap bitmap, int radius) {
+            if (bitmap == null) return null;
+            Bitmap roundedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(roundedBitmap);
+
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setShader(new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+
+            RectF rectF = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            canvas.drawRoundRect(rectF, radius, radius, paint);
+
+            return roundedBitmap;
         }
 
 

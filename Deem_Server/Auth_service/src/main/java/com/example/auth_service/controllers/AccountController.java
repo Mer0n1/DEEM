@@ -4,6 +4,7 @@ import com.example.auth_service.models.Account;
 import com.example.auth_service.models.DepartureForm;
 import com.example.auth_service.models.Group;
 import com.example.auth_service.config.PersonDetails;
+import com.example.auth_service.models.ListLong;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -112,6 +114,28 @@ public class AccountController {
     @GetMapping("/getListIdUsersGroup")
     public List<Long> getListIdUsersGroup(@RequestParam("id") Long idGroup) {
         return accountService.getUsersOfGroup(idGroup);
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/getListAverageValues") //неверно, но это меняет ограничения
+    public List<Integer> getListAverageValues(@RequestBody List<ListLong> list) {
+        System.out.println(list.toString());
+        return accountService.getListAverageValue(list);
+    }
+
+    @PostMapping("/test")
+    private List<ListLong>  test() {
+        System.out.println("test");
+        List<ListLong> list = new ArrayList<>();
+        list.add(new ListLong());
+        list.get(0).list.add(5L);
+        list.get(0).list.add(6L);
+
+        list.add(new ListLong());
+        list.get(1).list.add(5L);
+        list.get(1).list.add(6L);
+
+        return list;
     }
 
 }

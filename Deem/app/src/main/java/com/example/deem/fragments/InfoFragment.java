@@ -56,6 +56,8 @@ public class InfoFragment extends Fragment {
     }
 
     public void init() {
+        Toolbar.getInstance().setTitle("Новости");
+
         if (!APIManager.getManager().statusInfo.isNewsListGot())
             return;
 

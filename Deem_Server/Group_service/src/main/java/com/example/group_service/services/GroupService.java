@@ -24,13 +24,4 @@ public class GroupService {
 
     public List<Group> getGroupsOfFaculty(String faculty) { return repository.findAllByFaculty(faculty);}
 
-    public List<Group> sort(List<Group> groups) {
-        List<Group> tops = new ArrayList<>();
-        groups.stream().sorted(Comparator.comparing(o -> o.getScore()));
-
-        int size = Math.min(groups.size(), 10);
-        for (int j = 0; j < size; j++)
-            tops.add(groups.get(j));
-        return tops;
-    }
 }

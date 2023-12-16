@@ -1,6 +1,7 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.models.Account;
+import com.example.auth_service.models.ListLong;
 import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,23 @@ public class AccountService {
             Account account = account_opt.get();
             account.setGroup_id(idGroup);
         }
+    }
+
+    public List<Integer> getListAverageValue(List<ListLong> list) {
+        List<Integer> result_list = new ArrayList<>();
+
+        for (ListLong listInteger : list) {
+            List<Account> accountList = repository.findAllByIdIn(listInteger.list);
+
+            Integer aver = 0;
+
+            for (Account account : accountList)
+                aver += account.getScore();
+            if (accountList.size() != 0)
+                aver /= accountList.size();
+
+            result_list.add(aver);
+        }
+        return result_list;
     }
 }

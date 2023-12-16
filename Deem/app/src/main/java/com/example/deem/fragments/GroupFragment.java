@@ -37,6 +37,8 @@ public class GroupFragment extends Fragment {
     private NewsListRecycleAdapter newsListRecycleAdapter;
     private RecyclerView recyclerView;
 
+    private boolean itsMyGroup;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +57,27 @@ public class GroupFragment extends Fragment {
     public void init() {
         initToolbar();
 
-        if (newsList != null) { //очистим список записей группы
-            newsList.clear();
-            newsListRecycleAdapter.notifyDataSetChanged();
-        }
-
         if (!checkWorkingCondition())
             return;
+
 
         //Инициализация значений
         ((TextView)main_layout.findViewById(R.id.quality_users)).setText(
                 String.valueOf(group.getAccounts().size()) + " участников");
-        ((TextView)main_layout.findViewById(R.id.score)).setText(String.valueOf(CountAverageValue()));
+
+        if (group.getName().equals(APIManager.getManager().myAccount.getGroup().getName())) {
+            itsMyGroup = true;
+            ((TextView) main_layout.findViewById(R.id.score)).setText(String.valueOf(CountAverageValue()));
+
+            main_layout.findViewById(R.id.chat_button_group).setVisibility(View.VISIBLE);
+            main_layout.findViewById(R.id.create_news).setVisibility(View.VISIBLE);
+        } else { //если это чужая группа
+            itsMyGroup = false;
+            ((TextView) main_layout.findViewById(R.id.score)).setText("");
+
+            main_layout.findViewById(R.id.chat_button_group).setVisibility(View.GONE);
+            main_layout.findViewById(R.id.create_news).setVisibility(View.GONE);
+        }
 
         //Установим значок
         TextView icon = main_layout.findViewById(R.id.icon_group_main);
@@ -79,24 +90,27 @@ public class GroupFragment extends Fragment {
     }
 
     public void setListeners() {
-        main_layout.findViewById(R.id.create_news).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CreateNewsDialog createNewsDialog = new CreateNewsDialog();
-                createNewsDialog.setNewsList(newsList);
-                createNewsDialog.show(getActivity().getSupportFragmentManager(), "creation_menu");
-                newsListRecycleAdapter.notifyDataSetChanged();
-            }
-        });
 
-        main_layout.findViewById(R.id.chat_button_group).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra("Nickname", group.getName());
-                getActivity().startActivity(intent);
-            }
-        });
+        if (itsMyGroup) {
+            main_layout.findViewById(R.id.create_news).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CreateNewsDialog createNewsDialog = new CreateNewsDialog();
+                    createNewsDialog.setNewsList(newsList);
+                    createNewsDialog.show(getActivity().getSupportFragmentManager(), "creation_menu");
+                    newsListRecycleAdapter.notifyDataSetChanged();
+                }
+            });
+
+            main_layout.findViewById(R.id.chat_button_group).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    intent.putExtra("Nickname", group.getName());
+                    getActivity().startActivity(intent);
+                }
+            });
+        }
     }
 
     public void initRecycle() {
@@ -113,9 +127,9 @@ public class GroupFragment extends Fragment {
 
     public void initNews() {
         List<News> allNews = APIManager.getManager().listNews;
-        if (allNews == null) return;
         newsList = new ArrayList<>();
 
+        if (allNews != null)
         for (News news : allNews)
             if (news.getIdGroup() == group.getId())
                 newsList.add(news);

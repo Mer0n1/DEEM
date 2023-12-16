@@ -1,5 +1,7 @@
 package com.example.group_service.services;
 
+import com.example.group_service.models.ListLong;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -41,9 +43,26 @@ public class RestTemplateClient {
 
     public List<Long> getListIdUsersOfGroup(Long idGroup) {
         try {
+            headers.set("Content-Type", "text/plain");
             ResponseEntity<List<Long>> response = restTemplate.exchange(
                     accountServiceUrl + "getListIdUsersGroup" + "?id=" + idGroup,
                     HttpMethod.GET, entity, new ParameterizedTypeReference<List<Long>>(){});
+            return response.getBody();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Long> getListTopGroups(List<ListLong> list_id) {
+        try {
+            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                    .writeValueAsString(list_id);
+            headers.set("Content-Type", "application/json");
+            entity = new HttpEntity<>(jsonMessage, headers);
+
+            ResponseEntity<List<Long>> response = restTemplate.exchange(
+                    accountServiceUrl + "getListAverageValues",
+                    HttpMethod.POST, entity, new ParameterizedTypeReference<List<Long>>(){});
             return response.getBody();
         } catch (Exception e) {
             return new ArrayList<>();
