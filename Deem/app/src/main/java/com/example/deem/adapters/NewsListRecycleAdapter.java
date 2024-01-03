@@ -116,11 +116,13 @@ class ItemNews extends RecyclerView.ViewHolder {
                 APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
                     public void onImageLoaded(String decodeStr) {
-                        ImageView imageView = new ImageView(fragment.getContext());
-                        imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
-                        imageViews.add(imageView);
+                        if (fragment.getContext().getResources() != null) { //баг
+                            ImageView imageView = new ImageView(fragment.getContext());
+                            imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
+                            imageViews.add(imageView);
 
-                        recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
+                            recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
+                        }
                     }
                 });
             }

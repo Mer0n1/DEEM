@@ -59,7 +59,7 @@ public class ListUsersFragment extends Fragment {
     }
 
     private void init() {
-        Toolbar.getInstance().setTitle("Пользователи");
+        Toolbar.getInstance().setTitle("Пользователи", 16);
 
         if (!APIManager.getManager().statusInfo.isAccountListGot())
             return;
@@ -91,7 +91,7 @@ public class ListUsersFragment extends Fragment {
     }
 
     public void sort(String text) {
-        //название группы
+        //название
         List<Account> sort = new ArrayList<>();
         for (Account user : users)
             if (user.getUsername().equals(text) ||

@@ -122,7 +122,6 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
                     icon.setImageBitmap(bitmap);
                 }
             };
-            System.out.println("----- " + user.getImageIcon() + " " + user.getUsername());
 
             if (user.getImageIcon() != null) {
                 imageLoadCallback.onImageLoaded(user.getImageIcon().getImgEncode());

@@ -57,7 +57,7 @@ public class AccountServiceClient {
     public List<Group> getGroups() {
         try {
             ResponseEntity<List<Group>> response = restTemplate.exchange(
-                    groupServiceUrl + "getGroups", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Group>>() {});
+                    groupServiceUrl + "getAllGroups", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Group>>() {});
             return response.getBody();
 
         } catch(Exception e) {

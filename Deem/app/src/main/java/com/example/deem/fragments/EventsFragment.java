@@ -69,8 +69,9 @@ public class EventsFragment extends Fragment {
     }
 
     public void initToolbar() {
+        Toolbar.getInstance().reset();
         Toolbar.getInstance().setTitle("Текущие экзамены");
-        Toolbar.getInstance().ClearIcons();
+
         ImageView history_events_img = Toolbar.getInstance().loadIcon(R.drawable.icon_story_events);
 
         history_events_img.setOnClickListener(new View.OnClickListener() {

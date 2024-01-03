@@ -26,7 +26,7 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publication_date;
 
-    @NotEmpty(message = "Start Date must not be null")
+    @NotNull(message = "Start Date must not be null")
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_date;
 

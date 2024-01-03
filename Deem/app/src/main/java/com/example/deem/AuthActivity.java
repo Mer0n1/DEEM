@@ -46,6 +46,13 @@ public class AuthActivity extends AppCompatActivity {
                     APIManager.getManager().UpdateData();
                     APIManager.getManager().getMyAccount();
 
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {

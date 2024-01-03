@@ -18,7 +18,7 @@ public class AccountService {
     private AccountRepository repository;
 
     @Transactional
-    public void save(Account account) { repository.save(account); }
+    public Account save(Account account) { return repository.save(account); }
     @Transactional
     public void delete(Long idAccount) { repository.deleteById(idAccount); }
     public Account getAccount(String username) {

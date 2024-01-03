@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Date;
 
 
 @RestController
@@ -63,12 +64,15 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
-        restTemplateService.createStudent(form.getAccount());
+        Long id = restTemplateService.createStudent(form.getAccount()).getId();
+        form.getAccount().setId(id);
+
         Chat chat = new Chat();
         chat.setUsers(Collections.singletonList(form.getAccount().getId()));
-        restTemplateService.linkAccountToGroupChat(chat); //TODO привязка студента к чату группы - check
+        chat.setId(restTemplateService.getChatId(form.getAccount().getGroup_id()));
+        restTemplateService.linkAccountToGroupChat(chat);
 
-        enrollmentStoryService.save(form);
+        //enrollmentStoryService.save(form);
     }
 
     @PostMapping("/createGroup")
@@ -79,9 +83,10 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return;
 
+        form.getGroup().setDate_create(new Date(System.currentTimeMillis()));
         form.getGroup().setChat_id(restTemplateService.createChatAndGetId());
         restTemplateService.createGroup(form.getGroup());
-        groupCreationFormService.save(form); //maybe errors
+        //groupCreationFormService.save(form);
     }
 
     @PatchMapping("/sendScore")
@@ -109,5 +114,9 @@ public class AdminController {
         restTemplateService.releaseEvent(event);
     }
 
+    @GetMapping("/test")
+    public Date getDate() {
+        return new Date(System.currentTimeMillis());
+    }
 }
 

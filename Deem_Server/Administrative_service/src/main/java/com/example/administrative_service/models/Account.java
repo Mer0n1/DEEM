@@ -13,8 +13,8 @@ public class Account {
     private String name;
     private String surname;
     private String fathername;
-    //private Long group_id;
-    private String ROLE;
+    private String role;
     private int score;
-    private Group group;
+    /*private Group group;*/
+    private Long group_id;
 }

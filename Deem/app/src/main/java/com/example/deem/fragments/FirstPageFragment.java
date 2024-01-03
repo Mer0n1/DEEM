@@ -1,10 +1,12 @@
 package com.example.deem.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,8 +16,11 @@ import com.example.deem.R;
 import com.example.deem.utils.Toolbar;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.Event;
 import com.example.restful.models.News;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class FirstPageFragment extends Fragment {
@@ -42,6 +47,23 @@ public class FirstPageFragment extends Fragment {
     public void init() {
         initToolbar();
 
+        if (APIManager.statusInfo.isEventsListGot()) {
+            List<Event> events = APIManager.getManager().listEvents;
+            Date date = new Date(System.currentTimeMillis());
+
+            for (Event event : events)
+                if (event.getStart_date().after(date)) {
+
+                    Date date_exam = event.getStart_date();
+                    TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
+                    TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
+                    text_name_exam.setText(event.getName());
+                    text_date_exam.setText(date_exam.getDay() + "." + date_exam.getMonth() + "." + date_exam.getYear()
+                            + "  " + date_exam.getHours() + ":" + date_exam.getMinutes());
+                    break;
+                }
+        }
+
         if (!APIManager.getManager().statusInfo.isNewsListGot())
             return;
 
@@ -65,7 +87,7 @@ public class FirstPageFragment extends Fragment {
     }
 
     public void initToolbar() {
+        Toolbar.getInstance().reset();
         Toolbar.getInstance().setTitle("Основное меню");
-        Toolbar.getInstance().ClearIcons();
     }
 }

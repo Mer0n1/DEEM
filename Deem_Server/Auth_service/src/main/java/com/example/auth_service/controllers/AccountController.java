@@ -9,6 +9,8 @@ import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -79,13 +80,15 @@ public class AccountController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createAccount")
-    public void createAccount(@RequestBody @Valid Account account,
-                          BindingResult bindingResult) {
+    public Account createAccount(@RequestBody @Valid Account account,
+                                        BindingResult bindingResult) {
         System.out.println("createAccount");
-        if (bindingResult.hasErrors())
-            return;
 
-        accountService.save(account);
+        if (bindingResult.hasErrors())
+            return null;
+
+        Account ac = accountService.save(account);
+        return ac;
     }
 
     @PreAuthorize("hasRole('HIGH')")
@@ -121,21 +124,6 @@ public class AccountController {
     public List<Integer> getListAverageValues(@RequestBody List<ListLong> list) {
         System.out.println(list.toString());
         return accountService.getListAverageValue(list);
-    }
-
-    @PostMapping("/test")
-    private List<ListLong>  test() {
-        System.out.println("test");
-        List<ListLong> list = new ArrayList<>();
-        list.add(new ListLong());
-        list.get(0).list.add(5L);
-        list.get(0).list.add(6L);
-
-        list.add(new ListLong());
-        list.get(1).list.add(5L);
-        list.get(1).list.add(6L);
-
-        return list;
     }
 
 }

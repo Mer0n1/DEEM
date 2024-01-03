@@ -62,12 +62,12 @@ public class RestTemplateService {
         restTemplate.exchange(groupServiceUrl + "/createGroup", HttpMethod.POST, entity, Void.class);
     }
 
-    public void createStudent(Account account) throws JsonProcessingException {
+    public Account createStudent(Account account) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(account);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(authServiceUrl + "/createAccount", HttpMethod.POST, entity, Void.class);
+        return restTemplate.exchange(authServiceUrl + "/createAccount", HttpMethod.POST, entity, Account.class).getBody();
     }
 
     public void transferStudent(Long idStudent, Long idGroup) {
@@ -114,6 +114,15 @@ public class RestTemplateService {
 
         restTemplate.exchange(chatControllerUrl + "/linkAccountToGroupChat", HttpMethod.POST,
                 entity, Void.class);
+    }
+    public Long getChatId(Long idGroup) {
+        try {
+            ResponseEntity<Long> response = restTemplate.exchange(
+                    groupServiceUrl + "/getChatId" + "?id=" + idGroup, HttpMethod.GET, entity, Long.class);
+            return response.getBody();
 
+        } catch(Exception e) {
+            return null;
+        }
     }
 }

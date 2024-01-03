@@ -28,10 +28,6 @@ public class Group {
     @Column(name = "course")
     private int course; //курс.
 
-    @NotNull(message = "score must not be null")
-    @Column(name = "score")
-    private int score;
-
     @NotEmpty(message = "name must not be null")
     @Column(name = "name")
     private String name;
@@ -43,6 +39,10 @@ public class Group {
 
     @Column(name = "chat_id")
     private Long chat_id;
+
+    @NotNull(message = "score must not be null")
+    @Transient
+    private int score;
 
     @Transient
     private List<Long> users;

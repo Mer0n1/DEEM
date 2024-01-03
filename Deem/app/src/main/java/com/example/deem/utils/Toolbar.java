@@ -3,6 +3,7 @@ package com.example.deem.utils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.example.deem.MainActivity;
@@ -37,8 +38,12 @@ public class Toolbar {
         linearLayout.addView(ii);
 
         ii.getLayoutParams().width = ii.getLayoutParams().height =
-                toolbarInterface.findViewById(R.id.profile_icon).getLayoutParams().width;;
+                mainActivity.findViewById(R.id.profile_icon).getLayoutParams().width;
         ii.requestLayout();
+
+        Space space = new Space(mainActivity);
+        space.setMinimumWidth(10);
+        linearLayout.addView(space);
 
         return ii;
     }
@@ -53,6 +58,12 @@ public class Toolbar {
     public void setTitle(String title) {
         TextView textView = toolbarInterface.findViewById(R.id.text_toolbar);
         textView.setText(title);
+        textView.setTextSize(20);
+    }
+    public void setTitle(String title, int size) {
+        TextView textView = toolbarInterface.findViewById(R.id.text_toolbar);
+        textView.setText(title);
+        textView.setTextSize(size);
     }
 
     public ImageView includeButtonBack() {
@@ -70,5 +81,11 @@ public class Toolbar {
     public void TurnOffButtonBack() {
         if (button_back != null)
             button_back.setVisibility(View.INVISIBLE);
+    }
+
+    public void reset() {
+        ClearIcons();
+        setTitle("");
+        TurnOffButtonBack();
     }
 }

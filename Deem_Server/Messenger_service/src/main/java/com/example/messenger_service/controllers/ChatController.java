@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.security.Principal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -59,9 +60,10 @@ public class ChatController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/linkAccountToGroupChat")
-    public void linkAccountToGroupChat(Chat chat) {
+    public void linkAccountToGroupChat(@RequestBody Chat chat) {
         chatDAO.saveInAccount_chat(chat);
     }
+
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createChatGroup")

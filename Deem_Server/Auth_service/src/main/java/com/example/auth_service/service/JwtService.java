@@ -9,7 +9,6 @@ import com.example.auth_service.models.Account;
 import com.example.auth_service.models.LocationStudent;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +35,7 @@ public class JwtService {
                 .withSubject("User details")
                 .withClaim("username", account.getUsername())
                 .withClaim("id", account.getId())
-                .withClaim("ROLE", account.getROLE())
+                .withClaim("ROLE", account.getRole())
                 .withClaim("course", locationStudent.getCourse())
                 .withClaim("faculty", locationStudent.getFaculty())
                 .withIssuedAt(new Date())

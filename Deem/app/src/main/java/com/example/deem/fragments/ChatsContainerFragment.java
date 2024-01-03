@@ -53,7 +53,7 @@ public class ChatsContainerFragment extends Fragment {
     }
 
     public void initToolbar() {
-        Toolbar.getInstance().ClearIcons();
+        Toolbar.getInstance().reset();
         Toolbar.getInstance().setTitle("Чаты");
     }
 

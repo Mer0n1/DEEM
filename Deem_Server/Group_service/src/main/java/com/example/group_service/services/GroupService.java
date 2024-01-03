@@ -22,6 +22,6 @@ public class GroupService {
 
     public List<Group> getGroups() { return repository.findAll(); }
 
-    public List<Group> getGroupsOfFaculty(String faculty) { return repository.findAllByFaculty(faculty);}
+    public List<Group> getGroupsOfFacultyAndCourse(String faculty, Integer course) { return repository.findAllByFacultyAndCourse(faculty, course);}
 
 }

@@ -1,6 +1,5 @@
 package com.example.auth_service.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +42,7 @@ public class Account {
     private Group group;
 
     @Column(name = "role")
-    private String ROLE;
+    private String role;
 
     public void addScore(int score) {
         this.score += score;

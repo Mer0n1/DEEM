@@ -8,6 +8,8 @@ import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,12 +40,22 @@ public class GroupController {
         return group;
     }
 
+    /** Возвращает группы согласно допуску, тоесть текущего курса и факультета */
     @GetMapping("/getGroups")
     public List<Group> getGroups(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        PersonDetails personDetails = (PersonDetails) userDetails;
 
         //Получим список групп для текущего факультета заявителя
-        List<Group> groups = groupService.getGroupsOfFaculty(((PersonDetails)userDetails).getFaculty());
+        List<Group> groups = groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
+
+        buildListGroups(groups);
+
+        return groups;
+    }
+
+
+    private void buildListGroups(List<Group> groups) {
         //Получим список учащихся групп
         for (Group group : groups)
             group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
@@ -58,23 +70,22 @@ public class GroupController {
         groups.sort(Comparator.comparingInt(list_score::indexOf));
 
         if (list_score.size() != 0)
-        for (int j = 0; j < groups.size(); j++)
-            groups.get(j).setScore(list_score.get(j).intValue());
-
-        return groups;
+            for (int j = 0; j < groups.size(); j++)
+                groups.get(j).setScore(list_score.get(j).intValue());
     }
 
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")
-    public void createGroup(@RequestBody @Valid Group group,
-                            BindingResult bindingResult) {
+    public ResponseEntity<Void> createGroup(@RequestBody @Valid Group group,
+                                            BindingResult bindingResult) {
         System.out.println("createGroup");
 
         if (bindingResult.hasErrors())
-            return;
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 
         groupService.save(group);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @GetMapping("/getLocationStudent")
@@ -84,4 +95,19 @@ public class GroupController {
         return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 
+    @PreAuthorize("hasRole('HIGH')")
+    @GetMapping("/getAllGroups")
+    public List<Group> getAllGroups() {
+
+        List<Group> groups = groupService.getGroups();
+        buildListGroups(groups);
+
+        return groups;
+    }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @GetMapping("/getChatId")
+    public Long getChatId(@RequestParam("id") Long id) {
+        return groupService.getGroup(id).getChat_id();
+    }
 }

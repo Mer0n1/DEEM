@@ -2,6 +2,7 @@ package com.example.exam_service.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
@@ -25,12 +26,12 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publication_date;
 
-    @NotEmpty(message = "start_date must not be null")
+    @NotNull(message = "start_date must not be null")
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_date;
 
-    @NotEmpty(message = "Id Group must not be null")
+    @NotNull(message = "Id Group must not be null")
     @Column(name = "group_id")
     private Long idGroup;
 
