@@ -95,10 +95,9 @@ public class GroupController {
         return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 
-    @PreAuthorize("hasRole('HIGH')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
     @GetMapping("/getAllGroups")
     public List<Group> getAllGroups() {
-
         List<Group> groups = groupService.getGroups();
         buildListGroups(groups);
 

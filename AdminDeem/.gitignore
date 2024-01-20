@@ -1,0 +1,8 @@
+/debug
+/release
+.qmake.stash
+*.pro
+*.autosave
+Makefile
+*.Debug
+*.Release

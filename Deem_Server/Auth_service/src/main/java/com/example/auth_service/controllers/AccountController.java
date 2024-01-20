@@ -70,7 +70,6 @@ public class AccountController {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PersonDetails personDetails = (PersonDetails) userDetails;
-        System.out.println(personDetails.getROLE());
 
         if (bindingResult.hasErrors())
             return;

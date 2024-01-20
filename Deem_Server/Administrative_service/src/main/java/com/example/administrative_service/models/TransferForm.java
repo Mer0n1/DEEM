@@ -26,7 +26,7 @@ public class TransferForm {
     private Long idStudent;
 
     //группа в которую нужно перевести. Обязательно текущий факультет.
-    @NotEmpty(message = "Group must not be null")
+    @NotNull(message = "id_group must not be null")
     @Column(name = "id_group")
     private Long id_group;
 }

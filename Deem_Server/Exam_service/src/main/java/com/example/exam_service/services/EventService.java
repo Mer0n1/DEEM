@@ -20,4 +20,5 @@ public class EventService {
     public List<Event> getEvents(String faculty) {
         return eventRepository.getEventsByFaculty(faculty);
     }
+    public List<Event> getAllEvents() { return eventRepository.findAll(); }
 }

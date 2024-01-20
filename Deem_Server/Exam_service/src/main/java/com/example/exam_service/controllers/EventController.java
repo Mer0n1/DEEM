@@ -48,4 +48,10 @@ public class EventController {
 
         eventService.save(event);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
+    @GetMapping("/getAllEvents")
+    public List<Event> getAllEvents() {
+        return eventService.getAllEvents();
+    }
 }

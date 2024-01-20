@@ -6,10 +6,12 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Data
+@ToString
 public class Event {
     private Long id;
 
@@ -34,4 +36,6 @@ public class Event {
     private Long idGroup;
     @NotEmpty(message = "Faculty must not be null")
     private String faculty;
+    @NotNull(message = "course must not be null")
+    private Integer course;
 }

@@ -22,6 +22,10 @@ public class Event {
     @Column(name = "faculty")
     private String faculty;
 
+    @NotNull(message = "course must not be null")
+    @Column(name = "course")
+    private int course;
+
     //@Column(name = "publication_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date publication_date;
