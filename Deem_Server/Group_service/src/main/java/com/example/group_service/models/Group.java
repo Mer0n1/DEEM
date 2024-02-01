@@ -40,6 +40,9 @@ public class Group {
     @Column(name = "chat_id")
     private Long chat_id;
 
+    @Column(name = "type")
+    private String type;
+
     @NotNull(message = "score must not be null")
     @Transient
     private int score;

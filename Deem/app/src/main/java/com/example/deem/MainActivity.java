@@ -25,6 +25,7 @@ import com.example.deem.fragments.EventsFragment;
 import com.example.deem.fragments.FirstPageFragment;
 import com.example.deem.fragments.GroupFragment;
 import com.example.deem.fragments.InfoFragment;
+import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 
@@ -34,12 +35,14 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    //bottom_
     private FragmentTransaction fragmentTransaction;
     private GroupFragment groupFragment;
     private InfoFragment infoFragment;
     private FirstPageFragment firstPageFragment;
     private ChatsContainerFragment chatsContainerFragment;
     private EventsFragment eventsFragment;
+
 
     public enum FragmentType { first, group, info_, messenger, events }
 
@@ -78,13 +81,16 @@ public class MainActivity extends AppCompatActivity {
                     OpenMenu(FragmentType.group, bundle);
                 }
 
-
+            }
+        };
+        View.OnClickListener onClickOther = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if (v == findViewById(R.id.profile_icon)) {
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                     intent.putExtra("Nickname", APIManager.getManager().myAccount.getUsername());
                     startActivity(intent);
                 }
-
             }
         };
 
@@ -94,10 +100,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bottom_info).setOnClickListener(onClickBottom);
         findViewById(R.id.bottom_events).setOnClickListener(onClickBottom);
 
-        findViewById(R.id.profile_icon).setOnClickListener(onClickBottom);
+        findViewById(R.id.profile_icon).setOnClickListener(onClickOther);
     }
 
     public void OpenFragment(Fragment fragment, int id_layout, boolean saveIcon) {
+
         if (!saveIcon)
             Toolbar.getInstance().ClearIcons();
 
@@ -201,6 +208,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
 
 

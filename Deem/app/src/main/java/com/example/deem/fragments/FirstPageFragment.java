@@ -1,6 +1,7 @@
 package com.example.deem.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,23 +13,34 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.deem.MainActivity;
+import com.example.deem.ProfileActivity;
 import com.example.deem.R;
+import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Event;
+import com.example.restful.models.Group;
 import com.example.restful.models.News;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class FirstPageFragment extends Fragment {
 
     private FrameLayout main_layout;
+    private MainActivity activity;
 
     private NewsListRecycleAdapter recycleAdapterNews;
     private RecyclerView recyclerView;
+
+    private List<News> adminNews;
+
+    //fragments
+    private RatingGroupsFragment ratingGroupsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +50,7 @@ public class FirstPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_first, container, false);
+        activity = (MainActivity) getActivity();
 
         init();
 
@@ -45,8 +58,32 @@ public class FirstPageFragment extends Fragment {
     }
 
     public void init() {
-        initToolbar();
+        ratingGroupsFragment = new RatingGroupsFragment();
 
+        initToolbar();
+        initEvent();
+        initListNews();
+        initRecycle();
+        initClickListeners();
+    }
+
+    private void initToolbar() {
+        Toolbar.getInstance().reset();
+        Toolbar.getInstance().setTitle("Основное меню");
+    }
+
+    private void initRecycle() {
+        //recycle
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),
+                LinearLayoutManager.HORIZONTAL, false);
+
+        recycleAdapterNews = new NewsListRecycleAdapter(adminNews, this);
+        recyclerView = main_layout.findViewById(R.id.news_administrative);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(recycleAdapterNews);
+    }
+
+    private void initEvent() {
         if (APIManager.statusInfo.isEventsListGot()) {
             List<Event> events = APIManager.getManager().listEvents;
             Date date = new Date(System.currentTimeMillis());
@@ -63,31 +100,35 @@ public class FirstPageFragment extends Fragment {
                     break;
                 }
         }
-
-        if (!APIManager.getManager().statusInfo.isNewsListGot())
-            return;
-
-        //...event
-        List<News> listNews = APIManager.getManager().listNews;
-        //возьмем только новости из особой группы
-
-        if (listNews != null) {
-            //main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);
-            main_layout.findViewById(R.id.news_administrative).setVisibility(View.VISIBLE);
-        } else
-            return;
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),
-                LinearLayoutManager.HORIZONTAL, false);
-
-        recycleAdapterNews = new NewsListRecycleAdapter(listNews, this);
-        recyclerView = main_layout.findViewById(R.id.news_administrative);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(recycleAdapterNews);
     }
 
-    public void initToolbar() {
-        Toolbar.getInstance().reset();
-        Toolbar.getInstance().setTitle("Основное меню");
+    private void initListNews() {
+
+        if (APIManager.getManager().statusInfo.isGroupsListGot() && APIManager.getManager().statusInfo.isNewsListGot()) {
+            adminNews = new ArrayList<>();
+            List<News> news = APIManager.getManager().listNews;
+            List<Group> adminGroups = APIManager.getManager().adminGroups;
+
+            for (News news1 : news)
+                for (Group group : adminGroups)
+                    if (news1.getIdGroup() == group.getId())
+                        adminNews.add(news1);
+
+            main_layout.findViewById(R.id.news_administrative).setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void initClickListeners() {
+        //OnClick
+        View.OnClickListener onClickOther = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (v == main_layout.findViewById(R.id.rat_button))
+                    activity.OpenFragment(ratingGroupsFragment, R.id.fragment_main, false);
+            }
+        };
+        main_layout.findViewById(R.id.rat_button).setOnClickListener(onClickOther);
     }
 }

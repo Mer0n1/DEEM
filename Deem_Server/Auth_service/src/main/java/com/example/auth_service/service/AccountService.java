@@ -33,6 +33,14 @@ public class AccountService {
 
     public List<Long> getUsersOfGroup(Long idGroup) { return repository.findUsersOfGroup(idGroup);}
 
+    public List<String> getTopUniversity() {
+        List<Account> accounts = repository.findTopUniversity();
+        List<String> list = new ArrayList<>();
+        for (Account account : accounts)
+            list.add(account.getUsername());
+        return list;
+    }
+
 
     public List<Account> sort(List<Account> accounts) {
         List<Account> tops = new ArrayList<>();

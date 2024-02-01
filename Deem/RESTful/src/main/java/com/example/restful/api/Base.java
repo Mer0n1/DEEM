@@ -11,6 +11,8 @@ import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.models.PrivateAccountDTO;
+import com.example.restful.models.PublicAccountDTO;
 
 import java.util.List;
 
@@ -28,14 +30,18 @@ public interface Base {
     @POST("/auth/login")
     Call<String> getToken(@Body AuthRequest body);
     @GET("/getAuth/getMyAccount")
-    Call<Account> getMyAccount();
+    Call<PublicAccountDTO> getMyAccount();
     @GET("/getAuth/getMyAccount")
-    Call<Account> getMyAccount(@Header("Authorization") String token);
+    Call<PublicAccountDTO> getMyAccount(@Header("Authorization") String token);
     @GET("/getAuth/getAccounts")
-    Call<List<Account>> getAccounts();
+    Call<List<PrivateAccountDTO>> getAccounts();
+    @GET("/getAuth/getTopStudentsFaculty")
+    Call<List<String>> getTopStudentsFaculty();
+    @GET("/getAuth/getTopStudentsUniversity")
+    Call<List<String>> getTopStudentsUniversity();
 
     //groups
-    @GET("/group/getGroups")
+    @GET("/group/getAllGroups")
     Call<List<Group>> getGroups();
 
     //chats
@@ -45,15 +51,6 @@ public interface Base {
     Call<Void> sendMessage(@Body Message message);
     @POST("/chat/createChat")
     Call<Void> sendNewChat(@Body Chat chat);
-    /*@GET("/chat/getImageTest")
-    Call<ResponseBody> getImage(); //test
-    */
-    //test
-    /*@Multipart
-    @POST("/news/uploadProfile")
-    Call<ResponseBody> uploadProfile(
-            @Part("description") RequestBody description,
-            @Part MultipartBody.Part image);*/
 
     //news
     @GET("/news/getNews")

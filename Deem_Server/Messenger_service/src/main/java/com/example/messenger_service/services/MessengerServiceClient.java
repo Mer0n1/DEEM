@@ -30,7 +30,7 @@ public class MessengerServiceClient {
     @Value("http://localhost:8087/push/sendMessageToClient")
     private String pushServiceUrl;
     @Value("http://localhost:8086/image")
-    private String authServiceUrl;
+    private String imageServiceUrl;
 
     private String personal_key;
 
@@ -70,7 +70,7 @@ public class MessengerServiceClient {
         entity = new HttpEntity<>(jsonMessage, headers);
 
         try {
-            restTemplate.exchange(authServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
+            restTemplate.exchange(imageServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
         } catch (Exception e) {
         }
 

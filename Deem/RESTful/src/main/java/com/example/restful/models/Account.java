@@ -14,7 +14,7 @@ public class Account {
     private String surname;
     private String fathername;
     private int score;
-    private int group_id;
+    private Long group_id;
     private Group group;
 
     private Image imageIcon;
@@ -84,11 +84,11 @@ public class Account {
         this.group = group;
     }
 
-    public int getGroup_id() {
+    public Long getGroup_id() {
         return group_id;
     }
 
-    public void setGroup_id(int group_id) {
+    public void setGroup_id(Long group_id) {
         this.group_id = group_id;
     }
 

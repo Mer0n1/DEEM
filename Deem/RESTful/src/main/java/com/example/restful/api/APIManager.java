@@ -13,8 +13,14 @@ import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.models.PrivateAccountDTO;
+import com.example.restful.models.PublicAccountDTO;
+import com.example.restful.models.TopLoadCallback;
+import com.example.restful.models.TopsUsers;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
+
+import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,23 +41,39 @@ public class APIManager {
 
     public volatile List<Account> listAccounts;
     public volatile List<Group> listGroups;
+    public volatile List<Group> listGroupsOfFaculty;
+    public volatile List<Group> adminGroups;
     public volatile List<Chat> listChats;
     public volatile List<News> listNews;
     public volatile List<Event> listEvents;
+    private volatile TopsUsers topsUsers;
 
     public Account myAccount;
 
     private String jwtKey;
 
+    private static ModelMapper modelMapper;
 
-    private APIManager() {}
+    private APIManager() {
+        topsUsers = new TopsUsers();
+        pushClient = new PushClient();
+        statusInfo = new ServerStatusInfo();
+        modelMapper = new ModelMapper();
+
+        myAccount = new Account();
+        listAccounts = new ArrayList<>();
+        listGroups = new ArrayList<>();
+        listGroupsOfFaculty = new ArrayList<>();
+        listChats = new ArrayList<>();
+        listNews = new ArrayList<>();
+        listEvents = new ArrayList<>();
+        adminGroups = new ArrayList<>();
+    }
 
     public static APIManager getManager() {
-        if (manager == null) {
+        if (manager == null)
             manager = new APIManager();
-            pushClient = new PushClient();
-            statusInfo = new ServerStatusInfo();
-        }
+
         return manager;
     }
 
@@ -89,17 +111,18 @@ public class APIManager {
     }
 
     public void getMyAccount() {
-        Call<Account> str = Repository.getInstance().getMyAccount(Handler.getToken());
-        Callback<Account> cl = new Callback<Account>() {
+        Call<PublicAccountDTO> str = Repository.getInstance().getMyAccount(Handler.getToken());
+        Callback<PublicAccountDTO> cl = new Callback<PublicAccountDTO>() {
             @Override
-            public void onResponse(Call<Account> call, Response<Account> response) {
-                if (response.body() != null)
-                System.out.println(response.body().getSurname());
-                myAccount = response.body();
+            public void onResponse(Call<PublicAccountDTO> call, Response<PublicAccountDTO> response) {
+                if (response.body() != null) {
+                    PublicAccountDTO dto = response.body();
+                    myAccount = convertToAccount(dto);
+                }
             }
 
             @Override
-            public void onFailure(Call<Account> call, Throwable t) {
+            public void onFailure(Call<PublicAccountDTO> call, Throwable t) {
 
             }
         };
@@ -110,14 +133,15 @@ public class APIManager {
 
     public void UpdateData() {
 
-        final Call<Account> str = Repository.getInstance().getMyAccount();
+        final Call<PublicAccountDTO> str = Repository.getInstance().getMyAccount();
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Response<Account> stri = null;
+                Response<PublicAccountDTO> stri = null;
                 try {
                     stri = str.execute();
-                    myAccount = stri.body();
+                    PublicAccountDTO dto = stri.body();
+                    myAccount = convertToAccount(dto);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,16 +155,21 @@ public class APIManager {
             e.printStackTrace();
         }
 
-
-
         //Update accounts
         Repository.getInstance().getAccounts()
-                .enqueue(new Callback<List<Account>>() {
+                .enqueue(new Callback<List<PrivateAccountDTO>>() {
                     @Override
-                    public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
-                        listAccounts = response.body();
+                    public void onResponse(Call<List<PrivateAccountDTO>> call, Response<List<PrivateAccountDTO>> response) {
+                        List<PrivateAccountDTO> listDto = response.body();
+
+                        listAccounts.clear();
+
+                        for (PrivateAccountDTO dto : listDto)
+                            listAccounts.add(convertToAccount(dto));
+
                         buildGroups();
-                        if (listAccounts != null)
+
+                        if (listAccounts.size() != 0)
                             statusInfo.AccountListGot = true;
 
                         //загрузим иконки аккаунтов standart
@@ -161,7 +190,7 @@ public class APIManager {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Account>> call, Throwable t) {
+                    public void onFailure(Call<List<PrivateAccountDTO>> call, Throwable t) {
 
                     }
                 }
@@ -232,30 +261,9 @@ public class APIManager {
         });
     }
 
-    private void buildGroups() {
-        if (listGroups != null && listAccounts != null)
-            for (Group group : listGroups) {
-                if (group.getAccounts() != null) continue;
-                List<Account> accounts = new ArrayList<>();
-                List<Long> users = group.getUsers();
 
-                for (Long i : users) {
-                    Optional<Account> account = listAccounts.stream().filter(x->x.getId() == i).findAny();
-                    if (!account.isEmpty())
-                        accounts.add(account.get());
-                }
 
-                group.setAccounts(accounts);
-            }
-
-        //Сортировка по баллам сразу
-        if (listGroups != null)
-            Collections.sort(listGroups, (s1, s2) -> {
-                if (s1.getScore() > s2.getScore())
-                    return -1;
-                else return 0;
-            });
-    }
+    //--------send
 
     public void sendMessage(Message message) {
         Repository.getInstance().sendMessage(message).enqueue(new Callback<Void>() {
@@ -302,7 +310,6 @@ public class APIManager {
         Repository.getInstance().getImage(UUID, type).enqueue(new Callback<Image>() {
             @Override
             public void onResponse(Call<Image> call, Response<Image> response) {
-                System.err.println("RESPONSE IMAGE");
                 if (response.body() != null)
                     imageLoadCallback.onImageLoaded(response.body().getImgEncode());
             }
@@ -328,6 +335,38 @@ public class APIManager {
         });
     }
 
+    //
+    public void getTopStudentsFaculty(TopLoadCallback callback) {
+        Repository.getInstance().getTopStudentsFaculty().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                topsUsers.topsUsersFaculty = response.body();
+                callback.LoadTop(topsUsers);
+                statusInfo.TopsListUsersUniversityGot = true;
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getTopStudentsUniversity(TopLoadCallback callback) {
+        Repository.getInstance().getTopStudentsUniversity().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                topsUsers.topsUsersUniversity = response.body();
+                callback.LoadTop(topsUsers);
+                statusInfo.TopsListUsersFacultyGot = true;
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
+            }
+        });
+    }
 
     /** Lazy метод. Подгружаем картинки для новости и храним их в кэше*/
     public void getNewsImagesLazy(News news, ImageLoadCallback imageLoadCallback) {
@@ -419,7 +458,7 @@ public class APIManager {
 
                     String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
                             DateUtil.getInstance().getDateToForm(message.getDate()), author);
-System.err.println("000 " + message.getText() + " " + UUID);
+
                     Repository.getInstance().getImage(UUID, "message_image").enqueue(new Callback<Image>() {
                         @Override
                         public void onResponse(Call<Image> call, Response<Image> response) {
@@ -446,6 +485,58 @@ System.err.println("000 " + message.getText() + " " + UUID);
             }
         });
     }
+
+    ///////////////////////////////////////////
+    private Account convertToAccount(PrivateAccountDTO dto) {
+        return modelMapper.map(dto, Account.class);
+    }
+
+    private Account convertToAccount(PublicAccountDTO account) {
+        return modelMapper.map(account, Account.class);
+    }
+
+    private void buildGroups() {
+
+        if (listGroups != null) {
+
+            if (listAccounts != null)
+                for (Group group : listGroups) {
+                    if (group.getAccounts() != null || group.getType().equals("admin"))
+                        continue;
+
+                    List<Account> accounts = new ArrayList<>();
+                    List<Long> users = group.getUsers();
+
+                    for (Long i : users) {
+                        Optional<Account> account = listAccounts.stream().filter(x -> x.getId() == i).findAny();
+                        if (!account.isEmpty())
+                            accounts.add(account.get());
+                    }
+
+                    group.setAccounts(accounts);
+                }
+
+            //Сортировка по баллам сразу
+            Collections.sort(listGroups, (s1, s2) -> {
+                if (s1.getScore() > s2.getScore())
+                    return -1;
+                else return 0;
+            });
+
+            listGroupsOfFaculty.clear();
+            for (Group group : listGroups) {
+                if (myAccount.getGroup().getFaculty().equals(group.getFaculty())
+                        && group.getType().equals("standard"))
+                    listGroupsOfFaculty.add(group);
+                //соберем админ-группы
+                if (group.getType().equals("admin"))
+                    adminGroups.add(group);
+            }
+
+        }
+
+    }
+
 }
 
 

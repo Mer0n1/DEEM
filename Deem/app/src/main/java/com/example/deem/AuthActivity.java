@@ -56,7 +56,6 @@ public class AuthActivity extends AppCompatActivity {
                     Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
-                    System.out.println("non auth");
                     Toast.makeText(getApplicationContext(), "Не удалось авторизироваться" ,
                             Toast.LENGTH_LONG).show();
                 }

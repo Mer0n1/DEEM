@@ -14,9 +14,13 @@ import com.example.deem.R;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
+import com.example.restful.models.TopLoadCallback;
+import com.example.restful.models.TopsUsers;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ListTopsFragment extends Fragment {
 
@@ -41,21 +45,79 @@ public class ListTopsFragment extends Fragment {
     public void init() {
         Toolbar.getInstance().setTitle("Топы");
 
-        /*if (APIManager.statusInfo.isGroupsListGot()) {
+        TopLoadCallback topLoadCallback = new TopLoadCallback() {
+            @Override
+            public void LoadTop(TopsUsers topsUsers) {
+                setAdapter(main_layout.findViewById(R.id.list_users_top_general), topsUsers.topsUsersUniversity);
+            }
+        };
+        TopLoadCallback topLoadCallback2 = new TopLoadCallback() {
+            @Override
+            public void LoadTop(TopsUsers topsUsers) {
+                setAdapter(main_layout.findViewById(R.id.list_users_top), topsUsers.topsUsersFaculty);
+            }
+        };
+
+        if (!APIManager.statusInfo.isTopsListUsersFacultyGot())
+            APIManager.getManager().getTopStudentsUniversity(topLoadCallback);
+        if (!APIManager.statusInfo.isTopsListUsersFacultyGot())
+        APIManager.getManager().getTopStudentsFaculty(topLoadCallback2);
+
+        //установим топы групп
+        if (APIManager.statusInfo.isGroupsListGot()) {
             List<Group> groups = APIManager.getManager().listGroups;
 
             String[] names = new String[groups.size()];
-            for (int j = 0; j < groups.size(); j++)
+            for (int j = 0; j < Math.min(groups.size(), 10); j++)
                 names[j] = groups.get(j).getName();
 
             ListAdapter listAdapter = new ArrayAdapter<String>(getActivity(),
                     android.R.layout.simple_list_item_1, names);
 
             ((ListView)(main_layout.findViewById(R.id.list_groups_top))).setAdapter(listAdapter);
-        }*/
+        }
 
+        TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                changeList(tab.getPosition());
+            }
 
-        //((ListView)(main_layout.findViewById(R.id.list_users_top))).setAdapter(listAdapter);
-        //((ListView)(main_layout.findViewById(R.id.list_users_top_general))).setAdapter(listAdapter);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        };
+        TabLayout tabLayout = main_layout.findViewById(R.id.tab_layout);
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
+
     }
+
+    public void setAdapter(ListView listView, List<String> list) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(main_layout.getContext(), android.R.layout.simple_list_item_1, list);
+        listView.setAdapter(adapter);
+    }
+
+    public void changeList(int pos) {
+        ListView users_general_top = main_layout.findViewById(R.id.list_users_top_general);
+        ListView users_top = main_layout.findViewById(R.id.list_users_top);
+        ListView groups_top = main_layout.findViewById(R.id.list_groups_top);
+
+        users_general_top.setVisibility(View.GONE);
+        users_top.setVisibility(View.GONE);
+        groups_top.setVisibility(View.GONE);
+
+        if (pos == 0)
+            users_general_top.setVisibility(View.VISIBLE);
+        if (pos == 1)
+            users_top.setVisibility(View.VISIBLE);
+        if (pos == 2)
+            groups_top.setVisibility(View.VISIBLE);
+    }
+
 }

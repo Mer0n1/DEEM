@@ -11,6 +11,8 @@ import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.models.PrivateAccountDTO;
+import com.example.restful.models.PublicAccountDTO;
 
 import java.util.List;
 
@@ -30,15 +32,15 @@ public class Repository {
         return Handler.getInstance().getApi().getToken(authRequest);
     }
 
-    public Call<Account> getMyAccount() {
+    public Call<PublicAccountDTO> getMyAccount() {
         return Handler.getInstance().getApi().getMyAccount();
     }
 
-    public Call<Account> getMyAccount(String token) {
+    public Call<PublicAccountDTO> getMyAccount(String token) {
         return Handler.getInstance().getApi().getMyAccount("Bearer " + token);
     }
 
-    public Call<List<Account>> getAccounts() {
+    public Call<List<PrivateAccountDTO>> getAccounts() {
         return Handler.getInstance().getApi().getAccounts();
     }
 
@@ -52,8 +54,6 @@ public class Repository {
 
     public Call<Void> sendNewChat(Chat chat) { return Handler.getInstance().getApi().sendNewChat(chat); }
 
-    //public Call<ResponseBody> getImageTest() { return Handler.getInstance().getApi().getImage();}
-
     public Call<Void> createNews(News news) { return Handler.getInstance().getApi().createNews(news);}
 
     public Call<List<News>> getNews() { return Handler.getInstance().getApi().getNews(); }
@@ -65,4 +65,9 @@ public class Repository {
     public Call<Void> addIcon(IconImage img) { return Handler.getInstance().getApi().addIcon(img);}
 
     public Call<Integer> getCountImages(Long id, String type) { return Handler.getInstance().getApi().getCount(id, type);}
+
+    public Call<List<String>> getTopStudentsFaculty() { return Handler.getInstance().getApi().getTopStudentsFaculty();}
+
+    public Call<List<String>> getTopStudentsUniversity() { return Handler.getInstance().getApi().getTopStudentsUniversity();}
+
 }

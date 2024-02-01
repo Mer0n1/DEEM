@@ -5,50 +5,51 @@
     android:layout_height="match_parent"
     android:padding="20dp">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Топы факультета" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Топы университета" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Топы групп университета" />
+        </com.google.android.material.tabs.TabLayout>
+
+        <ListView
+            android:id="@+id/list_users_top"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:visibility="gone" />
 
-            <ListView
-                android:id="@+id/list_users_top"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="1dp"
-                tools:layout_editor_absoluteY="1dp"
-                android:visibility="gone"
-                android:background="@drawable/layout_bg1"
-                tools:ignore="MissingConstraints" >
+        <ListView
+            android:id="@+id/list_groups_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
-            </ListView>
+        <ListView
+            android:id="@+id/list_users_top_general"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                tools:ignore="MissingConstraints" />
-
-            <ListView
-                android:id="@+id/list_groups_top"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </ListView>
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                tools:ignore="MissingConstraints" />
-
-            <ListView
-                android:id="@+id/list_users_top_general"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"/>
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
 
 </FrameLayout>

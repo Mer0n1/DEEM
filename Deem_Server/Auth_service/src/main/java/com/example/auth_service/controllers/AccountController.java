@@ -1,5 +1,8 @@
 package com.example.auth_service.controllers;
 
+import com.example.auth_service.dao.AccountDAO;
+import com.example.auth_service.dto.PrivateAccountDTO;
+import com.example.auth_service.dto.PublicAccountDTO;
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.DepartureForm;
 import com.example.auth_service.models.Group;
@@ -8,10 +11,12 @@ import com.example.auth_service.models.ListLong;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/getAuth")
@@ -30,18 +36,24 @@ public class AccountController {
     @Autowired
     private AccountServiceClient accountServiceClient;
 
+    @Autowired
+    private AccountDAO accountDAO;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @GetMapping("/getMyAccount")
-    public Account getMyAccount(Principal principal) {
+    public PublicAccountDTO getMyAccount(Principal principal) {
         Account account = accountService.getAccount(principal.getName());
         account.setGroup(accountServiceClient.findGroupById(account.getGroup_id()));
-        return account;
+        return convertToPublicAccountDTO(account);
     }
 
     /** Заметка для дто
      * Скрывает данные: баллы
      */
     @GetMapping("/getAccounts")
-    public List<Account> getAccounts() {
+    public List<PrivateAccountDTO> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
         List<Group> groups = accountServiceClient.getGroups();
 
@@ -53,12 +65,19 @@ public class AccountController {
                 break;
             }
 
-        return accounts;
+        return accounts.stream().map(this::convertToPrivateAccountDTO).collect(Collectors.toList());
     }
 
-    @GetMapping("/getTableOfTopUsers")
-    public List<Account> getAccountsTops() {
-        return accountService.sort(accountService.getAccounts());
+    @GetMapping("/getTopStudentsFaculty")
+    public List<String> getTopStudentsFaculty(Authentication authentication) {
+        System.out.println("getTop");
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        PersonDetails personDetails = (PersonDetails) userDetails;
+        return accountDAO.findTopStudentsFaculty(personDetails.getFaculty());
+    }
+    @GetMapping("/getTopStudentsUniversity")
+    public List<String> getTopStudentsUniversity() {
+        return accountService.getTopUniversity();
     }
 
 
@@ -125,4 +144,18 @@ public class AccountController {
         return accountService.getListAverageValue(list);
     }
 
+
+    private Account convertToAccount(PublicAccountDTO dto) {
+        return modelMapper.map(dto, Account.class);
+    }
+    private PublicAccountDTO convertToPublicAccountDTO(Account account) {
+        return modelMapper.map(account, PublicAccountDTO.class);
+    }
+
+    private Account convertToAccount(PrivateAccountDTO dto) {
+        return modelMapper.map(dto, Account.class);
+    }
+    private PrivateAccountDTO convertToPrivateAccountDTO(Account account) {
+        return modelMapper.map(account, PrivateAccountDTO.class);
+    }
 }

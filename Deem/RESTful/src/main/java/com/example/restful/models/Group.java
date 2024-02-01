@@ -15,6 +15,7 @@ public class Group {
     private int score;
     private String name;
     private String faculty;
+    private String type;
     private Date date_create;
     private List<Long> users;
     private List<News> news;
@@ -108,5 +109,13 @@ public class Group {
 
     public void setRank(Integer rank) {
         this.rank = rank;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

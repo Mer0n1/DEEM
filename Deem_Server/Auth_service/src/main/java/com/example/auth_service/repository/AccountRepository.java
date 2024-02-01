@@ -22,4 +22,10 @@ public interface AccountRepository extends JpaRepository<Account,Integer> {
 
     @Query("SELECT u.id FROM Account u WHERE u.group_id= :idGroup")
     List<Long> findUsersOfGroup(@Param("idGroup") Long idGroup);
+
+    @Query("SELECT a FROM Account a ORDER BY a.score DESC limit 10")
+    List<Account> findTopUniversity();
+
+
+
 }

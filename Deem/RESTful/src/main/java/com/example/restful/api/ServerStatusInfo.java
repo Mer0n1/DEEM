@@ -13,6 +13,8 @@ public class ServerStatusInfo {
     protected boolean NewsListGot;
     protected boolean ChatsListGot;
     protected boolean GroupsListGot;
+    protected boolean TopsListUsersFacultyGot;
+    protected boolean TopsListUsersUniversityGot;
 
     public ServerStatusInfo() {
     }
@@ -59,5 +61,13 @@ public class ServerStatusInfo {
 
     public boolean isGroupServiceWorked() {
         return GroupServiceWorked;
+    }
+
+    public boolean isTopsListUsersFacultyGot() {
+        return TopsListUsersFacultyGot;
+    }
+
+    public boolean isTopsListUsersUniversityGot() {
+        return TopsListUsersUniversityGot;
     }
 }

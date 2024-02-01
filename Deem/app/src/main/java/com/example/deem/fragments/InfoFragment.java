@@ -56,8 +56,7 @@ public class InfoFragment extends Fragment {
     }
 
     public void init() {
-        Toolbar.getInstance().reset();
-        Toolbar.getInstance().setTitle("Новости");
+        initToolbar();
 
         if (!APIManager.getManager().statusInfo.isNewsListGot())
             return;
@@ -68,7 +67,6 @@ public class InfoFragment extends Fragment {
         listGroupsFragment = new ListGroupsFragment();
         listTopsFragment = new ListTopsFragment();
 
-        initToolbar();
         initListAndRecycle();
     }
 
@@ -86,7 +84,8 @@ public class InfoFragment extends Fragment {
     }
 
     public void initToolbar() {
-        Toolbar.getInstance().ClearIcons();
+        Toolbar.getInstance().reset();
+        Toolbar.getInstance().setTitle("Новости");
 
         //--Добавление иконок
         ImageView imgListTops   = Toolbar.getInstance().loadIcon(R.drawable.icon_tops);

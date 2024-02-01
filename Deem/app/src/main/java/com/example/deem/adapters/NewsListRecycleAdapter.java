@@ -116,7 +116,7 @@ class ItemNews extends RecyclerView.ViewHolder {
                 APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
                     public void onImageLoaded(String decodeStr) {
-                        if (fragment.getContext().getResources() != null) { //баг
+                        if (fragment.getContext() != null && fragment.getContext().getResources() != null) { //баг
                             ImageView imageView = new ImageView(fragment.getContext());
                             imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
                             imageViews.add(imageView);

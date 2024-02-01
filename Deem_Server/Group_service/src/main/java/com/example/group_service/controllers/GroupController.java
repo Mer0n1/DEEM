@@ -42,13 +42,21 @@ public class GroupController {
 
     /** Возвращает группы согласно допуску, тоесть текущего курса и факультета */
     @GetMapping("/getGroups")
-    public List<Group> getGroups(Authentication authentication) {
+    public List<Group> getGroupsOfFaculty(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         PersonDetails personDetails = (PersonDetails) userDetails;
 
         //Получим список групп для текущего факультета заявителя
         List<Group> groups = groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
 
+        buildListGroups(groups);
+
+        return groups;
+    }
+
+    @GetMapping("/getAllGroups")
+    public List<Group> getAllGroups() {
+        List<Group> groups = groupService.getGroups();
         buildListGroups(groups);
 
         return groups;
@@ -74,7 +82,6 @@ public class GroupController {
                 groups.get(j).setScore(list_score.get(j).intValue());
     }
 
-
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")
     public ResponseEntity<Void> createGroup(@RequestBody @Valid Group group,
@@ -95,14 +102,6 @@ public class GroupController {
         return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
-    @GetMapping("/getAllGroups")
-    public List<Group> getAllGroups() {
-        List<Group> groups = groupService.getGroups();
-        buildListGroups(groups);
-
-        return groups;
-    }
 
     @PreAuthorize("hasRole('HIGH')")
     @GetMapping("/getChatId")
