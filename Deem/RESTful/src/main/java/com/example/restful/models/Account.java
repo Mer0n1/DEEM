@@ -2,8 +2,6 @@ package com.example.restful.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.swing.ImageIcon;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
 

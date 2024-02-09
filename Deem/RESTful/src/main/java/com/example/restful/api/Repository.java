@@ -13,6 +13,7 @@ import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
 import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
+import com.example.restful.models.curriculum.Class;
 
 import java.util.List;
 
@@ -69,5 +70,7 @@ public class Repository {
     public Call<List<String>> getTopStudentsFaculty() { return Handler.getInstance().getApi().getTopStudentsFaculty();}
 
     public Call<List<String>> getTopStudentsUniversity() { return Handler.getInstance().getApi().getTopStudentsUniversity();}
+
+    public Call<List<Class>> getClasses() { return Handler.getInstance().getApi().getClasses(); }
 
 }

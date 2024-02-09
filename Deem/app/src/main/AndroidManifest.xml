@@ -32,6 +32,7 @@
         <activity android:name="com.example.deem.MainActivity" />
         <activity android:name="com.example.deem.ProfileActivity" />
         <activity android:name="com.example.deem.ChatActivity" />
+        <activity android:name="com.example.deem.CurriculumActivity" />
     </application>
 
 </manifest>

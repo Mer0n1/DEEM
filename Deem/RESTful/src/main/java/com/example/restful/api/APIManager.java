@@ -1,5 +1,6 @@
 package com.example.restful.api;
 
+
 import com.example.restful.api.websocket.PushClient;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
@@ -17,14 +18,21 @@ import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
 import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
+import com.example.restful.models.curriculum.Class;
+import com.example.restful.models.curriculum.DayliSchedule;
+import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 
+import org.graalvm.compiler.api.replacements.Snippet;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +45,7 @@ public class APIManager {
 
     private static APIManager manager;
     private static PushClient pushClient;
-    public static ServerStatusInfo statusInfo;
+    public  static ServerStatusInfo statusInfo;
 
     public volatile List<Account> listAccounts;
     public volatile List<Group> listGroups;
@@ -46,6 +54,7 @@ public class APIManager {
     public volatile List<Chat> listChats;
     public volatile List<News> listNews;
     public volatile List<Event> listEvents;
+    public volatile List<DayliSchedule> dayliSchedules;
     private volatile TopsUsers topsUsers;
 
     public Account myAccount;
@@ -68,6 +77,7 @@ public class APIManager {
         listNews = new ArrayList<>();
         listEvents = new ArrayList<>();
         adminGroups = new ArrayList<>();
+        dayliSchedules = new ArrayList<>();
     }
 
     public static APIManager getManager() {
@@ -167,12 +177,11 @@ public class APIManager {
                         for (PrivateAccountDTO dto : listDto)
                             listAccounts.add(convertToAccount(dto));
 
-                        buildGroups();
-
                         if (listAccounts.size() != 0)
                             statusInfo.AccountListGot = true;
 
-                        //загрузим иконки аккаунтов standart
+
+                        //загрузим иконки аккаунтов standard
                         /*for (Account account : listAccounts)
                             Repository.getInstance().getImage(
                                     GeneratorUUID.getInstance().generateUUIDForIcon(account.getUsername()), "profile_icon")
@@ -256,6 +265,36 @@ public class APIManager {
 
             @Override
             public void onFailure(Call<List<Event>> call, Throwable t) {
+
+            }
+        });
+
+        Repository.getInstance().getClasses().enqueue(new Callback<List<Class>>() {
+            @Override
+            public void onResponse(Call<List<Class>> call, Response<List<Class>> response) {
+
+                if (response.body() == null)
+                    return;
+                else
+                    statusInfo.TeacherListClassesGot = true;
+
+                List<Class> classes = response.body();
+
+                //test
+                /*Class cl1 = new Class("Математика", new Date(System.currentTimeMillis()), "л.", "220 к.");
+                Class cl2 = new Class("Информатика",new Date(System.currentTimeMillis()+10000000000L), "л.", "221 к.");
+                Class cl3 = new Class("Информатика",new Date(System.currentTimeMillis()+100000000L), "л.", "221 к.");
+                classes = new ArrayList<>();
+                classes.add(cl1);
+                classes.add(cl2);
+                classes.add(cl3);
+                //*/
+
+                buildClasses(classes);
+            }
+
+            @Override
+            public void onFailure(Call<List<Class>> call, Throwable t) {
 
             }
         });
@@ -415,6 +454,7 @@ public class APIManager {
 
     public void getIconImageLazy(Account account, ImageLoadCallback imageLoadCallback) {
         if (account == null) return;
+
         String username = account.getUsername();
         if (username == null || username.isEmpty())
             return;
@@ -499,22 +539,26 @@ public class APIManager {
 
         if (listGroups != null) {
 
+            //распределим аккаунты на каждую группу и группу на каждый аккаунт
             if (listAccounts != null)
                 for (Group group : listGroups) {
-                    if (group.getAccounts() != null || group.getType().equals("admin"))
+                    if (group.getAccounts() != null)
                         continue;
 
                     List<Account> accounts = new ArrayList<>();
                     List<Long> users = group.getUsers();
 
                     for (Long i : users) {
-                        Optional<Account> account = listAccounts.stream().filter(x -> x.getId() == i).findAny();
-                        if (!account.isEmpty())
-                            accounts.add(account.get());
+                        Account account = listAccounts.stream().filter(x -> x.getId() == i).findAny().orElse(null);
+                        if (account != null) {
+                            accounts.add(account);
+                            account.setGroup(group);
+                        }
                     }
 
                     group.setAccounts(accounts);
                 }
+
 
             //Сортировка по баллам сразу
             Collections.sort(listGroups, (s1, s2) -> {
@@ -525,16 +569,55 @@ public class APIManager {
 
             listGroupsOfFaculty.clear();
             for (Group group : listGroups) {
+
+                //сортируем группы для нашего факультета отдельно
                 if (myAccount.getGroup().getFaculty().equals(group.getFaculty())
                         && group.getType().equals("standard"))
                     listGroupsOfFaculty.add(group);
+
                 //соберем админ-группы
+                adminGroups.clear();
                 if (group.getType().equals("admin"))
                     adminGroups.add(group);
             }
 
         }
 
+    }
+
+    public void buildClasses(List<Class> classes) {
+        Collections.sort(classes, (s1, s2) -> {
+            if (s1.getDate().before(s2.getDate()))
+                return -1;
+            else return 0;
+        });
+
+        Date currentDate = classes.get(0).getDate();
+        List<Class> group = new ArrayList<>();
+
+        for (Class cl : classes) {
+            if (cl.getDate().getDate() == currentDate.getDate() &&
+                    cl.getDate().getMonth() == currentDate.getMonth()) {
+                group.add(cl);
+                continue;
+            }
+
+            DayliSchedule dl = new DayliSchedule();
+            dl.classes = new ArrayList<>(group);
+            dl.date = dl.classes.get(0).getDate();
+            dayliSchedules.add(dl);
+
+            group.clear();
+            group.add(cl);
+            currentDate = cl.getDate();
+        }
+
+        if (group.size() != 0) {
+            DayliSchedule dls = new DayliSchedule();
+            dls.classes = new ArrayList<>(group);
+            dls.date = dls.classes.get(0).getDate();
+            dayliSchedules.add(dls);
+        }
     }
 
 }

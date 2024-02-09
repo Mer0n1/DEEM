@@ -1,5 +1,6 @@
 package com.example.deem.adapters;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Group;
@@ -69,10 +72,22 @@ class ItemNews extends RecyclerView.ViewHolder {
             name_group   = itemView.findViewById(R.id.news_namegroup_info);
             recyclerView = itemView.findViewById(R.id.list_images);
             icon         = itemView.findViewById(R.id.icon_group_main);
+
+            icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", icon.getText().toString());
+
+                    MainActivity mainActivity = (MainActivity) fragment.getActivity();
+                    mainActivity.OpenMenu(MainActivity.FragmentType.group, bundle);
+                }
+            });
+
         }
 
         public void setData(News news) {
-            date.setText(news.getDate().toString());
+            date.setText(DateTranslator.getInstance().toString(news.getDate()));
             content.setText(news.getContent());
 
             if (APIManager.getManager().listGroups != null) { //установим иконку для группы

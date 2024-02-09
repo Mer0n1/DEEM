@@ -15,6 +15,7 @@ public class ServerStatusInfo {
     protected boolean GroupsListGot;
     protected boolean TopsListUsersFacultyGot;
     protected boolean TopsListUsersUniversityGot;
+    protected boolean TeacherListClassesGot;
 
     public ServerStatusInfo() {
     }
@@ -70,4 +71,6 @@ public class ServerStatusInfo {
     public boolean isTopsListUsersUniversityGot() {
         return TopsListUsersUniversityGot;
     }
+
+    public boolean isTeacherListClassesGot() { return TeacherListClassesGot; }
 }

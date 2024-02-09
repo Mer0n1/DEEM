@@ -1,6 +1,7 @@
 package com.example.administrative_service.controllers;
 
 import com.example.administrative_service.models.*;
+import com.example.administrative_service.models.Class;
 import com.example.administrative_service.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
@@ -116,5 +117,28 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/addClass")
+    public ResponseEntity<Void> addClass(@RequestBody @Valid Class cl,
+                                         BindingResult bindingResult) {
+        System.out.println("addClass");
+
+        System.out.println(bindingResult.getAllErrors());
+        if (bindingResult.hasErrors())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        restTemplateService.addClass(cl);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/deleteClass")
+    public ResponseEntity<Void> deleteClass(@RequestBody @Valid Class cl,
+                                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        restTemplateService.deleteClass(cl);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
 

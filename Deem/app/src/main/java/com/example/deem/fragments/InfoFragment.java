@@ -21,7 +21,9 @@ import com.example.deem.fragments.InfoFragments.ListUsersFragment;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.News;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Фрагмент информации: новости групп, список топов (людей и групп), список участников
@@ -67,6 +69,7 @@ public class InfoFragment extends Fragment {
         listGroupsFragment = new ListGroupsFragment();
         listTopsFragment = new ListTopsFragment();
 
+        Collections.reverse(listNews);
         initListAndRecycle();
     }
 

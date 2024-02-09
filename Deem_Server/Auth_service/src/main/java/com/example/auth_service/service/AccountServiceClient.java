@@ -54,7 +54,7 @@ public class AccountServiceClient {
         }
     }
 
-    public List<Group> getGroups() {
+    /*public List<Group> getGroups() {
         try {
             ResponseEntity<List<Group>> response = restTemplate.exchange(
                     groupServiceUrl + "getAllGroups", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Group>>() {});
@@ -63,7 +63,7 @@ public class AccountServiceClient {
         } catch(Exception e) {
             return null;
         }
-    }
+    }*/
 
     public LocationStudent getLocationStudent(Long idGroup) {
         try {

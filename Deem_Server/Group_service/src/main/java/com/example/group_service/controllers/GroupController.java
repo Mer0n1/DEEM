@@ -35,8 +35,8 @@ public class GroupController {
 
     @GetMapping("/getGroup")
     public Group getGroup(@RequestParam("id") Long id) {
-        Group group =groupService.getGroup(id);
-        group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
+        Group group = groupService.getGroup(id);
+        buildListGroups(Collections.singletonList(group));
         return group;
     }
 
@@ -62,11 +62,18 @@ public class GroupController {
         return groups;
     }
 
+    @GetMapping("/getLocationStudent")
+    public LocationStudent getLocationStudent(@RequestParam("id") Long idGroup) {
+
+        Group group = groupService.getGroup(idGroup);
+        return new LocationStudent(0l, group.getFaculty(), group.getCourse());
+    }
 
     private void buildListGroups(List<Group> groups) {
         //Получим список учащихся групп
         for (Group group : groups)
             group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
+
         //Вычислим средние значения каждой группы
         List<ListLong> list_id = new ArrayList<>();
         for (int j = 0; j < groups.size(); j++) {
@@ -82,6 +89,7 @@ public class GroupController {
                 groups.get(j).setScore(list_score.get(j).intValue());
     }
 
+
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")
     public ResponseEntity<Void> createGroup(@RequestBody @Valid Group group,
@@ -93,13 +101,6 @@ public class GroupController {
 
         groupService.save(group);
         return new ResponseEntity<Void>(HttpStatus.OK);
-    }
-
-    @GetMapping("/getLocationStudent")
-    public LocationStudent getLocationStudent(@RequestParam("id") Long idGroup) {
-
-        Group group = groupService.getGroup(idGroup);
-        return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 
 

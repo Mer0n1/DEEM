@@ -24,6 +24,7 @@ import com.example.restful.models.Group;
 import com.example.restful.models.News;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupFragment extends Fragment {
@@ -133,6 +134,7 @@ public class GroupFragment extends Fragment {
         for (News news : allNews)
             if (news.getIdGroup() == group.getId())
                 newsList.add(news);
+        Collections.reverse(newsList);
     }
 
     public boolean checkWorkingCondition() {
@@ -160,9 +162,13 @@ public class GroupFragment extends Fragment {
 
     private int CountAverageValue() {
         int score = 0;
+
         for (Account account : group.getAccounts())
             score += account.getScore();
-        score /= group.getAccounts().size();
+
+        if (score != 0)
+            score /= group.getAccounts().size();
+
         return score;
     }
 }

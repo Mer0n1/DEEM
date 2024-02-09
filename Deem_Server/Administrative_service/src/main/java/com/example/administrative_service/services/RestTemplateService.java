@@ -1,6 +1,7 @@
 package com.example.administrative_service.services;
 
 import com.example.administrative_service.models.*;
+import com.example.administrative_service.models.Class;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class RestTemplateService {
     private String examServiceUrl;
     @Value("http://localhost:8084/chat")
     private String chatControllerUrl;
+    @Value("http://localhost:8090/curriculum")
+    private String teacherControllerUrl;
 
     private String personal_key;
 
@@ -124,5 +127,27 @@ public class RestTemplateService {
         } catch(Exception e) {
             return null;
         }
+    }
+
+    public void addClass(Class cl) {
+        try {
+            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                    .writeValueAsString(cl);
+            entity = new HttpEntity<>(jsonMessage, headers);
+
+            restTemplate.exchange(teacherControllerUrl + "/addClass", HttpMethod.POST, entity, Void.class);
+
+        } catch(Exception e) {}
+    }
+
+    public void deleteClass(Class cl) {
+        try {
+            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                    .writeValueAsString(cl);
+            entity = new HttpEntity<>(jsonMessage, headers);
+
+            restTemplate.exchange(teacherControllerUrl + "/deleteClass", HttpMethod.POST, entity, Void.class);
+
+        } catch(Exception e) {}
     }
 }

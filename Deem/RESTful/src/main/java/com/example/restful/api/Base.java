@@ -13,6 +13,7 @@ import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
 import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
+import com.example.restful.models.curriculum.Class;
 
 import java.util.List;
 
@@ -69,4 +70,8 @@ public interface Base {
     Call<Integer> getCount(@Query("id") Long id, @Query("type") String type);
     @POST("/image/addImageIcon")
     Call<Void> addIcon(@Body IconImage image);
+
+    //teacher
+    @GET("/curriculum/getTwoWeek")
+    Call<List<Class>> getClasses();
 }

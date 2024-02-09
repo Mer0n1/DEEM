@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.restful.utils.DateTranslator;
 import com.example.restful.models.Event;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public class EventRecycleAdapter extends RecyclerView.Adapter<EventRecycleAdapte
         public void setData(Event event) {
             header.setText(event.getName());
             content.setText(event.getDescription());
-            date.setText("Начало: " + event.getStart_date().toString());
+            date.setText("Начало: " + DateTranslator.getInstance().toString(event.getStart_date()));
         }
     }
 }

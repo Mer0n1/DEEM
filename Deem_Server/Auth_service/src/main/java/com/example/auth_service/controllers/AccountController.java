@@ -55,16 +55,6 @@ public class AccountController {
     @GetMapping("/getAccounts")
     public List<PrivateAccountDTO> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
-        List<Group> groups = accountServiceClient.getGroups();
-
-        if (groups != null)
-        for (Account account : accounts)
-            for (Group group : groups)
-            if (account.getGroup_id() == group.getId()) {
-                account.setGroup(group);
-                break;
-            }
-
         return accounts.stream().map(this::convertToPrivateAccountDTO).collect(Collectors.toList());
     }
 
@@ -80,6 +70,10 @@ public class AccountController {
         return accountService.getTopUniversity();
     }
 
+    @GetMapping("/getListIdUsersGroup")
+    public List<Long> getListIdUsersGroup(@RequestParam("id") Long idGroup) {
+        return accountService.getUsersOfGroup(idGroup);
+    }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/sendScore")
@@ -130,11 +124,6 @@ public class AccountController {
     @GetMapping ("/getIdGroupAccount")
     public Long getIdGroupAccount(@RequestParam("id") Long idStudent) {
         return accountService.getAccount(idStudent).getGroup_id();
-    }
-
-    @GetMapping("/getListIdUsersGroup")
-    public List<Long> getListIdUsersGroup(@RequestParam("id") Long idGroup) {
-        return accountService.getUsersOfGroup(idGroup);
     }
 
     @PreAuthorize("hasRole('HIGH')")

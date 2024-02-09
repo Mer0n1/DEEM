@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private ChatsContainerFragment chatsContainerFragment;
     private EventsFragment eventsFragment;
 
-
     public enum FragmentType { first, group, info_, messenger, events }
 
 
@@ -209,4 +208,10 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+/**
+ * Вопрос касаемо пересылки больших данных. Неэффективно пересылать все группы и все новости сразу. Новостей может быть тысячи. (на данный момент не могу сделать это тк не придумал как упростить)
+ *
+ * lombok был бы кстати
+ * Проблема в том что новости добавляются как стек, проще всего заменить List на Stack в новостях
+ * */
 

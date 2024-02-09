@@ -1,6 +1,5 @@
 package com.example.deem.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,10 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.deem.CurriculumActivity;
 import com.example.deem.MainActivity;
-import com.example.deem.ProfileActivity;
 import com.example.deem.R;
 import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
+import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.Toolbar;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.restful.api.APIManager;
@@ -24,7 +24,6 @@ import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.News;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,8 +94,7 @@ public class FirstPageFragment extends Fragment {
                     TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
                     TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
                     text_name_exam.setText(event.getName());
-                    text_date_exam.setText(date_exam.getDay() + "." + date_exam.getMonth() + "." + date_exam.getYear()
-                            + "  " + date_exam.getHours() + ":" + date_exam.getMinutes());
+                    text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
                     break;
                 }
         }
@@ -111,7 +109,7 @@ public class FirstPageFragment extends Fragment {
 
             for (News news1 : news)
                 for (Group group : adminGroups)
-                    if (news1.getIdGroup() == group.getId())
+                    if (news1.getIdGroup().equals(group.getId()))
                         adminNews.add(news1);
 
             main_layout.findViewById(R.id.news_administrative).setVisibility(View.VISIBLE);
@@ -127,8 +125,14 @@ public class FirstPageFragment extends Fragment {
 
                 if (v == main_layout.findViewById(R.id.rat_button))
                     activity.OpenFragment(ratingGroupsFragment, R.id.fragment_main, false);
+
+                if (v == main_layout.findViewById(R.id.curriculum_button)) {
+                    Intent intent = new Intent(getActivity(), CurriculumActivity.class);
+                    startActivity(intent);
+                }
             }
         };
         main_layout.findViewById(R.id.rat_button).setOnClickListener(onClickOther);
+        main_layout.findViewById(R.id.curriculum_button).setOnClickListener(onClickOther);
     }
 }

@@ -63,6 +63,20 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Teacher_service
+         uri: lb://teachers
+         predicates:
+           - Path=/curriculum/**
+         filters:
+           - AuthenticationFilter
+
+       - id: Teacher_service
+         uri: lb://teachers
+         predicates:
+           - Path=/teacher/**
+         filters:
+           - AuthenticationFilter
+
  application:
    name: Gateway
 
