@@ -25,7 +25,7 @@ public class DateTranslator {
         String result = new String();
         result += date.getDate() + "." + (date.getMonth()+1) + "." +
                 (1900 + date.getYear()) + "  " + date.getHours() + ":" + date.getMinutes();
-        return result;
+        return String.format("%02d.%02d", date.getDate(), date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + TimeToString(date);
     }
 
     public String IntToStringDay(int day) {
@@ -49,6 +49,6 @@ public class DateTranslator {
         int hours = calendar.get(Calendar.HOUR_OF_DAY);
         int minutes = calendar.get(Calendar.MINUTE);
 
-        return String.format("%02d:%02d", hours, minutes); //TODO;
+        return String.format("%02d:%02d", hours, minutes);
     }
 }

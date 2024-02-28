@@ -16,8 +16,18 @@ public class ServerStatusInfo {
     protected boolean TopsListUsersFacultyGot;
     protected boolean TopsListUsersUniversityGot;
     protected boolean TeacherListClassesGot;
+    protected boolean ClubListGot;
 
     public ServerStatusInfo() {
+        AccountListGot = false;
+        EventsListGot  = false;
+        NewsListGot    = false;
+        ChatsListGot   = false;
+        GroupsListGot  = false;
+        TopsListUsersFacultyGot     = false;
+        TopsListUsersUniversityGot  = false;
+        TeacherListClassesGot       = false;
+        ClubListGot                 = false;
     }
 
     public boolean isAccountListGot() {
@@ -73,4 +83,8 @@ public class ServerStatusInfo {
     }
 
     public boolean isTeacherListClassesGot() { return TeacherListClassesGot; }
+
+    public boolean isClubListGot() {
+        return ClubListGot;
+    }
 }

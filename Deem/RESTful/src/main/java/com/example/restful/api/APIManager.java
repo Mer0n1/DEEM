@@ -5,6 +5,7 @@ import com.example.restful.api.websocket.PushClient;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.Club;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -16,6 +17,7 @@ import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
 import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
+import com.example.restful.models.StandardCallback;
 import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
 import com.example.restful.models.curriculum.Class;
@@ -29,11 +31,13 @@ import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import retrofit2.Call;
@@ -54,8 +58,10 @@ public class APIManager {
     public volatile List<Chat> listChats;
     public volatile List<News> listNews;
     public volatile List<Event> listEvents;
+    public volatile List<Club> listClubs;
     public volatile List<DayliSchedule> dayliSchedules;
     private volatile TopsUsers topsUsers;
+    private volatile List<Group> groupClubs;
 
     public Account myAccount;
 
@@ -78,6 +84,8 @@ public class APIManager {
         listEvents = new ArrayList<>();
         adminGroups = new ArrayList<>();
         dayliSchedules = new ArrayList<>();
+        groupClubs = new ArrayList<>();
+        listClubs = new ArrayList<>();
     }
 
     public static APIManager getManager() {
@@ -213,8 +221,27 @@ public class APIManager {
                 listGroups = response.body();
                 buildGroups();
 
-                if (listGroups != null)
+                if (listGroups != null) {
                     statusInfo.GroupsListGot = true;
+
+                    //clubs
+                    Repository.getInstance().getClubs().enqueue(new Callback<List<Club>>() {
+                        @Override
+                        public void onResponse(Call<List<Club>> call, Response<List<Club>> response) {
+                            if (response.body() != null) {
+                                statusInfo.ClubListGot = true;
+                                listClubs = response.body();
+                                buildClubs();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Club>> call, Throwable t) {
+
+                        }
+                    });
+
+                }
             }
 
             @Override
@@ -239,7 +266,7 @@ public class APIManager {
         });
 
 
-        Repository.getInstance().getNews().enqueue(new Callback<List<News>>() {
+        /*Repository.getInstance().getNews().enqueue(new Callback<List<News>>() {
             @Override
             public void onResponse(Call<List<News>> call, Response<List<News>> response) {
                 listNews = response.body();
@@ -250,6 +277,14 @@ public class APIManager {
             @Override
             public void onFailure(Call<List<News>> call, Throwable t) {
 
+            }
+        });*/
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+        String dateStr = sdf.format(new Date(System.currentTimeMillis()));
+        updateNewsFeed(dateStr, new StandardCallback() {
+            @Override
+            public void call() {
+                statusInfo.NewsListGot = true;
             }
         });
 
@@ -278,19 +313,7 @@ public class APIManager {
                 else
                     statusInfo.TeacherListClassesGot = true;
 
-                List<Class> classes = response.body();
-
-                //test
-                /*Class cl1 = new Class("Математика", new Date(System.currentTimeMillis()), "л.", "220 к.");
-                Class cl2 = new Class("Информатика",new Date(System.currentTimeMillis()+10000000000L), "л.", "221 к.");
-                Class cl3 = new Class("Информатика",new Date(System.currentTimeMillis()+100000000L), "л.", "221 к.");
-                classes = new ArrayList<>();
-                classes.add(cl1);
-                classes.add(cl2);
-                classes.add(cl3);
-                //*/
-
-                buildClasses(classes);
+                buildClasses(response.body());
             }
 
             @Override
@@ -298,9 +321,28 @@ public class APIManager {
 
             }
         });
+
+
     }
 
 
+    //---
+    public void updateNewsFeed(String date, StandardCallback callback) {
+        Repository.getInstance().getNewsFeed(date).enqueue(new Callback<List<News>>() {
+            @Override
+            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
+                if (response.body() != null) {
+                    listNews.addAll(response.body());
+                    callback.call();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<News>> call, Throwable t) {
+
+            }
+        });
+    }
 
     //--------send
 
@@ -539,6 +581,18 @@ public class APIManager {
 
         if (listGroups != null) {
 
+            //Разделим на клубы и стандартные группы
+            /*for (Group group : listGroups)
+                if (group.getType().equals("club")) {
+                    groupClubs.add(group);
+                    listGroups.remove(group);
+                }*/
+            for (int j = 0; j < listGroups.size(); j++)
+                if (listGroups.get(j).getType().equals("club")) {
+                    groupClubs.add(listGroups.get(j));
+                    listGroups.remove(listGroups.get(j));
+                }
+
             //распределим аккаунты на каждую группу и группу на каждый аккаунт
             if (listAccounts != null)
                 for (Group group : listGroups) {
@@ -568,6 +622,8 @@ public class APIManager {
             });
 
             listGroupsOfFaculty.clear();
+            adminGroups.clear();
+
             for (Group group : listGroups) {
 
                 //сортируем группы для нашего факультета отдельно
@@ -576,7 +632,6 @@ public class APIManager {
                     listGroupsOfFaculty.add(group);
 
                 //соберем админ-группы
-                adminGroups.clear();
                 if (group.getType().equals("admin"))
                     adminGroups.add(group);
             }
@@ -620,6 +675,26 @@ public class APIManager {
         }
     }
 
+    public void buildClubs() {
+
+        if (!groupClubs.isEmpty()) {
+
+            for (Club club : listClubs) {
+                for (Group group : groupClubs)
+                    if (club.getId_group() == group.getId()) {
+                        club.setGroup(group);
+                        break;
+                    }
+
+                for (Account account : listAccounts)
+                    if (club.getId_leader() == account.getId()) {
+                        club.setAccount(account);
+                        break;
+                    }
+            }
+
+        }
+    }
 }
 
 

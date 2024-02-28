@@ -3,6 +3,7 @@ package com.example.restful.api;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.Club;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -15,6 +16,7 @@ import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
 import com.example.restful.models.curriculum.Class;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -59,6 +61,8 @@ public class Repository {
 
     public Call<List<News>> getNews() { return Handler.getInstance().getApi().getNews(); }
 
+    public Call<List<News>> getNewsFeed(String date) { return Handler.getInstance().getApi().getNewsFeed(date);}
+
     public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
 
     public Call<Image> getImage(String UUID, String type) { return Handler.getInstance().getApi().getImage(UUID, type);}
@@ -72,5 +76,7 @@ public class Repository {
     public Call<List<String>> getTopStudentsUniversity() { return Handler.getInstance().getApi().getTopStudentsUniversity();}
 
     public Call<List<Class>> getClasses() { return Handler.getInstance().getApi().getClasses(); }
+
+    public Call<List<Club>> getClubs() { return Handler.getInstance().getApi().getClubs(); }
 
 }

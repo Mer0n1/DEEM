@@ -77,6 +77,13 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Club_service
+         uri: lb://clubs
+         predicates:
+           - Path=/club/**
+         filters:
+           - AuthenticationFilter
+
  application:
    name: Gateway
 

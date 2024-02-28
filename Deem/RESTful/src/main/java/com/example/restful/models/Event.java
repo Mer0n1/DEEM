@@ -1,7 +1,10 @@
 package com.example.restful.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Event {
     private String type;
     private String name;

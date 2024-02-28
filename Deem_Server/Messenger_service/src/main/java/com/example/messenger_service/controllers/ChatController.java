@@ -68,7 +68,7 @@ public class ChatController {
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createChatGroup")
     public Long createChatGroup() {
-        return chatService.save(new Chat());
+        return chatService.save(new Chat()).getId();
     }
 
 

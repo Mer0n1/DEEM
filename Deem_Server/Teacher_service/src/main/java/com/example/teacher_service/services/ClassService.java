@@ -3,6 +3,7 @@ package com.example.teacher_service.services;
 import com.example.teacher_service.models.Class;
 import com.example.teacher_service.repositories.ClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class ClassService {
     @Autowired
     private ClassRepository repository;
 
+    @Cacheable("classes")
     public List<com.example.teacher_service.models.Class> getClasses() {
         return repository.findAll();
     }

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import java.util.Base64;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -39,14 +41,24 @@ public class NewsController {
     private RestTemplateService restTemplateService;
 
 
-    @GetMapping("/getNews")
-    public List<News> getNews(Authentication authentication) {
+   /* @GetMapping("/getAllNews")
+    public List<News> getAllNews(Authentication authentication) {
         System.out.println("getNews");
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         PersonDetails personDetails = (PersonDetails) userDetails;
 
         return newsService.getNews(personDetails.getFaculty());
+    }*/
+
+    @GetMapping("/getNewsFeed")
+    public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
+                                  Authentication authentication) {
+        System.out.println("getNewsFeed " + date);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        PersonDetails personDetails = (PersonDetails) userDetails;
+
+        return newsService.getNewsFeed(personDetails.getFaculty(), date);
     }
 
 
@@ -58,12 +70,12 @@ public class NewsController {
         if (bindingResult.hasErrors())
             return;
 
-        Long id = newsService.createNews(news).getId();
+        News mnews = newsService.createNews(news);
 
         //Сохранение изображений
         if (news.getImages() != null)
             if (news.getImages().size() != 0) {
-                news.getImages().forEach(x -> x.setId_news(id));
+                news.getImages().forEach(x -> x.setId_news(mnews.getId()));
                 restTemplateService.addImagesNews(news.getImages());
             }
     }

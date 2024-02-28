@@ -3,6 +3,7 @@ package com.example.restful.api;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
+import com.example.restful.models.Club;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -15,6 +16,7 @@ import com.example.restful.models.PrivateAccountDTO;
 import com.example.restful.models.PublicAccountDTO;
 import com.example.restful.models.curriculum.Class;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,7 +27,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface Base {
-    String BASE_URL ="http://192.168.1.104:8081/";
+    String BASE_URL ="http://192.168.0.101:8081/";
 
     //auth
     @POST("/auth/login")
@@ -55,9 +57,11 @@ public interface Base {
 
     //news
     @GET("/news/getNews")
-    Call<List<News>> getNews(/*@Query("faculty") String faculty*/);
+    Call<List<News>> getNews();
     @POST("/news/createNews")
     Call<Void> createNews(@Body News news);
+    @GET("/news/getNewsFeed")
+    Call<List<News>> getNewsFeed(@Query("date") String date);
 
     //events or exams
     @GET("/event/getEvents")
@@ -74,4 +78,8 @@ public interface Base {
     //teacher
     @GET("/curriculum/getTwoWeek")
     Call<List<Class>> getClasses();
+
+    //club
+    @GET("/club/getClubs")
+    Call<List<Club>> getClubs();
 }

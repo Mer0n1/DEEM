@@ -3,6 +3,7 @@ package com.example.news_service.config;
 
 import com.google.common.cache.CacheBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -27,6 +28,9 @@ class WebSecurityConfiguration {
 
     @Autowired
     private JWTFilter jwtFilter;
+
+    @Value("${timeCacheReset}")
+    private String timeCacheReset;
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -56,7 +60,7 @@ class WebSecurityConfiguration {
                 return new ConcurrentMapCache(
                         name,
                         CacheBuilder.newBuilder()
-                                .expireAfterWrite(30, TimeUnit.SECONDS)
+                                .expireAfterWrite(Integer.valueOf(timeCacheReset), TimeUnit.SECONDS)
                                 .build().asMap(),
                         false);
             }

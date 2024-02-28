@@ -1,7 +1,10 @@
 package com.example.restful.models.curriculum;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Class {
     private String name;
     private Date date;

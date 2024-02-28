@@ -28,14 +28,14 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
+    /*@PostMapping("/register")
     public String addNewUser(@RequestBody @Valid Account user,
                              BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return bindingResult.getAllErrors().toString();
 
         return service.saveUser(user);
-    }
+    }*/
 
     @PostMapping("/login")
     public String getToken(@RequestBody @Valid AuthRequest authRequest,

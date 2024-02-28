@@ -142,34 +142,7 @@ public class ChatActivity extends AppCompatActivity {
                 EditText editText = activityChatBinding.EditText;
                 String content = editText.getText().toString();
 
-                //Send message
-                Message message = new Message();
-                message.setText(content);
-                message.setAuthor(APIManager.getManager().myAccount.getId());
-                message.setImages(FixedImages);
-                message.setDate(new Date(System.currentTimeMillis()));
-                message.setImages(FixedImages);
-
-                //Создание uuid
-                Date date = message.getDate();
-                FixedImages.forEach(x->x.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
-                         DateUtil.getInstance().getDateToForm(date),
-                        APIManager.getManager().myAccount.getUsername()
-                )));
-
-                //Игнорирование рекурсии
-                Chat chatformessage = new Chat();
-                chatformessage.setId(currentChat.getId());
-                message.setChat(chatformessage);
-
-                messages.add(message);
-
-                if (!newChat)
-                    APIManager.getManager().sendMessage(message);
-                else
-                    APIManager.getManager().sendNewChat(currentChat);
-
-                message.setChat(currentChat);
+                sendMessage(content);
 
                 //Update Interface
                 editText.setText("");
@@ -238,7 +211,6 @@ public class ChatActivity extends AppCompatActivity {
             if (currentChat != null) {
                 messages = currentChat.getMessages();
                 newChat = false;
-                sort();
             } else {
                 currentChat = new Chat();
                 messages = currentChat.getMessages();
@@ -261,10 +233,34 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
     }
 
-    public void sort() {
-        //Возможно сортировка по времени
-        //Date.before
+    private void sendMessage(String content) {
+        //Send message
+        Message message = new Message();
+        message.setText(content);
+        message.setAuthor(APIManager.getManager().myAccount.getId());
+        message.setImages(FixedImages);
+        message.setDate(new Date(System.currentTimeMillis()));
 
+        //Создание uuid
+        Date date = message.getDate();
+        FixedImages.forEach(x->x.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
+                DateUtil.getInstance().getDateToForm(date),
+                APIManager.getManager().myAccount.getUsername()
+        )));
+
+        //Игнорирование рекурсии
+        Chat chatformessage = new Chat();
+        chatformessage.setId(currentChat.getId());
+        message.setChat(chatformessage);
+
+        messages.add(message);
+
+        if (!newChat)
+            APIManager.getManager().sendMessage(message);
+        else
+            APIManager.getManager().sendNewChat(currentChat);
+
+        message.setChat(currentChat);
     }
 
     @Override

@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/Administrative_service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Auth_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Auth_service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Club_service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Club_service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Exam_service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Gateway/src/main/resources" charset="UTF-8" />

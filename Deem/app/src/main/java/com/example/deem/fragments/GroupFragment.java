@@ -68,7 +68,7 @@ public class GroupFragment extends Fragment {
 
         if (group.getName().equals(APIManager.getManager().myAccount.getGroup().getName())) {
             itsMyGroup = true;
-            ((TextView) main_layout.findViewById(R.id.score)).setText(String.valueOf(CountAverageValue()));
+            ((TextView) main_layout.findViewById(R.id.score)).setText(String.valueOf(group.getScore()));
 
             main_layout.findViewById(R.id.chat_button_group).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.create_news).setVisibility(View.VISIBLE);
@@ -160,15 +160,4 @@ public class GroupFragment extends Fragment {
         return true;
     }
 
-    private int CountAverageValue() {
-        int score = 0;
-
-        for (Account account : group.getAccounts())
-            score += account.getScore();
-
-        if (score != 0)
-            score /= group.getAccounts().size();
-
-        return score;
-    }
 }

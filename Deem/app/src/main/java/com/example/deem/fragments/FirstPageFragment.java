@@ -40,6 +40,7 @@ public class FirstPageFragment extends Fragment {
 
     //fragments
     private RatingGroupsFragment ratingGroupsFragment;
+    private ClubsFragment clubsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class FirstPageFragment extends Fragment {
 
     public void init() {
         ratingGroupsFragment = new RatingGroupsFragment();
+        clubsFragment = new ClubsFragment();
 
         initToolbar();
         initEvent();
@@ -85,23 +87,18 @@ public class FirstPageFragment extends Fragment {
     private void initEvent() {
         if (APIManager.statusInfo.isEventsListGot()) {
             List<Event> events = APIManager.getManager().listEvents;
-            Date date = new Date(System.currentTimeMillis());
+            Event event = events.get(events.size()-1);
 
-            for (Event event : events)
-                if (event.getStart_date().after(date)) {
+            Date date_exam = event.getStart_date();
+            TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
+            TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
+            text_name_exam.setText(event.getName());
+            text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
 
-                    Date date_exam = event.getStart_date();
-                    TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
-                    TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
-                    text_name_exam.setText(event.getName());
-                    text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
-                    break;
-                }
         }
     }
 
     private void initListNews() {
-
         if (APIManager.getManager().statusInfo.isGroupsListGot() && APIManager.getManager().statusInfo.isNewsListGot()) {
             adminNews = new ArrayList<>();
             List<News> news = APIManager.getManager().listNews;
@@ -130,9 +127,14 @@ public class FirstPageFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), CurriculumActivity.class);
                     startActivity(intent);
                 }
+
+                if (v == main_layout.findViewById(R.id.club_menu))
+                    activity.OpenFragment(clubsFragment, R.id.fragment_main, false);
+
             }
         };
         main_layout.findViewById(R.id.rat_button).setOnClickListener(onClickOther);
         main_layout.findViewById(R.id.curriculum_button).setOnClickListener(onClickOther);
+        main_layout.findViewById(R.id.club_menu).setOnClickListener(onClickOther);
     }
 }

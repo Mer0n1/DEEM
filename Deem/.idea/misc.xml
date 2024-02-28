@@ -17,7 +17,7 @@
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/shadow.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/shape_icon.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable/test_icon.xml" value="0.1" />
-        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/activity_chat.xml" value="0.22" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/activity_chat.xml" value="0.33" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/activity_curriculum.xml" value="0.30012825994014536" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/activity_identefication_form.xml" value="0.22" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/activity_main.xml" value="0.25" />
@@ -30,14 +30,17 @@
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_first_page.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_group.xml" value="0.25" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_groups.xml" value="0.1675929884566054" />
-        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_tops_users.xml" value="0.33" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_tops_users.xml" value="1.0" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_users.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_messenger.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_news.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_options.xml" value="0.2" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_recucle_menu.xml" value="0.3009833262077811" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_recycle_menu.xml" value="0.3009833262077811" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/group_rating_list.xml" value="0.3009833262077811" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_chat_story.xml" value="0.25" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_class.xml" value="0.33" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_club_info.xml" value="0.3009833262077811" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_dayli_schedule.xml" value="0.4182648401826484" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_event.xml" value="0.25" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/item_group_info.xml" value="0.33" />

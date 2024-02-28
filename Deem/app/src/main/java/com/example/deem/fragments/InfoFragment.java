@@ -20,9 +20,13 @@ import com.example.deem.fragments.InfoFragments.ListTopsFragment;
 import com.example.deem.fragments.InfoFragments.ListUsersFragment;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.News;
+import com.example.restful.models.StandardCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -41,6 +45,8 @@ public class InfoFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private List<News> listNews;
+
+    private static boolean lock = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +75,6 @@ public class InfoFragment extends Fragment {
         listGroupsFragment = new ListGroupsFragment();
         listTopsFragment = new ListTopsFragment();
 
-        Collections.reverse(listNews);
         initListAndRecycle();
     }
 
@@ -137,6 +142,32 @@ public class InfoFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         newsListRecycleAdapter = new NewsListRecycleAdapter(listNews, this);
         recyclerView.setAdapter(newsListRecycleAdapter);
+
+        //
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)) {
+
+                    if (!lock) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+                        String dateStr = sdf.format(listNews.get(listNews.size() - 1).getDate());
+
+                        APIManager.getManager().updateNewsFeed(dateStr,
+                                new StandardCallback() {
+                                    @Override
+                                    public void call() {
+                                        newsListRecycleAdapter.notifyDataSetChanged();
+                                        lock = false;
+                                    }
+                                });
+                    }
+                    lock = true;
+                }
+            }
+        });
+
     }
 
 }

@@ -118,4 +118,24 @@ public class Group {
     public void setType(String type) {
         this.type = type;
     }
+
+
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", chat_id=" + chat_id +
+                ", course=" + course +
+                ", score=" + score +
+                ", name='" + name + '\'' +
+                ", faculty='" + faculty + '\'' +
+                ", type='" + type + '\'' +
+                ", date_create=" + date_create +
+                ", users=" + users +
+                ", news=" + news +
+                ", rank=" + rank +
+                ", accounts=" + accounts +
+                '}';
+    }
 }

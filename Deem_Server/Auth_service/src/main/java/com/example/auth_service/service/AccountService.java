@@ -4,6 +4,7 @@ import com.example.auth_service.models.Account;
 import com.example.auth_service.models.ListLong;
 import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,18 +22,24 @@ public class AccountService {
     public Account save(Account account) { return repository.save(account); }
     @Transactional
     public void delete(Long idAccount) { repository.deleteById(idAccount); }
+
+    @Cacheable("account_name")
     public Account getAccount(String username) {
         return repository.findByUsername(username).orElse(null);
     }
 
+    @Cacheable("account_id")
     public Account getAccount(Long id) { return repository.findById(id).orElse(null); }
 
+    @Cacheable("accounts")
     public List<Account> getAccounts() {
         return repository.findAll();
     }
 
+    @Cacheable("users_of_group")
     public List<Long> getUsersOfGroup(Long idGroup) { return repository.findUsersOfGroup(idGroup);}
 
+    @Cacheable("topUsers")
     public List<String> getTopUniversity() {
         List<Account> accounts = repository.findTopUniversity();
         List<String> list = new ArrayList<>();
@@ -42,7 +49,7 @@ public class AccountService {
     }
 
 
-    public List<Account> sort(List<Account> accounts) {
+    /*public List<Account> sort(List<Account> accounts) {
         List<Account> tops = new ArrayList<>();
         accounts.stream().sorted(Comparator.comparing(o -> o.getScore()));
 
@@ -50,7 +57,7 @@ public class AccountService {
         for (int j = 0; j < size; j++)
             tops.add(accounts.get(j));
         return tops;
-    }
+    }*/
 
     @Transactional
     public void sendScore(Long idAccount, int score) {

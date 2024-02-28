@@ -6,6 +6,7 @@ import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.repositories.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +23,12 @@ public class ChatService {
     @Autowired
     private MessageService messageService;
 
+    @Cacheable("chats")
     public List<Chat> getChats(List<Long> chatIds) {
         return chatRepository.findAllByIdIn(chatIds);
     }
 
+    @Cacheable("chat")
     public Chat getChat(Long id) {
         Chat chat = chatRepository.findChatById(id);
         chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId()));
@@ -34,10 +37,11 @@ public class ChatService {
     }
 
     @Transactional
-    public Long save(Chat chat) {
-        return chatRepository.save(chat).getId();
+    public Chat save(Chat chat) {
+        return chatRepository.save(chat);
     }
 
+    @Cacheable("chats_account")
     public List<Chat> getListChats(String nameAccount) {
         int accountId = chatDAO.getIdAccount(nameAccount);
         List<Chat> chats = getChats(chatDAO.getChatsIdByAccountId(accountId));
@@ -50,11 +54,14 @@ public class ChatService {
 
     @Transactional
     public void CreateNewChat(Chat chat) {
+
+        Message firstMessage = chat.getMessages().get(0);
+        chat.getMessages().clear();
         //создание чата в таблице чатов
-        save(chat);
+        Chat updatedChat = save(chat);
         //создание сообщения в таблице сообщений
-        chat.getMessages().get(0).setChat(chat);
-        messageService.save(chat.getMessages().get(0));
+        firstMessage.setChat(updatedChat);
+        messageService.save(firstMessage);
         //создание чата в таблице account_chat
         chatDAO.saveInAccount_chat(chat);
     }

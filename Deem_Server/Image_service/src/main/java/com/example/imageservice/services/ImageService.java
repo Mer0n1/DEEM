@@ -5,6 +5,7 @@ import com.example.imageservice.repositories.*;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,8 @@ public class ImageService {
 
     @Transactional
     public void deleteIcon(int id) { iconImageRepository.deleteById(id);}
+
+    @Cacheable("iconUuid")
     public IconImage getImageIcon(String uuid) { return iconImageRepository.findByUuid(uuid); }
 
     public Image getImage(String UUID, String type) {
