@@ -40,9 +40,8 @@ public class ChatController {
 
     /** Возвращает чаты текущего пользователя */
     @GetMapping("/getChats")
-    public List<Chat> getChats(Principal principle) {
-        System.out.println("getChats called");
-        return chatService.getListChats(principle.getName());
+    public List<Chat> getChats(Principal principal) {
+        return chatService.getListChats(principal.getName());
     }
 
 
@@ -50,7 +49,6 @@ public class ChatController {
     @PostMapping("/createChat")
     public void createChat(@RequestBody @Valid Chat chat,
                            BindingResult bindingResult) {
-        System.out.println("createChat called");
 
         if (bindingResult.hasErrors())
             return;

@@ -66,7 +66,7 @@ public class GroupController {
         return new LocationStudent(0l, group.getFaculty(), group.getCourse());
     }
 
-    private void buildListGroups(List<Group> groups) {
+    public void buildListGroups(List<Group> groups) {
         //Получим список учащихся групп
         for (Group group : groups)
             group.setUsers(restTemplateClient.getListIdUsersOfGroup(group.getId()));
@@ -89,15 +89,15 @@ public class GroupController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createGroup")
-    public ResponseEntity<Void> createGroup(@RequestBody @Valid Group group,
+    public ResponseEntity<?> createGroup(@RequestBody @Valid Group group,
                                             BindingResult bindingResult) {
         System.out.println("createGroup");
 
         if (bindingResult.hasErrors())
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
 
         groupService.save(group);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
 

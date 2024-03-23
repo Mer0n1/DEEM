@@ -25,7 +25,6 @@ public class CurriculumController {
     @PreAuthorize("hasAnyRole('ADMIN', 'HIGH', 'TEACHER')")
     @PostMapping("/addClass")
     public void addClass(@RequestBody @Valid Class cl, BindingResult bindingResult) {
-        System.out.println("addClass " + classService);
 
         if (bindingResult.hasErrors())
             return;
@@ -36,7 +35,6 @@ public class CurriculumController {
     @PreAuthorize("hasAnyRole('ADMIN', 'HIGH', 'TEACHER')")
     @PostMapping("/deleteClass")
     public void deleteClass(@RequestBody @Valid Class cl, BindingResult bindingResult) {
-        System.out.println("deleteClass");
 
         if (bindingResult.hasErrors())
             return;

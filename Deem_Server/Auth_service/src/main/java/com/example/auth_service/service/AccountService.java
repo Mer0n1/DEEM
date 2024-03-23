@@ -49,16 +49,6 @@ public class AccountService {
     }
 
 
-    /*public List<Account> sort(List<Account> accounts) {
-        List<Account> tops = new ArrayList<>();
-        accounts.stream().sorted(Comparator.comparing(o -> o.getScore()));
-
-        int size = Math.min(accounts.size(), 10);
-        for (int j = 0; j < size; j++)
-            tops.add(accounts.get(j));
-        return tops;
-    }*/
-
     @Transactional
     public void sendScore(Long idAccount, int score) {
         Optional<Account> accountOpt = repository.findById(idAccount);

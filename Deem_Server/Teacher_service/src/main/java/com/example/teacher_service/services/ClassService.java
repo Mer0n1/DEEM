@@ -26,7 +26,6 @@ public class ClassService {
 
     @Transactional
     public void delete(Class cl) { //TODO date не сравнивается в БД
-        System.out.println(cl.getDate());
         //Optional<Class> m  = repository.findByNameAndDate(cl.getName(), cl.getDate());
         Optional<Class> m = repository.findByDate(cl.getDate());
 

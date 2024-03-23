@@ -23,29 +23,9 @@ public class ImageController {
     @Autowired
     private Validator validator;
 
-    /*@GetMapping("/getImageTest")
-    public ResponseEntity<byte[]> getImageTest() throws IOException {
-        System.out.println("getImage");
-        File imageFile = new File(Resources.getResource("").getFile());
-        byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-    }
-
-    //to
-    @PostMapping("/uploadProfile")
-    public ResponseEntity<String> uploadProfile(
-            @RequestParam("description") String description,
-            @RequestPart("image") MultipartFile image) {
-        return ResponseEntity.ok("Uploaded successfully.");
-    }*/
-
     @GetMapping("/getCount")
     public Integer getCount(@RequestParam("type") String type,
                             @RequestParam("id") Long id) {
-        System.out.println("getCount");
         Integer result = -1;
 
         if (type.equals("news_image"))
@@ -60,15 +40,12 @@ public class ImageController {
     @GetMapping("/getImage")
     public Image getImage(@RequestParam("UUID") String UUID,
                           @RequestParam("type") String type) {
-        System.out.println("getImage");
         return imageService.getImage(UUID, type);
     }
 
     @PostMapping("/addImageIcon")
-    private void addImageIcon(@RequestBody @Valid IconImage image,
+    public void addImageIcon(@RequestBody @Valid IconImage image,
                               BindingResult bindingResult, Principal principal) throws IOException {
-        System.out.println("addImageIcon");
-
         if (bindingResult.hasErrors())
             return;
 
@@ -82,9 +59,7 @@ public class ImageController {
     }
 
     @PostMapping("/addImagesNews")
-    private void addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
-        System.out.println("addImagesNews");
-
+    public void addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
         if (validator.hasErrorsNewsImages(imgs))
             return;
 
@@ -95,9 +70,7 @@ public class ImageController {
     }
 
     @PostMapping("/addImagesMessage")
-    private void addImagesMessage(@RequestBody List<MessageImage> imgs) throws IOException {
-        System.out.println("addImagesMessage");
-
+    public void addImagesMessage(@RequestBody List<MessageImage> imgs) throws IOException {
         if (validator.hasErrorsMessageImages(imgs))
             return;
 

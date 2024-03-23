@@ -60,7 +60,6 @@ public class AccountController {
 
     @GetMapping("/getTopStudentsFaculty")
     public List<String> getTopStudentsFaculty(Authentication authentication) {
-        System.out.println("getTop");
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         PersonDetails personDetails = (PersonDetails) userDetails;
         return accountDAO.findTopStudentsFaculty(personDetails.getFaculty());
@@ -79,11 +78,6 @@ public class AccountController {
     @PostMapping("/sendScore")
     public void sendScore(@RequestBody @Valid DepartureForm form,
                           BindingResult bindingResult) {
-        System.out.println("sendScore");
-
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        PersonDetails personDetails = (PersonDetails) userDetails;
-
         if (bindingResult.hasErrors())
             return;
 
@@ -94,29 +88,22 @@ public class AccountController {
     @PostMapping("/createAccount")
     public Account createAccount(@RequestBody @Valid Account account,
                                         BindingResult bindingResult) {
-        System.out.println("createAccount");
-
         if (bindingResult.hasErrors())
             return null;
 
-        Account ac = accountService.save(account);
-        return ac;
+        return accountService.save(account);
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/transferStudent")
     public void transferStudent(@RequestParam("idStudent") Long idStudent,
                                 @RequestParam("idGroup")   Long idGroup) {
-        System.out.println("transferStudent " + idStudent + " " + idGroup);
-
         accountService.transferAccount(idStudent, idGroup);
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/deleteAccount")
     public void deleteAccount(@RequestParam("idStudent") Long idStudent) {
-        System.out.println("deleteAccount");
-
         accountService.delete(idStudent);
     }
 
@@ -129,7 +116,6 @@ public class AccountController {
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/getListAverageValues") //неверно, но это меняет ограничения
     public List<Integer> getListAverageValues(@RequestBody List<ListLong> list) {
-        System.out.println(list.toString());
         return accountService.getListAverageValue(list);
     }
 

@@ -19,16 +19,15 @@ public class PushController {
     private WebSocketService webSocketService;
 
     @PostMapping("/sendMessageToClient")
-    public ResponseEntity<Void> sendMessageToClient(
+    public ResponseEntity<?> sendMessageToClient(
             @RequestBody @Valid MessagePush messagePush,
             BindingResult bindingResult) throws JsonProcessingException {
-        System.out.println("sendMessageToClient ");
 
         if (bindingResult.hasErrors())
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
 
         webSocketService.sendMessageToClient(messagePush);
 
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }

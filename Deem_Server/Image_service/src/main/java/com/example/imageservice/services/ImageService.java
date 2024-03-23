@@ -77,7 +77,6 @@ public class ImageService {
         if (!path.isEmpty())
             image.setImgEncode(encodeImage(path));
 
-
         return image;
     }
 

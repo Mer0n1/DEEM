@@ -54,7 +54,6 @@ public class NewsController {
     @GetMapping("/getNewsFeed")
     public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
                                   Authentication authentication) {
-        System.out.println("getNewsFeed " + date);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         PersonDetails personDetails = (PersonDetails) userDetails;
 
@@ -65,8 +64,6 @@ public class NewsController {
     @PostMapping("/createNews")
     public void createNews(@RequestBody @Valid News news,
                            BindingResult bindingResult) throws JsonProcessingException {
-        System.out.println("createNews");
-
         if (bindingResult.hasErrors())
             return;
 

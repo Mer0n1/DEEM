@@ -25,12 +25,11 @@ public class MessageController {
     private MessengerServiceClient messengerServiceClient;
 
     @PostMapping("/sendMessage")
-    public ResponseEntity<Void> sendMessage(@RequestBody @Valid Message message,
+    public ResponseEntity<?> sendMessage(@RequestBody @Valid Message message,
                                       BindingResult bindingResult) throws JsonProcessingException {
-        System.out.println("Message called");
 
         if (bindingResult.hasErrors())
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
 
         Message actualObject = messageService.save(message);
 
@@ -44,12 +43,11 @@ public class MessageController {
         //send
         messengerServiceClient.pushMessageTo(message);
 
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/getMessage")
     public Message getMessage(int id) {
-        System.out.println(id);
         return messageService.getMessage(id);
     }
 
