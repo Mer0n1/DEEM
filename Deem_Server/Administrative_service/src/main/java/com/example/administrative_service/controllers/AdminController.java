@@ -10,10 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -35,7 +38,7 @@ public class AdminController {
         System.out.println("expelStudent");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.expelStudent(form.getIdStudent());
         exclusionStoryService.save(form);
@@ -48,7 +51,7 @@ public class AdminController {
         System.out.println("transferStudent");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.transferStudent(form.getIdStudent(), form.getId_group());
         transferStoryService.save(form);
@@ -61,7 +64,7 @@ public class AdminController {
         System.out.println("createStudent");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         Long id = restTemplateService.createStudent(form.getAccount()).getId();
         form.getAccount().setId(id);
@@ -81,7 +84,7 @@ public class AdminController {
         System.out.println("createGroup");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         form.getGroup().setDate_create(new Date(System.currentTimeMillis()));
         form.getGroup().setChat_id(restTemplateService.createChatAndGetId());
@@ -96,7 +99,7 @@ public class AdminController {
         System.out.println("sendScore");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.sendScore(form);
 
@@ -110,7 +113,7 @@ public class AdminController {
         System.out.println("releaseEvent");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.releaseEvent(event);
         return ResponseEntity.ok().build();
@@ -122,7 +125,7 @@ public class AdminController {
         System.out.println("addClass");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.addClass(cl);
         return ResponseEntity.ok().build();
@@ -133,10 +136,17 @@ public class AdminController {
                                          BindingResult bindingResult) {
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         restTemplateService.deleteClass(cl);
         return ResponseEntity.ok().build();
+    }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
     }
 }
 

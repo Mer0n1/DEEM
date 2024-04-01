@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -24,10 +25,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static com.example.messenger_service.util.ResponseValidator.getErrors;
 
 @RestController
 @RequestMapping("/chat")
@@ -47,19 +47,24 @@ public class ChatController {
 
     /** При создании чата пользователь создает всего 1 сообщение */
     @PostMapping("/createChat")
-    public void createChat(@RequestBody @Valid Chat chat,
+    public ResponseEntity<?> createChat(@RequestBody @Valid Chat chat,
                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors())
-            return;
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         chatService.CreateNewChat(chat);
+
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/linkAccountToGroupChat")
-    public void linkAccountToGroupChat(@RequestBody Chat chat) {
-        chatDAO.saveInAccount_chat(chat);
+    public ResponseEntity<?> linkAccountToGroupChat(@RequestBody Chat chat) {
+        if (chatDAO.saveInAccount_chat(chat))
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.badRequest().build();
     }
 
 

@@ -17,16 +17,16 @@ public class TransferForm {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty(message = "Description must not be null")
+    @NotEmpty
     @Column(name = "description")
     private String description;
 
-    @NotNull(message = "Id Student must not be null")
+    @NotNull
     @Column(name = "idStudent")
     private Long idStudent;
 
     //группа в которую нужно перевести. Обязательно текущий факультет.
-    @NotNull(message = "id_group must not be null")
+    @NotNull
     @Column(name = "id_group")
     private Long id_group;
 }

@@ -175,16 +175,20 @@ public class MainActivity extends AppCompatActivity {
         ImageView bottom_events = findViewById(R.id.bottom_events);
         ImageView bottom_info = findViewById(R.id.bottom_info);
 
-        bottom_message.setBackgroundResource(R.drawable.icon_messenger);
-        bottom_group.setBackgroundResource(R.drawable.icon_group);
-        bottom_events.setBackgroundResource(R.drawable.icon_events);
-        bottom_info.setBackgroundResource(R.drawable.icon_news);
+        bottom_message.setImageResource(R.drawable.icon_messenger);
+        bottom_group.setImageResource(R.drawable.icon_group);
+        bottom_events.setImageResource(R.drawable.icon_events);
+        bottom_info.setImageResource(R.drawable.icon_news);
 
         switch (RId) {
-            case R.id.bottom_message: bottom_message.setBackgroundResource(R.drawable.icon_messenger_pressed); break;
-            case R.id.bottom_group: bottom_group.setBackgroundResource(R.drawable.icon_group_pressed); break;
-            case R.id.bottom_info: bottom_info.setBackgroundResource(R.drawable.icon_news_pressed); break;
-            case R.id.bottom_events: bottom_events.setBackgroundResource(R.drawable.icon_events_pressed); break;
+            case R.id.bottom_message:
+                bottom_message.setBackgroundResource(R.drawable.icon_messenger_pressed); break;
+            case R.id.bottom_group:
+                bottom_group.setBackgroundResource(R.drawable.icon_group_pressed); break;
+            case R.id.bottom_info:
+                bottom_info.setBackgroundResource(R.drawable.icon_news_pressed); break;
+            case R.id.bottom_events:
+                bottom_events.setBackgroundResource(R.drawable.icon_events_pressed);break;
         }
     }
 

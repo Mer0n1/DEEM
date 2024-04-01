@@ -1,6 +1,8 @@
 package com.example.administrative_service.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,16 +17,17 @@ import java.util.Date;
 public class Class {
     private Long id;
 
-    @NotEmpty(message = "name must not be null")
+    @NotEmpty
     private String name;
 
-    @NotEmpty(message = "type must not be null")
+    @Max(1)
+    @NotEmpty
     private String type; //l - lecture, p - practice
 
-    @NotEmpty(message = "place must not be null")
+    @NotEmpty
     private String place; //room
 
-    @NotNull(message = "date must not be null")
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 }

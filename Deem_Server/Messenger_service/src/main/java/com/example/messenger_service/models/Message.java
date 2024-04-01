@@ -21,7 +21,7 @@ public class Message {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty(message = "message must not be empty")
+    @NotEmpty
     @Column(name = "content")
     private String text;
 
@@ -29,13 +29,13 @@ public class Message {
     @Column(name = "Date")
     private Date date;
 
-    @NotNull(message = "chat must not be empty")
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "id_chat", referencedColumnName = "id")
     @JsonIgnoreProperties("messages")
     private Chat chat;
 
-    @NotNull(message = "author must not be empty")
+    @NotNull
     @Column(name = "id_account")
     private Long author;
 

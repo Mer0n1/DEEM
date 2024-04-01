@@ -16,20 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping("/news")
@@ -53,19 +52,16 @@ public class NewsController {
 
     @GetMapping("/getNewsFeed")
     public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
-                                  Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        PersonDetails personDetails = (PersonDetails) userDetails;
-
+                                  @AuthenticationPrincipal PersonDetails personDetails) {
         return newsService.getNewsFeed(personDetails.getFaculty(), date);
     }
 
 
     @PostMapping("/createNews")
-    public void createNews(@RequestBody @Valid News news,
+    public ResponseEntity<?> createNews(@RequestBody @Valid News news,
                            BindingResult bindingResult) throws JsonProcessingException {
         if (bindingResult.hasErrors())
-            return;
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         News mnews = newsService.createNews(news);
 
@@ -75,5 +71,14 @@ public class NewsController {
                 news.getImages().forEach(x -> x.setId_news(mnews.getId()));
                 restTemplateService.addImagesNews(news.getImages());
             }
+
+        return ResponseEntity.ok().build();
+    }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
     }
 }

@@ -5,14 +5,18 @@ import com.example.imageservice.services.ImageService;
 import com.example.imageservice.util.Validator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/image")
@@ -44,10 +48,10 @@ public class ImageController {
     }
 
     @PostMapping("/addImageIcon")
-    public void addImageIcon(@RequestBody @Valid IconImage image,
-                              BindingResult bindingResult, Principal principal) throws IOException {
+    public ResponseEntity<?> addImageIcon(@RequestBody @Valid IconImage image,
+                                       BindingResult bindingResult, Principal principal) throws IOException {
         if (bindingResult.hasErrors())
-            return;
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         image.setPath(imageService.getPath("profile_icon") + principal.getName()+".png");
 
@@ -56,28 +60,41 @@ public class ImageController {
             imageService.saveIcon(image);
 
         imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/addImagesNews")
-    public void addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
+    public ResponseEntity<?> addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
         if (validator.hasErrorsNewsImages(imgs))
-            return;
+            return ResponseEntity.badRequest().body("Некорректный запрос");
 
         imageService.initNewsImages(imgs);
         for (NewsImage image : imgs)
             imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
         imageService.saveAllNewsImages(imgs);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/addImagesMessage")
-    public void addImagesMessage(@RequestBody List<MessageImage> imgs) throws IOException {
+    public ResponseEntity<?> addImagesMessage(@RequestBody List<MessageImage> imgs) throws IOException {
         if (validator.hasErrorsMessageImages(imgs))
-            return;
+            return ResponseEntity.badRequest().body("Некорректный запрос");
 
         imageService.initMessageImages(imgs);
         for (MessageImage image : imgs)
             imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
         imageService.saveAllMessageImages(imgs);
+
+        return ResponseEntity.ok().build();
     }
 
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
+    }
 }

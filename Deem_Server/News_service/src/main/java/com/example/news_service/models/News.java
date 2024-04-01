@@ -23,11 +23,11 @@ public class News {
     @Column(name = "content")
     private String content;
 
-    @NotEmpty(message = "Faculty not need be null")
+    @NotEmpty
     @Column(name = "faculty")
     private String faculty;
 
-    @NotNull(message = "id Group must not be null")
+    @NotNull
     @Column(name = "group_id")
     private Long idGroup;
 

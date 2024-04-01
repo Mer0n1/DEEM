@@ -20,19 +20,19 @@ public class Group {
     @Column(name = "group_id")
     private Long id;
 
-    @NotEmpty(message = "faculty must not be null")
+    @NotEmpty
     @Column(name = "faculty")
-    private String faculty; //название факультета
+    private String faculty;
 
-    @NotNull(message = "Course must not be null")
+    @NotNull
     @Column(name = "course")
-    private int course; //курс.
+    private int course; //курс
 
-    @NotEmpty(message = "name must not be null")
+    @NotEmpty
     @Column(name = "name")
     private String name;
 
-    @NotNull(message = "date_create must not be null")
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_create")
     private Date date_create;
@@ -43,7 +43,7 @@ public class Group {
     @Column(name = "type")
     private String type;
 
-    @NotNull(message = "score must not be null")
+    @NotNull
     @Transient
     private int score;
 

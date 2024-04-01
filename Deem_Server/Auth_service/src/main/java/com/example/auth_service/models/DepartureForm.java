@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class DepartureForm {
 
-    @NotNull(message = "Некорректно заполнено")
+    @NotNull
     private Long idAccount;
 
-    @NotNull(message = "Отсутствует указанные очки")
+    @NotNull
     private int score;
 }

@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -108,23 +109,19 @@ class AccountControllerTest {
     void getTopStudentsFaculty() { //TODO failed
 
         // Создание моков
-        Authentication authentication = mock(Authentication.class);
-        UserDetails userDetails = mock(UserDetails.class);
         PersonDetails personDetails = mock(PersonDetails.class);
         AccountDAO accountDAO = mock(AccountDAO.class);
 
         // Задание поведения моков
-        when(authentication.getPrincipal()).thenReturn(personDetails);
         when(personDetails.getFaculty()).thenReturn("EPF");
         when(accountDAO.findTopStudentsFaculty(anyString())).thenReturn(List.of("Student1"));
 
-        List<String> result = accountController.getTopStudentsFaculty(authentication);
+        List<String> result = accountController.getTopStudentsFaculty(personDetails);
 
         // Проверка ожидаемого результата
         assertEquals(List.of("Student1"), result);
 
         // Проверка вызовов методов
-        verify(authentication).getPrincipal();
         verify(personDetails).getFaculty();
         verify(accountDAO).findTopStudentsFaculty("FacultyName");
     }
@@ -173,9 +170,9 @@ class AccountControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(accountService.save(account)).thenReturn(account);
 
-        Account TestAccount = accountController.createAccount(account, bindingResult);
+        ResponseEntity<?> TestAccount = accountController.createAccount(account, bindingResult);
 
-        assertEquals(account, TestAccount);
+        assertEquals(account, TestAccount.getBody());
         verify(accountService).save(account);
     }
 

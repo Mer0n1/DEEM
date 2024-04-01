@@ -35,7 +35,7 @@ class EventControllerTest {
 
         when(eventService.getEvents("TestFaculty")).thenReturn(List.of(new Event()));
 
-        List<Event> actualEvents = eventController.getEvents(userDetails);
+        List<Event> actualEvents = eventController.getEvents((PersonDetails)userDetails);
 
         verify(eventService).getEvents("TestFaculty");
 

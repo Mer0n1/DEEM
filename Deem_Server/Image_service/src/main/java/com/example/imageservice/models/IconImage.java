@@ -19,11 +19,11 @@ public class IconImage {
     @Column(name = "path")
     private String path;
 
-    @NotEmpty(message = "uuid null")
+    @NotEmpty
     @Column(name = "uuid")
     private String uuid;
 
-    @NotNull(message = "image null")
+    @NotNull
     @Transient
     private Image image;
 }

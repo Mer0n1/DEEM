@@ -1,12 +1,16 @@
 package com.example.push_notification_service.models;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
 
 
 public class MessagePush {
+    @NotNull
     private List<Long> receivers;
+
+    @NotNull
     private Message message;
 
     public List<Long> getReceivers() {

@@ -15,11 +15,11 @@ public class GroupCreationForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Group must not be null")
+    @NotNull
     @Transient
     private Group group;
 
-    @NotEmpty(message = "Department must not be null")
+    @NotEmpty
     @Column(name = "department")
     private String department;
 }

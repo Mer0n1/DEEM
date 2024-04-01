@@ -12,4 +12,5 @@
     <color name="blue">#1ea6c6</color>
     <color name="ora1">#f8695c</color>
     <color name="yel1">#f9af5f</color>
+    <color name="transparent">#00000000</color>
 </resources>

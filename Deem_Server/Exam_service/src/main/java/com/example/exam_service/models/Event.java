@@ -18,11 +18,11 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty(message = "faculty must not be null")
+    @NotEmpty
     @Column(name = "faculty")
     private String faculty;
 
-    @NotNull(message = "course must not be null")
+    @NotNull
     @Column(name = "course")
     private int course;
 
@@ -30,26 +30,26 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publication_date;
 
-    @NotNull(message = "start_date must not be null")
+    @NotNull
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date start_date;
 
-    @NotNull(message = "Id Group must not be null")
+    @NotNull
     @Column(name = "group_id")
     private Long idGroup;
 
     //private Exam exam;
     //Временно
-    @NotEmpty(message = "type must not be null")
+    @NotEmpty
     @Column(name = "type")
     private String type;
 
-    @NotEmpty(message = "name must not be null")
+    @NotEmpty
     @Column(name = "name")
     private String name;
 
-    @NotEmpty(message = "Description must not be null")
+    @NotEmpty
     @Column(name = "description")
     private String description;
 }

@@ -13,17 +13,17 @@ import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -49,9 +49,6 @@ public class AccountController {
         return convertToPublicAccountDTO(account);
     }
 
-    /** Заметка для дто
-     * Скрывает данные: баллы
-     */
     @GetMapping("/getAccounts")
     public List<PrivateAccountDTO> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
@@ -59,9 +56,7 @@ public class AccountController {
     }
 
     @GetMapping("/getTopStudentsFaculty")
-    public List<String> getTopStudentsFaculty(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        PersonDetails personDetails = (PersonDetails) userDetails;
+    public List<String> getTopStudentsFaculty(@AuthenticationPrincipal PersonDetails personDetails) {
         return accountDAO.findTopStudentsFaculty(personDetails.getFaculty());
     }
     @GetMapping("/getTopStudentsUniversity")
@@ -76,35 +71,38 @@ public class AccountController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/sendScore")
-    public void sendScore(@RequestBody @Valid DepartureForm form,
+    public ResponseEntity<?> sendScore(@RequestBody @Valid DepartureForm form,
                           BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return;
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         accountService.sendScore(form.getIdAccount(), form.getScore());
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/createAccount")
-    public Account createAccount(@RequestBody @Valid Account account,
+    public ResponseEntity<?> createAccount(@RequestBody @Valid Account account,
                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return null;
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        return accountService.save(account);
+        return ResponseEntity.ok(accountService.save(account));
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/transferStudent")
-    public void transferStudent(@RequestParam("idStudent") Long idStudent,
+    public ResponseEntity<?> transferStudent(@RequestParam("idStudent") Long idStudent,
                                 @RequestParam("idGroup")   Long idGroup) {
         accountService.transferAccount(idStudent, idGroup);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/deleteAccount")
-    public void deleteAccount(@RequestParam("idStudent") Long idStudent) {
+    public ResponseEntity<?> deleteAccount(@RequestParam("idStudent") Long idStudent) {
         accountService.delete(idStudent);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('HIGH')")
@@ -133,4 +131,12 @@ public class AccountController {
     private PrivateAccountDTO convertToPrivateAccountDTO(Account account) {
         return modelMapper.map(account, PrivateAccountDTO.class);
     }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
+    }
+
 }

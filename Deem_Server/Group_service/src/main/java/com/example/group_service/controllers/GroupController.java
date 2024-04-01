@@ -8,14 +8,12 @@ import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.util.*;
@@ -39,9 +37,7 @@ public class GroupController {
 
     /** Возвращает группы согласно допуску, тоесть текущего курса и факультета */
     @GetMapping("/getGroups")
-    public List<Group> getGroupsOfFaculty(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        PersonDetails personDetails = (PersonDetails) userDetails;
+    public List<Group> getGroupsOfFaculty(@AuthenticationPrincipal PersonDetails personDetails) {
 
         //Получим список групп для текущего факультета заявителя
         List<Group> groups = groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
@@ -94,7 +90,7 @@ public class GroupController {
         System.out.println("createGroup");
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         groupService.save(group);
         return ResponseEntity.ok().build();
@@ -106,4 +102,12 @@ public class GroupController {
     public Long getChatId(@RequestParam("id") Long id) {
         return groupService.getGroup(id).getChat_id();
     }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
+    }
+
 }

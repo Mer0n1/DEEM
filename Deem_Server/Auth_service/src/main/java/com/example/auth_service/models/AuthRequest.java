@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class AuthRequest {
 
-    @NotEmpty(message = "Username must not be null")
+    @NotEmpty
     private String username;
 
-    @NotEmpty(message = "Password must not be null")
+    @NotEmpty
     private String password;
 
 }

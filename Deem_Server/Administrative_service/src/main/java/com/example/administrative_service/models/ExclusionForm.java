@@ -17,7 +17,7 @@ public class ExclusionForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "must not be null")
+    @NotEmpty
     @Column(name = "description")
     private String description;
 
@@ -25,7 +25,7 @@ public class ExclusionForm {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @NotNull(message = "must not be null")
+    @NotNull
     @Column(name = "idStudent")
     private Long idStudent;
 }

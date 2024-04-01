@@ -10,9 +10,9 @@ public class LocationStudent {
     @NotNull()
     private Long idStudent;
 
-    @NotEmpty(message = "faculty must not be null")
+    @NotEmpty
     private String faculty;
 
-    @NotNull(message = "Username must not be null")
+    @NotNull
     private int course;
 }

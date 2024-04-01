@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/push")
@@ -24,10 +28,17 @@ public class PushController {
             BindingResult bindingResult) throws JsonProcessingException {
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         webSocketService.sendMessageToClient(messagePush);
 
         return ResponseEntity.ok().build();
+    }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
     }
 }

@@ -10,10 +10,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.example.messenger_service.util.ResponseValidator.getErrors;
 
 @RestController
 @RequestMapping("/message")
@@ -29,7 +34,7 @@ public class MessageController {
                                       BindingResult bindingResult) throws JsonProcessingException {
 
         if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         Message actualObject = messageService.save(message);
 
@@ -60,6 +65,5 @@ public class MessageController {
 
         return new ArrayList<>();
     }
-
 
 }

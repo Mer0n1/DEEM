@@ -19,15 +19,15 @@ public class MessageImage {
     @Column(name = "path")
     private String path;
 
-    @NotEmpty(message = "uuid null")
+    @NotEmpty
     @Column(name = "uuid")
     private String uuid;
 
-    @NotNull(message = "id news null")
+    @NotNull
     @Column(name = "id_message")
     private Long id_message;
 
-    @NotNull(message = "image null")
+    @NotNull
     @Transient
     private Image image;
 }
