@@ -50,13 +50,8 @@ class AccountControllerTest {
 
     @Test
     void getMyAccount() {
-        String name = "Meron";
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return name;
-            }
-        };
+        Principal principal = mock(Principal.class);
+
         Group group = new Group();
         group.setId(1L);
 
@@ -69,6 +64,7 @@ class AccountControllerTest {
         publicAccountDTONew.setGroup(group);
         publicAccountDTONew.setGroup_id(group.getId());
 
+        when(principal.getName()).thenReturn("Name");
         when(accountService.getAccount(principal.getName())).thenReturn(account);
         when(accountServiceClient.findGroupById(account.getGroup_id())).thenReturn(group);
         when(modelMapper.map(account, PublicAccountDTO.class)).thenReturn(publicAccountDTONew);

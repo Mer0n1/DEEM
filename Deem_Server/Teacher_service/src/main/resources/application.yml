@@ -5,7 +5,20 @@ spring:
   application:
     name: teachers
 
+  kafka:
+    consumer:
+      bootstarp-servers: localhost:9092
+      group-id: "my_group_id"
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstarp-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 eureka:
   client:
     service-url:
       defaultZone : http://localhost:8080/eureka
+
