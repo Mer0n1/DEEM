@@ -1,22 +1,19 @@
 package com.example.messenger_service.controllers;
 
 import com.example.messenger_service.models.Message;
+import com.example.messenger_service.services.ChatService;
 import com.example.messenger_service.services.MessageService;
 import com.example.messenger_service.services.MessengerServiceClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.messenger_service.util.ResponseValidator.getErrors;
 
@@ -28,6 +25,8 @@ public class MessageController {
     private MessageService messageService;
     @Autowired
     private MessengerServiceClient messengerServiceClient;
+    @Autowired
+    private ChatService chatService;
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody @Valid Message message,
@@ -41,12 +40,17 @@ public class MessageController {
         if (message.getImages() != null)
             if (message.getImages().size() != 0) {
                 message.getImages().forEach(x -> x.setId_message(actualObject.getId()));
-                messengerServiceClient.addImagesNews(message.getImages());
+
+                try {
+                    messengerServiceClient.addImagesNews(message.getImages());
+                } catch (Exception e) {
+                    messageService.delete(actualObject);
+                    return ResponseEntity.badRequest().body(e.getMessage());
+                }
             }
 
-
         //send
-        messengerServiceClient.pushMessageTo(message);
+        messengerServiceClient.pushMessageTo(message); //отправляем запрос на уведомления
 
         return ResponseEntity.ok().build();
     }

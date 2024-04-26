@@ -16,6 +16,8 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    public void delete(Message message) { messageRepository.delete(message);}
+
     @Cacheable("messages")
     public Message getMessage(int id) {
         return messageRepository.findById(id);

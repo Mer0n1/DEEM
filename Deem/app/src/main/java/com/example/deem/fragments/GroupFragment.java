@@ -134,11 +134,10 @@ public class GroupFragment extends Fragment {
         for (News news : allNews)
             if (news.getIdGroup() == group.getId())
                 newsList.add(news);
-        Collections.reverse(newsList);
     }
 
     public boolean checkWorkingCondition() {
-        if (!APIManager.getManager().statusInfo.isGroupsListGot()) {
+        if (!APIManager.statusInfo.isGroupsListGot()) {
             main_layout.findViewById(R.id.layout_progress_bar).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.scroll_view).setVisibility(View.GONE);
             return false;

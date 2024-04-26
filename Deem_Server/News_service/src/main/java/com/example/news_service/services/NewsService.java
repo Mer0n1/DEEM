@@ -49,4 +49,5 @@ public class NewsService {
     }
 
 
+    public void deleteNews(News news) {repository.delete(news);}
 }

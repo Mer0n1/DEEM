@@ -27,7 +27,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface Base {
-    String BASE_URL ="http://192.168.0.101:8081/";
+    String BASE_URL ="http://192.168.0.102:8081/";
 
     //auth
     @POST("/auth/login")

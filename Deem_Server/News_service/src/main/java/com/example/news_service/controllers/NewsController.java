@@ -59,17 +59,23 @@ public class NewsController {
 
     @PostMapping("/createNews")
     public ResponseEntity<?> createNews(@RequestBody @Valid News news,
-                           BindingResult bindingResult) throws JsonProcessingException {
+                           BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        News mnews = newsService.createNews(news);
+        News nnews = newsService.createNews(news);
 
         //Сохранение изображений
         if (news.getImages() != null)
             if (news.getImages().size() != 0) {
-                news.getImages().forEach(x -> x.setId_news(mnews.getId()));
-                restTemplateService.addImagesNews(news.getImages());
+                news.getImages().forEach(x -> x.setId_news(nnews.getId()));
+
+                try {
+                    restTemplateService.addImagesNews(news.getImages());
+                } catch (Exception e) {
+                    newsService.deleteNews(nnews);
+                    return ResponseEntity.badRequest().body(e.getMessage());
+                }
             }
 
         return ResponseEntity.ok().build();

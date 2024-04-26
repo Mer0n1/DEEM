@@ -90,7 +90,6 @@ public class ImageController {
         return ResponseEntity.ok().build();
     }
 
-
     public Map<String, String> getErrors(BindingResult bindingResult) {
         Map<String, String> errorMap = new HashMap<>();
         for (FieldError error : bindingResult.getFieldErrors())

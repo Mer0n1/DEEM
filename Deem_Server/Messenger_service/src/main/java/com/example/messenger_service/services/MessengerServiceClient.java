@@ -64,15 +64,12 @@ public class MessengerServiceClient {
         } catch(Exception e) {}
     }
 
-    public void addImagesNews(List<MessageImage> imgs) throws JsonProcessingException {
+    public ResponseEntity<?> addImagesNews(List<MessageImage> imgs) throws JsonProcessingException {
+
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(imgs);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        try {
-            restTemplate.exchange(imageServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
-        } catch (Exception e) {
-        }
-
+        return restTemplate.exchange(imageServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
     }
 }

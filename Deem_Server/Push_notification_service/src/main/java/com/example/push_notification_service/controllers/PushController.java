@@ -1,6 +1,5 @@
 package com.example.push_notification_service.controllers;
 
-import com.example.push_notification_service.models.Message;
 import com.example.push_notification_service.models.MessagePush;
 import com.example.push_notification_service.services.WebSocketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,4 +40,5 @@ public class PushController {
             errorMap.put(error.getField(), error.getDefaultMessage());
         return errorMap;
     }
+
 }

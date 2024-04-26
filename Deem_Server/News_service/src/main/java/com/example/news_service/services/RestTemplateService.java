@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -39,11 +40,11 @@ public class RestTemplateService {
         this.environment = environment;
     }
 
-    public void addImagesNews(List<NewsImage> imgs) throws JsonProcessingException {
+    public ResponseEntity<?> addImagesNews(List<NewsImage> imgs) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(imgs);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(authServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
+        return restTemplate.exchange(authServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
     }
 }
