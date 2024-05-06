@@ -1,6 +1,8 @@
 package com.example.auth_service.service;
 
 import com.example.auth_service.models.Account;
+import com.example.auth_service.models.ChangeRoleForm;
+import com.example.auth_service.models.ClubForm;
 import com.example.auth_service.models.ListLong;
 import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,9 @@ public class AccountService {
     }
 
     @Cacheable("account_id")
-    public Account getAccount(Long id) { return repository.findById(id).orElse(null); }
+    public Account getAccount(Long id) throws Exception {
+        return repository.findById(id).orElseThrow(() -> new Exception("Такого аккаунта не существует"));
+    }
 
     @Cacheable("accounts")
     public List<Account> getAccounts() {
@@ -44,7 +47,7 @@ public class AccountService {
         List<Account> accounts = repository.findTopUniversity();
         List<String> list = new ArrayList<>();
         for (Account account : accounts)
-            list.add(account.getUsername());
+            list.add(account.getName() + " " + account.getSurname());
         return list;
     }
 
@@ -67,6 +70,44 @@ public class AccountService {
             Account account = account_opt.get();
             account.setGroup_id(idGroup);
         }
+    }
+
+    @Transactional
+    public void addStudentToClub(ClubForm form) throws Exception {
+
+        //узнаем состоит ли студент в клубе
+        Account account = repository.findById(form.getId_student())
+                .orElseThrow(() -> new Exception("Такого аккаунта не существует"));
+
+        if (account.getId_club() != null)
+            throw new Exception("Студент уже состоит в клубе");
+
+        //если у студента нет клуба, то назначаем ему его
+        account.setId_club(form.getId_club());
+        repository.save(account);
+    }
+
+    @Transactional
+    public void expelStudentClub(ClubForm form) throws Exception {
+
+        //узнаем состоит ли студент в клубе
+        Account account = repository.findById(form.getId_student())
+                .orElseThrow(() -> new Exception("Такого аккаунта не существует"));
+
+        if (account.getId_club() == null)
+            throw new Exception("Студент не состоит в клубе");
+
+        //если у студента нет клуба, то назначаем ему его
+        account.setId_club(null);
+        repository.save(account);
+    }
+
+    @Transactional
+    public void changeRoleClub(ChangeRoleForm form) throws Exception {
+        Account account = repository.findById(form.getId_student())
+                .orElseThrow(() -> new Exception("Такого аккаунта не существует"));
+
+        account.setRole("ROLE_" + form.getNewRole());
     }
 
     public List<Integer> getListAverageValue(List<ListLong> list) {

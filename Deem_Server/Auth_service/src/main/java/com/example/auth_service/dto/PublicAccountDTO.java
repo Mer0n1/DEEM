@@ -8,6 +8,7 @@ import lombok.Data;
 public class PublicAccountDTO {
 
     private Long id;
+    private Long id_club;
     private String username;
     private String password;
     private String name;

@@ -16,6 +16,7 @@ public class Group {
     private String name;
     private String faculty;
     private String type;
+    private String description;
     private Date date_create;
     private List<Long> users;
     private List<News> news;
@@ -119,6 +120,13 @@ public class Group {
         this.type = type;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 
     @Override

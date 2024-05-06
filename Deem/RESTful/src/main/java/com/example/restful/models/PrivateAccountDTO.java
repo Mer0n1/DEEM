@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrivateAccountDTO {
     private Long id;
+    private Long id_club;
     private String username;
     private String name;
     private String surname;
@@ -75,5 +76,13 @@ public class PrivateAccountDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Long getId_club() {
+        return id_club;
+    }
+
+    public void setId_club(Long id_club) {
+        this.id_club = id_club;
     }
 }

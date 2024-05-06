@@ -18,6 +18,7 @@ import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -67,9 +68,10 @@ public class ListTopsFragment extends Fragment {
         if (APIManager.statusInfo.isGroupsListGot()) {
             List<Group> groups = APIManager.getManager().listGroups;
 
-            String[] names = new String[groups.size()];
-            for (int j = 0; j < Math.min(groups.size(), 10); j++)
-                names[j] = groups.get(j).getName();
+            List<String> names = new ArrayList<>();
+            for (Group group : groups)
+                if (group.getCourse() != 0)
+                    names.add(group.getName());
 
             ListAdapter listAdapter = new ArrayAdapter<String>(getActivity(),
                     android.R.layout.simple_list_item_1, names);

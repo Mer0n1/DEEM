@@ -13,6 +13,7 @@ public class Account {
     private String fathername;
     private int score;
     private Long group_id;
+    private Long id_club;
     private Group group;
 
     private Image imageIcon;
@@ -96,5 +97,13 @@ public class Account {
 
     public void setImageIcon(Image imageIcon) {
         this.imageIcon = imageIcon;
+    }
+
+    public Long getId_club() {
+        return id_club;
+    }
+
+    public void setId_club(Long id_club) {
+        this.id_club = id_club;
     }
 }

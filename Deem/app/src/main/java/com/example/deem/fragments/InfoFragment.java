@@ -79,7 +79,7 @@ public class InfoFragment extends Fragment {
     }
 
 
-    public void includeButtonBack() {
+    /*public void includeButtonBack() {
         //listener
         View.OnClickListener onClick = new View.OnClickListener() {
             @Override
@@ -89,7 +89,7 @@ public class InfoFragment extends Fragment {
             }
         };
         Toolbar.getInstance().includeButtonBack().setOnClickListener(onClick);
-    }
+    }*/
 
     public void initToolbar() {
         Toolbar.getInstance().reset();

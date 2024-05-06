@@ -52,10 +52,13 @@ public class EventsFragment extends Fragment {
 
     private void init() {
         AllEvents = APIManager.getManager().listEvents;
+        Date currentDate = new Date(System.currentTimeMillis());
+        pastEvents = AllEvents.stream().filter(x->x.getStart_date().before(currentDate)).collect(Collectors.toList());
+        currentEvents = AllEvents.stream().filter(x->x.getStart_date().after(currentDate)).collect(Collectors.toList());
         isStory = false;
         initToolbar();
 
-        if (!APIManager.getManager().statusInfo.isEventsListGot()) {
+        if (!APIManager.statusInfo.isEventsListGot()) {
             main_layout.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.list_events).setVisibility(View.GONE);
             Toolbar.getInstance().ClearIcons();
@@ -65,7 +68,12 @@ public class EventsFragment extends Fragment {
             main_layout.findViewById(R.id.list_events).setVisibility(View.VISIBLE);
         }
 
-        initListAndRecycle();
+        if (currentEvents.size() == 0)
+            main_layout.findViewById(R.id.exams_not_found).setVisibility(View.VISIBLE);
+        else
+            main_layout.findViewById(R.id.exams_not_found).setVisibility(View.GONE);
+
+        initRecycle();
     }
 
     public void initToolbar() {
@@ -80,21 +88,18 @@ public class EventsFragment extends Fragment {
                 if (isStory) {
                     eventRecycleAdapter.setEventList(AllEvents);
                     Toolbar.getInstance().setTitle("Текущие экзамены");
+                    main_layout.findViewById(R.id.exams_not_found).setVisibility(View.VISIBLE);
                 } else {
                     eventRecycleAdapter.setEventList(pastEvents);
                     Toolbar.getInstance().setTitle("История экзаменов");
+                    main_layout.findViewById(R.id.exams_not_found).setVisibility(View.GONE);
                 }
                 eventRecycleAdapter.notifyDataSetChanged();
             }
         });
     }
 
-    public void initListAndRecycle() {
-        Date currentDate = new Date(System.currentTimeMillis());
-        pastEvents = AllEvents.stream().filter(x->x.getStart_date().before(currentDate)).collect(Collectors.toList());
-        currentEvents = AllEvents.stream().filter(x->x.getStart_date().after(currentDate)).collect(Collectors.toList());
-
-
+    public void initRecycle() {
         //recycle
         recyclerView = main_layout.findViewById(R.id.list_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));

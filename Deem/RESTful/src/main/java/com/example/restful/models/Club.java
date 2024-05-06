@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Club {
 
+    private Long id;
     private String name;
-    private String description;
     private Long id_group;
     private Long id_leader;
 
     private Group group;
-    private Account account;
+    private Account leader;
     private Image icon;
 
     public String getName() {
@@ -30,14 +30,6 @@ public class Club {
         this.group = group;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Long getId_group() {
         return id_group;
     }
@@ -50,16 +42,16 @@ public class Club {
         return id_leader;
     }
 
-    public Account getAccount() {
-        return account;
+    public Account getLeader() {
+        return leader;
+    }
+
+    public void setLeader(Account leader) {
+        this.leader = leader;
     }
 
     public void setId_leader(Long id_leader) {
         this.id_leader = id_leader;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 
     public Image getIcon() {
@@ -68,5 +60,13 @@ public class Club {
 
     public void setIcon(Image icon) {
         this.icon = icon;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

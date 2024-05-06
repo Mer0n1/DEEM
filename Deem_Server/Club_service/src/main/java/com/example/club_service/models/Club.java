@@ -27,5 +27,4 @@ public class Club {
     @Column(name = "id_leader")
     private Long id_leader;
 
-    //private String description;
 }

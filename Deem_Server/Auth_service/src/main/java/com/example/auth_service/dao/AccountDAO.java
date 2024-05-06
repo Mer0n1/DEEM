@@ -40,10 +40,10 @@ public class AccountDAO {
 
     public List<String> findTopStudentsFaculty(String faculty) {
         List<String> accounts = new ArrayList<>();
-        System.out.println("findTOP");
+
         try {
             preparedStatement = connection.prepareStatement
-                    ("SELECT account.name, di_group.faculty, account.score " +
+                    ("SELECT account.name, account.surname, di_group.faculty, account.score " +
                             "FROM account " +
                             "LEFT JOIN di_group " +
                             "ON account.group_id = di_group.group_id " +
@@ -53,7 +53,7 @@ public class AccountDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next())
-                accounts.add(resultSet.getString(1));
+                accounts.add(resultSet.getString(1) + " " + resultSet.getString(2));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

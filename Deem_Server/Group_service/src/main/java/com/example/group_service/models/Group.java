@@ -43,6 +43,9 @@ public class Group {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "description")
+    private String description;
+
     @NotNull
     @Transient
     private int score;

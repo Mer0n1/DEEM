@@ -188,22 +188,6 @@ public class APIManager {
                         if (listAccounts.size() != 0)
                             statusInfo.AccountListGot = true;
 
-
-                        //загрузим иконки аккаунтов standard
-                        /*for (Account account : listAccounts)
-                            Repository.getInstance().getImage(
-                                    GeneratorUUID.getInstance().generateUUIDForIcon(account.getUsername()), "profile_icon")
-                                    .enqueue(new Callback<Image>() {
-                                        @Override
-                                        public void onResponse(Call<Image> call, Response<Image> response) {
-                                            account.setImageIcon(response.body());
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<Image> call, Throwable t) {
-
-                                        }
-                                    });*/
                     }
 
                     @Override
@@ -581,12 +565,7 @@ public class APIManager {
 
         if (listGroups != null) {
 
-            //Разделим на клубы и стандартные группы
-            /*for (Group group : listGroups)
-                if (group.getType().equals("club")) {
-                    groupClubs.add(group);
-                    listGroups.remove(group);
-                }*/
+            //разделим клубы и стандартные группы
             for (int j = 0; j < listGroups.size(); j++)
                 if (listGroups.get(j).getType().equals("club")) {
                     groupClubs.add(listGroups.get(j));
@@ -612,7 +591,6 @@ public class APIManager {
 
                     group.setAccounts(accounts);
                 }
-
 
             //Сортировка по баллам сразу
             Collections.sort(listGroups, (s1, s2) -> {
@@ -677,20 +655,26 @@ public class APIManager {
 
     public void buildClubs() {
 
+
         if (!groupClubs.isEmpty()) {
 
             for (Club club : listClubs) {
-                for (Group group : groupClubs)
+                for (Group group : groupClubs) //определяем группу для клуба
                     if (club.getId_group() == group.getId()) {
                         club.setGroup(group);
+                        group.setAccounts(new ArrayList<>());
                         break;
                     }
 
-                for (Account account : listAccounts)
-                    if (club.getId_leader() == account.getId()) {
-                        club.setAccount(account);
-                        break;
-                    }
+                for (Account account : listAccounts) {
+                    if (club.getId_leader() == account.getId())
+                        club.setLeader(account);
+
+                    if (account.getId_club() == club.getId())
+                        club.getGroup().getAccounts().add(account);
+                }
+
+
             }
 
         }

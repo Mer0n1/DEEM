@@ -64,7 +64,6 @@ public class ListUsersFragment extends Fragment {
         if (!APIManager.getManager().statusInfo.isAccountListGot())
             return;
 
-        ((MainActivity)(getActivity())).getInfoFragment().includeButtonBack();
         users = APIManager.getManager().listAccounts;
 
         //search

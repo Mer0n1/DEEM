@@ -35,7 +35,6 @@ public class Account {
     @Column(name = "surname")
     private String surname;
 
-    @NotEmpty
     @Column(name = "fathername")
     private String fathername;
 
@@ -52,6 +51,9 @@ public class Account {
     @NotEmpty
     @Column(name = "role")
     private String role;
+
+    @Column(name = "id_club")
+    private Long id_club;
 
     public void addScore(int score) {
         this.score += score;

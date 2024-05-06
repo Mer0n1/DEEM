@@ -6,6 +6,7 @@ import com.example.group_service.models.ListLong;
 import com.example.group_service.models.LocationStudent;
 import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
+import com.example.group_service.util.GroupValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class GroupController {
     private GroupService groupService;
     @Autowired
     private RestTemplateClient restTemplateClient;
+    @Autowired
+    private GroupValidator groupValidator;
 
     @GetMapping("/getGroup")
     public Group getGroup(@RequestParam("id") Long id) {
@@ -89,11 +92,12 @@ public class GroupController {
                                             BindingResult bindingResult) {
         System.out.println("createGroup");
 
+        groupValidator.validate(group, bindingResult);
+
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        groupService.save(group);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(groupService.save(group));
     }
 
 
@@ -110,4 +114,10 @@ public class GroupController {
         return errorMap;
     }
 
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/deleteGroup")
+    public ResponseEntity<?> deleteGroup(@RequestParam("id_group") Integer id_group) {
+        groupService.deleteGroup(id_group);
+        return ResponseEntity.ok().build();
+    }
 }

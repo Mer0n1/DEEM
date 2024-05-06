@@ -20,6 +20,7 @@ import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.databinding.FragmentGroupBinding;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
+import com.example.restful.models.Club;
 import com.example.restful.models.Group;
 import com.example.restful.models.News;
 
@@ -40,6 +41,10 @@ public class GroupFragment extends Fragment {
 
     private boolean itsMyGroup;
 
+    private TextView GroupDescription;
+    private TextView place;
+    private TextView score;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +62,12 @@ public class GroupFragment extends Fragment {
 
     public void init() {
         initToolbar();
+        GroupDescription = main_layout.findViewById(R.id.GroupDescription);
+        place = main_layout.findViewById(R.id.ier);
+        score = main_layout.findViewById(R.id.score);
+        GroupDescription.setText("");
+        place.setText("");
+        score.setText("");
 
         if (!checkWorkingCondition())
             return;
@@ -65,16 +76,21 @@ public class GroupFragment extends Fragment {
         //Инициализация значений
         ((TextView)main_layout.findViewById(R.id.quality_users)).setText(
                 String.valueOf(group.getAccounts().size()) + " участников");
+        GroupDescription.setText(group.getDescription());
+
+        if (group.getDescription() == null || group.getDescription().isEmpty())
+            GroupDescription.setVisibility(View.GONE);
 
         if (group.getName().equals(APIManager.getManager().myAccount.getGroup().getName())) {
             itsMyGroup = true;
-            ((TextView) main_layout.findViewById(R.id.score)).setText(String.valueOf(group.getScore()));
+            group.setRank(APIManager.getManager().listGroups.indexOf(group) + 1);
+            score.setText("Баллов: " + String.valueOf(group.getScore()));
+            place.setText(String.valueOf("Позиция: " + group.getRank()));
 
             main_layout.findViewById(R.id.chat_button_group).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.create_news).setVisibility(View.VISIBLE);
         } else { //если это чужая группа
             itsMyGroup = false;
-            ((TextView) main_layout.findViewById(R.id.score)).setText("");
 
             main_layout.findViewById(R.id.chat_button_group).setVisibility(View.GONE);
             main_layout.findViewById(R.id.create_news).setVisibility(View.GONE);
@@ -148,15 +164,22 @@ public class GroupFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            String name = bundle.getString("name", null);
+            String name = bundle.getString("name");
 
             if (name != null)
-                group = APIManager.getManager().listGroups.stream().filter(
-                        x->x.getName().equals(name)).findAny().orElse(null);
+                if (bundle.getString("type") == null) {
+                    group = APIManager.getManager().listGroups.stream().filter(
+                            x -> x.getName().equals(name)).findAny().orElse(null);
+                } else if (bundle.getString("type").equals("club")) {
+                    Club club = APIManager.getManager().listClubs.stream().filter(
+                            x -> x.getGroup().getName().equals(name)).findAny().orElse(null);
+
+                    if (club != null)
+                        group = club.getGroup();
+                }
         }
 
-        if (group == null) return false;
-        return true;
+        return group != null;
     }
 
 }

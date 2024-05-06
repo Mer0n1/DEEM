@@ -46,7 +46,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="90dp"
                     android:background="@drawable/layout_bg1_white"
                     android:orientation="vertical"
@@ -57,48 +57,80 @@
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_height="25dp"
+                        android:layout_weight="0.9" />
 
                     <TextView
-                        android:id="@+id/quality_users"
+                        android:id="@+id/GroupDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="0 участников"
-                        android:textSize="22dp"
-                        android:paddingLeft="5dp"/>
-
+                        android:layout_weight="0"
+                        android:text="Некоторое описание..."
+                        android:textSize="16dp" />
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_height="20dp"
+                        />
 
-                    <TextView
+                    <Button
+                        android:id="@+id/quality_users"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_white_animate1"
+                        android:gravity="left|center"
+                        android:paddingLeft="10dp"
+                        android:stateListAnimator="@null"
+                        android:text="0 участников"
+                        android:textSize="18dp" />
+
+
+                    <!--<TextView
                         android:id="@+id/textView15"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Лидер Null"
                         android:visibility="gone"
-                        android:textSize="22dp" />
+                        android:textSize="22dp" />-->
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
 
-                    <TextView
-                        android:id="@+id/score"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="0 баллов"
-                        android:textSize="24dp" />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/ier"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:gravity="center"
+                            android:text="1 место"
+                            android:textColor="@color/black"
+                            android:textSize="24dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/score"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:gravity="center"
+                            android:text="0 баллов"
+                            android:textColor="@color/black"
+                            android:textSize="24dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1" />
+                        android:layout_height="10dp" />
 
                     <Button
                         android:id="@+id/chat_button_group"
@@ -106,9 +138,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/button_style_black"
                         android:text="ЧАТ"
-                        android:textSize="26dp"
                         android:textColor="#ffffff"
-                        />
+                        android:textSize="26dp" />
                 </LinearLayout>
 
 
@@ -128,18 +159,17 @@
                     android:id="@+id/icon_group_main"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_marginBottom="212dp"
+                    android:layout_marginBottom="-35dp"
+                    android:background="@drawable/black_circle"
+                    android:gravity="center"
                     android:text="A"
                     android:textColor="@color/white"
                     android:textSize="50dp"
                     android:textStyle="bold"
-                    android:gravity="center"
-                    android:background="@drawable/black_circle"
-                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"
-                    app:layout_constraintStart_toStartOf="parent"
-                    />
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

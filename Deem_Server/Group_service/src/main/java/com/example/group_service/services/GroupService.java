@@ -21,6 +21,12 @@ public class GroupService {
     @Transactional
     public Group save(Group group) { return repository.save(group); }
 
+    @Transactional
+    public void deleteGroup(Group group) { repository.delete(group);}
+
+    @Transactional
+    public void deleteGroup(Integer id_group) { repository.deleteById(id_group);}
+
     @Cacheable("oneGroup")
     public Group getGroup(Long id) {
         return repository.findById(id).orElse(null);

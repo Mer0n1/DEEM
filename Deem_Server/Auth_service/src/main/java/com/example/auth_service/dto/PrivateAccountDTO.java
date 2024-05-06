@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class PrivateAccountDTO {
     private Long id;
+    private Long id_club;
     private String username;
     //private String password;
     private String name;

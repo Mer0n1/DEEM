@@ -66,7 +66,7 @@ public class Toolbar {
         textView.setTextSize(size);
     }
 
-    public ImageView includeButtonBack() {
+    /*public ImageView includeButtonBack() {
         if (button_back == null) {
             LinearLayout linearLayout = toolbarInterface.findViewById(R.id.layout_toolbar);
             button_back = linearLayout.findViewById(R.id.button_back);
@@ -81,11 +81,11 @@ public class Toolbar {
     public void TurnOffButtonBack() {
         if (button_back != null)
             button_back.setVisibility(View.INVISIBLE);
-    }
+    }*/
 
     public void reset() {
         ClearIcons();
         setTitle("");
-        TurnOffButtonBack();
+        //TurnOffButtonBack();
     }
 }

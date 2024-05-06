@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +49,7 @@ public class ClubsRecycleAdapter extends RecyclerView.Adapter<ClubsRecycleAdapte
         private TextView name;
         private TextView description;
         private TextView leader;
+        private ConstraintLayout club_window;
         private CircleImageView icon;
 
         public ClubViewHolder(@NonNull View itemView) {
@@ -57,35 +59,32 @@ public class ClubsRecycleAdapter extends RecyclerView.Adapter<ClubsRecycleAdapte
             description = itemView.findViewById(R.id.club_description_info);
             leader      = itemView.findViewById(R.id.club_lead_info);
             icon        = itemView.findViewById(R.id.icon_club_info);
+            club_window = itemView.findViewById(R.id.club_window);
         }
 
         public void setData(Club club) {
-            if (club.getAccount() == null || club.getGroup() == null)
+            if (club.getLeader() == null || club.getGroup() == null)
                 return;
 
             name.setText(club.getName());
-            leader.setText("Глава: " + club.getAccount().getUsername());
+            leader.setText("Глава: " + club.getLeader().getUsername());
 
-            if (club.getDescription() != null) {
-                description.setText(club.getDescription());
+            if (club.getGroup().getDescription() != null) {
+                description.setText(club.getGroup().getDescription());
                 description.setVisibility(View.GONE);
             } else
                 description.setVisibility(View.GONE);
 
 
-            icon.setOnClickListener(new View.OnClickListener() {
+            club_window.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    icon.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("name", club.getGroup().getName());
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", club.getGroup().getName());
+                    bundle.putString("type", "club");
 
-                            MainActivity mainActivity = (MainActivity) fragment.getActivity();
-                            mainActivity.OpenMenu(MainActivity.FragmentType.group, bundle);
-                        }
-                    });
+                    MainActivity mainActivity = (MainActivity) fragment.getActivity();
+                    mainActivity.OpenMenu(MainActivity.FragmentType.group, bundle);
                 }
             });
         }

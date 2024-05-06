@@ -3,16 +3,15 @@ package com.example.auth_service.controllers;
 import com.example.auth_service.dao.AccountDAO;
 import com.example.auth_service.dto.PrivateAccountDTO;
 import com.example.auth_service.dto.PublicAccountDTO;
-import com.example.auth_service.models.Account;
-import com.example.auth_service.models.DepartureForm;
-import com.example.auth_service.models.Group;
+import com.example.auth_service.models.*;
 import com.example.auth_service.config.PersonDetails;
-import com.example.auth_service.models.ListLong;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,6 +51,8 @@ public class AccountController {
     @GetMapping("/getAccounts")
     public List<PrivateAccountDTO> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
+        for (Account account : accounts)
+            System.out.println(account.getId_club());
         return accounts.stream().map(this::convertToPrivateAccountDTO).collect(Collectors.toList());
     }
 
@@ -69,6 +70,18 @@ public class AccountController {
         return accountService.getUsersOfGroup(idGroup);
     }
 
+
+    @PreAuthorize("hasRole('HIGH')")
+    @GetMapping("/getAccount")
+    public ResponseEntity<?> getAccount(@RequestParam("id") Long id) {
+        try {
+            Account account = accountService.getAccount(id);
+
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/sendScore")
     public ResponseEntity<?> sendScore(@RequestBody @Valid DepartureForm form,
@@ -108,7 +121,11 @@ public class AccountController {
     @PreAuthorize("hasRole('HIGH')")
     @GetMapping ("/getIdGroupAccount")
     public Long getIdGroupAccount(@RequestParam("id") Long idStudent) {
-        return accountService.getAccount(idStudent).getGroup_id();
+        try {
+            return accountService.getAccount(idStudent).getGroup_id();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @PreAuthorize("hasRole('HIGH')")
@@ -116,6 +133,52 @@ public class AccountController {
     public List<Integer> getListAverageValues(@RequestBody List<ListLong> list) {
         return accountService.getListAverageValue(list);
     }
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/addStudentToClub")
+    public ResponseEntity<?> addStudentToClub(@RequestBody @Valid ClubForm form, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
+
+        try {
+            accountService.addStudentToClub(form);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/expelStudentClub")
+    public ResponseEntity<?> expelStudentClub(@RequestBody @Valid ClubForm form, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
+
+        try {
+            accountService.expelStudentClub(form);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    @PreAuthorize("hasRole('HIGH')")
+    @PostMapping("/changeRoleClub")
+    public ResponseEntity<?> ChangeRoleClub(@RequestBody @Valid ChangeRoleForm form, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest().body(getErrors(bindingResult));
+
+        try {
+            accountService.changeRoleClub(form);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 
     private Account convertToAccount(PublicAccountDTO dto) {
@@ -138,5 +201,6 @@ public class AccountController {
             errorMap.put(error.getField(), error.getDefaultMessage());
         return errorMap;
     }
+
 
 }
