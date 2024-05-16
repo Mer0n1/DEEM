@@ -51,8 +51,6 @@ public class AccountController {
     @GetMapping("/getAccounts")
     public List<PrivateAccountDTO> getAccounts() {
         List<Account> accounts = accountService.getAccounts();
-        for (Account account : accounts)
-            System.out.println(account.getId_club());
         return accounts.stream().map(this::convertToPrivateAccountDTO).collect(Collectors.toList());
     }
 
@@ -89,8 +87,12 @@ public class AccountController {
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        accountService.sendScore(form.getIdAccount(), form.getScore());
-        return ResponseEntity.ok().build();
+        try {
+            accountService.sendScore(form.getIdAccount(), form.getScore());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('HIGH')")
@@ -107,8 +109,12 @@ public class AccountController {
     @PostMapping("/transferStudent")
     public ResponseEntity<?> transferStudent(@RequestParam("idStudent") Long idStudent,
                                 @RequestParam("idGroup")   Long idGroup) {
-        accountService.transferAccount(idStudent, idGroup);
-        return ResponseEntity.ok().build();
+        try {
+            accountService.transferAccount(idStudent, idGroup);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('HIGH')")

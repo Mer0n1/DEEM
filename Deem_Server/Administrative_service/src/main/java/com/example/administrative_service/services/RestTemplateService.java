@@ -4,7 +4,6 @@ import com.example.administrative_service.models.*;
 import com.example.administrative_service.models.Class;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -49,20 +48,20 @@ public class RestTemplateService {
     }
 
 
-    public void sendScore(DepartureForm form) throws JsonProcessingException {
+    public ResponseEntity<?> sendScore(SubmissionForm form) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(form);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(authServiceUrl + "/sendScore", HttpMethod.POST, entity, Void.class);
+        return restTemplate.exchange(authServiceUrl + "/sendScore", HttpMethod.POST, entity, Void.class);
     }
 
-    public void createGroup(Group group) throws JsonProcessingException {
+    public ResponseEntity<?> createGroup(Group group) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(group);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(groupServiceUrl + "/createGroup", HttpMethod.POST, entity, Void.class);
+        return restTemplate.exchange(groupServiceUrl + "/createGroup", HttpMethod.POST, entity, Void.class);
     }
 
     public Account createStudent(Account account) throws JsonProcessingException {
@@ -73,29 +72,29 @@ public class RestTemplateService {
         return restTemplate.exchange(authServiceUrl + "/createAccount", HttpMethod.POST, entity, Account.class).getBody();
     }
 
-    public void transferStudent(Long idStudent, Long idGroup) {
+    public ResponseEntity<?> transferStudent(Long idStudent, Long idGroup) {
         headers.set("Content-Type", "application/x-www-form-urlencoded");
         entity = new HttpEntity<>("idStudent="+idStudent +
                 "&idGroup="+idGroup, headers);
 
-        restTemplate.exchange(authServiceUrl + "/transferStudent",
+        return restTemplate.exchange(authServiceUrl + "/transferStudent",
                 HttpMethod.POST, entity, Void.class);
     }
 
-    public void expelStudent(Long idStudent) {
+    public ResponseEntity<?> expelStudent(Long idStudent) {
         headers.set("Content-Type", "application/x-www-form-urlencoded");
         entity = new HttpEntity<>("idStudent="+idStudent, headers);
 
-        restTemplate.exchange(authServiceUrl + "/deleteAccount",
+        return restTemplate.exchange(authServiceUrl + "/deleteAccount",
                 HttpMethod.POST, entity, Void.class);
     }
 
-    public void releaseEvent(Event event) throws JsonProcessingException {
+    public ResponseEntity<?> releaseEvent(Event event) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(event);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        restTemplate.exchange(examServiceUrl + "/releaseEvent", HttpMethod.POST,
+        return restTemplate.exchange(examServiceUrl + "/releaseEvent", HttpMethod.POST,
                 entity, Void.class);
     }
 
@@ -129,25 +128,20 @@ public class RestTemplateService {
         }
     }
 
-    public void addClass(Class cl) {
-        try {
-            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
-                    .writeValueAsString(cl);
-            entity = new HttpEntity<>(jsonMessage, headers);
+    public ResponseEntity<?> addClass(Class cl) throws JsonProcessingException {
 
-            restTemplate.exchange(teacherControllerUrl + "/addClass", HttpMethod.POST, entity, Void.class);
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(cl);
+        entity = new HttpEntity<>(jsonMessage, headers);
 
-        } catch(Exception e) {}
+        return restTemplate.exchange(teacherControllerUrl + "/addClass", HttpMethod.POST, entity, Void.class);
     }
 
-    public void deleteClass(Class cl) {
-        try {
-            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
-                    .writeValueAsString(cl);
-            entity = new HttpEntity<>(jsonMessage, headers);
+    public ResponseEntity<?> deleteClass(Class cl) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(cl);
+        entity = new HttpEntity<>(jsonMessage, headers);
 
-            restTemplate.exchange(teacherControllerUrl + "/deleteClass", HttpMethod.POST, entity, Void.class);
-
-        } catch(Exception e) {}
+        return restTemplate.exchange(teacherControllerUrl + "/deleteClass", HttpMethod.POST, entity, Void.class);
     }
 }

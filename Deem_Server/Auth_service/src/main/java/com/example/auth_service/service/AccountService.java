@@ -53,23 +53,18 @@ public class AccountService {
 
 
     @Transactional
-    public void sendScore(Long idAccount, int score) {
-        Optional<Account> accountOpt = repository.findById(idAccount);
-
-        if (!accountOpt.isEmpty()) {
-            Account account = accountOpt.get();
-            account.addScore(score);
-        }
+    public void sendScore(Long idAccount, int score) throws Exception {
+        Account account = repository.findById(idAccount).orElseThrow(()->new Exception("Пользователь не найден"));
+        account.addScore(score);
     }
 
     @Transactional
-    public void transferAccount(Long idStudent, Long idGroup) {
-        Optional<Account> account_opt = repository.findById(idStudent);
-
-        if (!account_opt.isEmpty()) {
-            Account account = account_opt.get();
-            account.setGroup_id(idGroup);
-        }
+    public void transferAccount(Long idStudent, Long idGroup) throws Exception {
+        Account account = repository.findById(idStudent).orElseThrow(
+                ()->new Exception("Пользователь не найден"));
+        if (account.getGroup_id() == idGroup)
+            throw new Exception("Студент уже состоит в этой группе");
+        account.setGroup_id(idGroup);
     }
 
     @Transactional

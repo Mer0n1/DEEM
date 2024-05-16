@@ -48,6 +48,7 @@ public class EventController {
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
+        //разослать уведомления через пуш сервис TODO
         eventService.save(event);
         return ResponseEntity.ok().build();
     }

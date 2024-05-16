@@ -56,6 +56,13 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Administrative_service
+         uri: lb://admins
+         predicates:
+           - Path=/info/**
+         filters:
+           - AuthenticationFilter
+
        - id: Exam_service
          uri: lb://exams
          predicates:
@@ -81,6 +88,13 @@ spring:
          uri: lb://clubs
          predicates:
            - Path=/club/**
+         filters:
+           - AuthenticationFilter
+
+       - id: Statistics_service
+         uri: lb://statistics
+         predicates:
+           - Path=/statistic/**
          filters:
            - AuthenticationFilter
 

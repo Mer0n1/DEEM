@@ -124,6 +124,7 @@
                             android:layout_height="wrap_content"
                             android:text="Рейтинг групп факультета"
                             android:textSize="20dp"
+                            android:gravity="center"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -168,7 +169,7 @@
 
                 <TextView
                     android:id="@+id/textView5"
-                    android:layout_width="222dp"
+                    android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="32dp"
                     android:gravity="right"

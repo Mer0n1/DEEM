@@ -6,7 +6,7 @@ import com.example.administrative_service.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -30,9 +30,11 @@ public class AdminController {
     private TransferStoryService transferStoryService;
     @Autowired
     private ExclusionStoryService exclusionStoryService;
+    @Autowired
+    private SubmissionStoryService submissionStoryService;
 
-    /** Исключение студента. Удаление из группы */
-    @PostMapping("/expelStudent")
+
+    @PostMapping("/expelStudent") /** Исключение студента. Удаление из группы */
     public ResponseEntity<?> expelStudent(@RequestBody @Valid ExclusionForm form,
                              BindingResult bindingResult) {
         System.out.println("expelStudent");
@@ -53,8 +55,13 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        restTemplateService.transferStudent(form.getIdStudent(), form.getId_group());
+        ResponseEntity<?> responseEntity = restTemplateService.transferStudent(form.getIdStudent(), form.getId_group());
+        if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200))
+            return responseEntity;
+
+        form.setDate(new Date(System.currentTimeMillis()));
         transferStoryService.save(form);
+
         return ResponseEntity.ok().build();
     }
 
@@ -88,20 +95,24 @@ public class AdminController {
 
         form.getGroup().setDate_create(new Date(System.currentTimeMillis()));
         form.getGroup().setChat_id(restTemplateService.createChatAndGetId());
-        restTemplateService.createGroup(form.getGroup());
-        //groupCreationFormService.save(form);
-        return ResponseEntity.ok().build();
+        return restTemplateService.createGroup(form.getGroup());
+        //groupCreationFormService.save(form); //TODO?
     }
 
     @PostMapping("/sendScore")
-    public ResponseEntity<?> sendScore(@RequestBody @Valid DepartureForm form,
+    public ResponseEntity<?> sendScore(@RequestBody @Valid SubmissionForm form,
                                           BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("sendScore");
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        restTemplateService.sendScore(form);
+        ResponseEntity<?> responseEntity = restTemplateService.sendScore(form);
+        if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200))
+            return responseEntity;
+
+        form.setDate(new Date(System.currentTimeMillis()));
+        submissionStoryService.save(form);
 
         return ResponseEntity.ok().build();
     }
@@ -115,31 +126,28 @@ public class AdminController {
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        restTemplateService.releaseEvent(event);
-        return ResponseEntity.ok().build();
+        return restTemplateService.releaseEvent(event);
     }
 
     @PostMapping("/addClass")
     public ResponseEntity<?> addClass(@RequestBody @Valid Class cl,
-                                         BindingResult bindingResult) {
+                                         BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("addClass");
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        restTemplateService.addClass(cl);
-        return ResponseEntity.ok().build();
+        return restTemplateService.addClass(cl);
     }
 
     @PostMapping("/deleteClass")
     public ResponseEntity<?> deleteClass(@RequestBody @Valid Class cl,
-                                         BindingResult bindingResult) {
+                                         BindingResult bindingResult) throws JsonProcessingException {
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        restTemplateService.deleteClass(cl);
-        return ResponseEntity.ok().build();
+        return restTemplateService.deleteClass(cl);
     }
 
     public Map<String, String> getErrors(BindingResult bindingResult) {
