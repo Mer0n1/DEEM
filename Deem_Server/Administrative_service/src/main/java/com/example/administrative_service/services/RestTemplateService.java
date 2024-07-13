@@ -89,9 +89,9 @@ public class RestTemplateService {
                 HttpMethod.POST, entity, Void.class);
     }
 
-    public ResponseEntity<?> releaseEvent(Event event) throws JsonProcessingException {
+    public ResponseEntity<?> releaseEvent(EventPush eventForm) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
-                .writeValueAsString(event);
+                .writeValueAsString(eventForm);
         entity = new HttpEntity<>(jsonMessage, headers);
 
         return restTemplate.exchange(examServiceUrl + "/releaseEvent", HttpMethod.POST,

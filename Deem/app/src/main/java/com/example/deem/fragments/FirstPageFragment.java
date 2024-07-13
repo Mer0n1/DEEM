@@ -92,9 +92,8 @@ public class FirstPageFragment extends Fragment {
             Date date_exam = event.getStart_date();
             TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
             TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
-            text_name_exam.setText(event.getName());
             text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
-
+            text_name_exam.setText(event.getNameExam());
         }
     }
 

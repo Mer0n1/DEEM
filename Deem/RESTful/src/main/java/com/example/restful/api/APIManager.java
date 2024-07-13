@@ -35,9 +35,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import retrofit2.Call;
@@ -280,6 +282,7 @@ public class APIManager {
 
                 if (listEvents != null)
                     statusInfo.EventsListGot = true;
+
             }
 
             @Override
@@ -552,6 +555,7 @@ public class APIManager {
         });
     }
 
+
     ///////////////////////////////////////////
     private Account convertToAccount(PrivateAccountDTO dto) {
         return modelMapper.map(dto, Account.class);
@@ -678,6 +682,10 @@ public class APIManager {
             }
 
         }
+    }
+
+    public String getJwtKey() {
+        return jwtKey;
     }
 }
 

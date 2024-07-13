@@ -98,6 +98,12 @@ spring:
          filters:
            - AuthenticationFilter
 
+       - id: Exam_Taller_Service
+         uri: lb://examtaller
+         predicates:
+           - Path=/main/**
+         filters:
+           - AuthenticationFilter
  application:
    name: Gateway
 

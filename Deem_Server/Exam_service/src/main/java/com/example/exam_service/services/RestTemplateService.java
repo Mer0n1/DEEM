@@ -1,5 +1,6 @@
 package com.example.exam_service.services;
 
+import com.example.exam_service.models.EventPush;
 import com.example.exam_service.models.LocationStudent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,8 @@ public class RestTemplateService {
     private String authServiceUrl;
     @Value("http://localhost:8083/group")
     private String groupServiceUrl;
+    @Value("http://localhost:8087/push")
+    private String pushServiceUrl;
 
     private String personal_key;
 
@@ -66,4 +69,15 @@ public class RestTemplateService {
             return null;
         }
     }
+
+    public ResponseEntity<?> pushEventPush(EventPush eventPush) throws JsonProcessingException {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(eventPush);
+
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        return restTemplate.exchange(pushServiceUrl + "/sendEventPush", HttpMethod.POST, entity, ResponseEntity.class);
+    }
+
+    /** Проверяем доступность сервиса экзамена */
 }

@@ -119,14 +119,14 @@ public class AdminController {
 
     /** Выпуск ивента (экзамена) */
     @PostMapping("/releaseEvent")
-    public ResponseEntity<?> releaseEvent(@RequestBody @Valid Event event,
+    public ResponseEntity<?> releaseEvent(@RequestBody @Valid EventPush form,
                              BindingResult bindingResult) throws JsonProcessingException {
         System.out.println("releaseEvent");
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        return restTemplateService.releaseEvent(event);
+        return restTemplateService.releaseEvent(form);
     }
 
     @PostMapping("/addClass")

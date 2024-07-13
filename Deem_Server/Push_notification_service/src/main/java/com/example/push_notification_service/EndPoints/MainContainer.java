@@ -3,7 +3,6 @@ package com.example.push_notification_service.EndPoints;
 import com.example.push_notification_service.config.JWTFilter;
 import com.example.push_notification_service.config.PersonDetails;
 import com.example.push_notification_service.models.Client;
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 
@@ -29,7 +28,7 @@ public class MainContainer {
     /** Неавторизированные клиенты */
     public static final Set<Client> queue  = Collections.synchronizedSet(new HashSet<Client>());
 
-    public enum Type { Message, GroupNotice }
+    public enum Type { Message, GroupNotice, Event }
 
     @javax.websocket.OnOpen
     public void onOpen(Session session) {
@@ -70,12 +69,13 @@ public class MainContainer {
         System.out.println("Close " + clients.size() + " " + queue.size());
     }
 
-    public static void sendMessage(Session session, String jsonMessage, Type type) {
-        System.out.println("try sendMessage");
+    public static void send(Session session, String jsonMessage, Type type) {
+        System.out.println("try send");
 
-        if (type == Type.Message) {
+        if (type == Type.Message)
             jsonMessage = "{\"Protocol\":\"Message\",\"Type\":" + jsonMessage + "}";
-        }
+        if (type == Type.Event)
+            jsonMessage = "{\"Protocol\":\"Event\",\"Type\":" + jsonMessage + "}";
 
         if (session.isOpen()) {
 
@@ -86,6 +86,7 @@ public class MainContainer {
             }
         }
     }
+
 
     public Optional<Client> findInQueue(Session session) {
         return queue.stream().filter(s->s.getSession().getId()==session.getId()).findAny();

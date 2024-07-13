@@ -2,9 +2,11 @@ package com.example.exam_service.controllers;
 
 import com.example.exam_service.config.PersonDetails;
 import com.example.exam_service.models.Event;
+import com.example.exam_service.models.EventPush;
 import com.example.exam_service.models.LocationStudent;
 import com.example.exam_service.services.EventService;
 import com.example.exam_service.services.RestTemplateService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,23 +36,25 @@ public class EventController {
     @GetMapping("/getEvents")
     public List<Event> getEvents(@AuthenticationPrincipal PersonDetails personDetails) {
 
-        //Long idGroup = restTemplateService.getIdGroup(personDetails.getId());
-        //LocationStudent locationStudent = restTemplateService.getLocationStudent(idGroup);
         return eventService.getEvents(personDetails.getFaculty());
     }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/releaseEvent")
-    public ResponseEntity<?> releaseEvent(@RequestBody @Valid Event event,
+    public ResponseEntity<?> releaseEvent(@RequestBody @Valid EventPush eventPush, //TODO протестировать
                              BindingResult bindingResult) {
         System.out.println("releaseEvent");
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        //разослать уведомления через пуш сервис TODO
-        eventService.save(event);
-        return ResponseEntity.ok().build();
+        eventService.save(eventPush.getEvent());
+        try {
+            restTemplateService.pushEventPush(eventPush);
+            return ResponseEntity.ok().build();
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
@@ -65,4 +69,5 @@ public class EventController {
             errorMap.put(error.getField(), error.getDefaultMessage());
         return errorMap;
     }
+
 }

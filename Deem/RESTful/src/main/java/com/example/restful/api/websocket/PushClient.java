@@ -2,6 +2,7 @@ package com.example.restful.api.websocket;
 
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Chat;
+import com.example.restful.models.Event;
 import com.example.restful.models.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,7 @@ public class PushClient {
     public PushClient() {
         client = new OkHttpClient();
 
-        Request request = new Request.Builder().url("ws://192.168.1.104:8025/ws/login").build();
+        Request request = new Request.Builder().url("ws://192.168.0.103:8025/ws/login").build();
 
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
@@ -52,6 +53,28 @@ public class PushClient {
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
+                }
+
+
+                //Event Protocol
+                if (protocol.equals("\"Event\"")) {
+                    System.out.println("EVENT!");
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    try {
+                        Event event = objectMapper.readValue(jsonObject.get("Type").toString(), Event.class);
+
+                        for (Event event_ : APIManager.getManager().listEvents)
+                            if (event_.getId() == event.getId())
+                                return;
+
+                        APIManager.getManager().listEvents.add(event);
+
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
 

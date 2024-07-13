@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
+import java.sql.Time;
 import java.util.Date;
 
 @Entity
@@ -26,6 +27,9 @@ public class Event {
     @Column(name = "course")
     private int course;
 
+    @Column(name = "name")
+    private String name;
+
     //@Column(name = "publication_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date publication_date;
@@ -39,17 +43,10 @@ public class Event {
     @Column(name = "group_id")
     private Long idGroup;
 
-    //private Exam exam;
-    //Временно
-    @NotEmpty
-    @Column(name = "type")
-    private String type;
-
-    @NotEmpty
-    @Column(name = "name")
-    private String name;
-
-    @NotEmpty
     @Column(name = "description")
     private String description;
+
+    @OneToOne
+    @JoinColumn(name = "id_exam")
+    private Exam exam;
 }

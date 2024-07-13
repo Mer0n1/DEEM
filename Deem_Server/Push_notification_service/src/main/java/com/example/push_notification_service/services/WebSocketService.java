@@ -2,11 +2,10 @@ package com.example.push_notification_service.services;
 
 import com.example.push_notification_service.EndPoints.MainContainer;
 import com.example.push_notification_service.models.Client;
-import com.example.push_notification_service.models.Message;
+import com.example.push_notification_service.models.EventPush;
 import com.example.push_notification_service.models.MessagePush;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -53,16 +52,42 @@ public class WebSocketService {
 
         //
         Set<Client> clientSet = MainContainer.clients;
-        Optional<Client> client = clientSet.stream().filter(s->s.getPersonDetails()
+        Optional<Client> client = clientSet.stream().filter(s->s.getPersonDetails() //TODO если в чате более 2 человек то не работает, убедиться
                 .getUsername().equals(list.get(0))).findAny();
 
         if (!client.isEmpty()) {
             String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                     .writeValueAsString(messagePush.getMessage());
 
-            MainContainer.sendMessage(client.get().getSession(), jsonMessage, MainContainer.Type.Message);
+            MainContainer.send(client.get().getSession(), jsonMessage, MainContainer.Type.Message);
         }
 
+    }
+
+    public void sendEventToClient(EventPush eventPush) throws JsonProcessingException {
+        Set<Client> clients = MainContainer.clients;
+        System.out.println(clients.size());
+
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(eventPush.getEvent());
+
+        for (Client client : clients) {
+
+            if (eventPush.getType() == EventPush.Extension.course)
+                if (client.getPersonDetails().getCourse() == eventPush.getEvent().getCourse())
+                    MainContainer.send(client.getSession(), jsonMessage, MainContainer.Type.Event);
+
+            if (eventPush.getType() == EventPush.Extension.faculty)
+                if (client.getPersonDetails().getFaculty().equals(eventPush.getEvent().getFaculty()))
+                    MainContainer.send(client.getSession(), jsonMessage, MainContainer.Type.Event);
+
+            if (eventPush.getType() == EventPush.Extension.university)
+                MainContainer.send(client.getSession(), jsonMessage, MainContainer.Type.Event);
+
+            //TODO
+            //if (eventPush.getType() == EventPush.Extension.person) //требуются дополнительные данные id студента или группы
+            //if (eventPush.getType() == EventPush.Extension.group);
+        }
     }
 
 }

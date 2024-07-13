@@ -51,7 +51,10 @@ public class EventsFragment extends Fragment {
     }
 
     private void init() {
-        AllEvents = APIManager.getManager().listEvents;
+        if (!APIManager.statusInfo.isEventsListGot())
+            return;
+
+        AllEvents = APIManager.getManager().listEvents; System.out.println("+++++++++ " + AllEvents.size());
         Date currentDate = new Date(System.currentTimeMillis());
         pastEvents = AllEvents.stream().filter(x->x.getStart_date().before(currentDate)).collect(Collectors.toList());
         currentEvents = AllEvents.stream().filter(x->x.getStart_date().after(currentDate)).collect(Collectors.toList());
@@ -103,7 +106,7 @@ public class EventsFragment extends Fragment {
         //recycle
         recyclerView = main_layout.findViewById(R.id.list_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        eventRecycleAdapter = new EventRecycleAdapter(currentEvents);
+        eventRecycleAdapter = new EventRecycleAdapter(currentEvents, this);
         recyclerView.setAdapter(eventRecycleAdapter);
     }
 
