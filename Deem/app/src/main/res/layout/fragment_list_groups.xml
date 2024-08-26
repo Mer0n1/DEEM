@@ -38,6 +38,23 @@
                 android:background="@color/white"
                 android:inputType="textPersonName"
                 />
+
+            <!--<EditText
+                android:id="@+id/editText_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:background="@color/white"
+                android:inputType="text"
+
+                android:drawableStart="@drawable/search_icon_2"
+                android:drawablePadding="10"
+
+                android:hint="Поиск"
+                android:singleLine="true"
+                android:textColorHint="@color/color_hint"
+                android:textSize="16sp"
+                />-->
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

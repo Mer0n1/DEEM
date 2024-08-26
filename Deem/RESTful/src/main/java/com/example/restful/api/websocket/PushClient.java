@@ -58,8 +58,6 @@ public class PushClient {
 
                 //Event Protocol
                 if (protocol.equals("\"Event\"")) {
-                    System.out.println("EVENT!");
-
                     ObjectMapper objectMapper = new ObjectMapper();
 
                     try {

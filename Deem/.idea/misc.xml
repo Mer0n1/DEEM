@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-hdpi/search_icon_2.xml" value="0.2285" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-ldpi/background_n_message.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-ldpi/background_received_message.xml" value="0.1" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/drawable-mdpi/ic_launcher_background.xml" value="0.1" />
@@ -31,7 +32,7 @@
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_first.xml" value="0.33" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_first_page.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_group.xml" value="0.25" />
-        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_groups.xml" value="0.1675929884566054" />
+        <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_groups.xml" value="0.33" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_tops_users.xml" value="1.0" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_list_users.xml" value="0.1675929884566054" />
         <entry key="..\:/Github/Android apps/Deem/Deem/Deem/app/src/main/res/layout/fragment_messenger.xml" value="0.1675929884566054" />

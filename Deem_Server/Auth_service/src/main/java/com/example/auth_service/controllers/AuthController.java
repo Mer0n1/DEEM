@@ -24,13 +24,14 @@ public class AuthController {
     private AccountService accountService;
     @Autowired
     private AccountServiceClient accountServiceClient;
-
     @Autowired
     private AuthenticationManager authenticationManager;
+
 
     @PostMapping("/login")
     public String getToken(@RequestBody @Valid AuthRequest authRequest,
                            BindingResult bindingResult) {
+
         if (bindingResult.hasErrors())
             return bindingResult.getAllErrors().toString();
 
