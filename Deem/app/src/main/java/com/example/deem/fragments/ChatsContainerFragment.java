@@ -43,7 +43,8 @@ public class ChatsContainerFragment extends Fragment {
     public void init() {
         initToolbar();
 
-        if (!APIManager.getManager().statusInfo.isChatsListGot())
+        if (!APIManager.statusInfo.isChatsListGot() &&
+            !APIManager.statusCacheInfo.isListChatsLoaded())
             return;
 
         listChats = APIManager.getManager().listChats;

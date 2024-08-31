@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {finish();}
         });
 
-        if (APIManager.getManager().statusInfo.isChatsListGot()) {
+        if (APIManager.statusInfo.isChatsListGot() || APIManager.statusCacheInfo.isListChatsLoaded()) {
             activityChatBinding.progressBar.setVisibility(View.GONE);
             activityChatBinding.listMessages.setVisibility(View.VISIBLE);
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.restful.api.APIManager;
+import com.example.restful.datebase.CacheSystem;
 import com.example.restful.models.AuthRequest;
 
 public class AuthActivity extends AppCompatActivity {
@@ -29,11 +30,11 @@ public class AuthActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.password_enter)).setText(preferences.getString("password", ""));
         }
 
+        CacheSystem.initialize(this.getApplicationContext()); //TODO
 
         View.OnClickListener onClickLogIn = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String username = ((TextView)findViewById(R.id.username_enter)).getText().toString();
                 String password = ((TextView)findViewById(R.id.password_enter)).getText().toString();
 

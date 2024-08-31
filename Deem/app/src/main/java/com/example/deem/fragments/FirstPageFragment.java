@@ -16,6 +16,7 @@ import com.example.deem.CurriculumActivity;
 import com.example.deem.MainActivity;
 import com.example.deem.R;
 import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
+import com.example.restful.api.ServerStatusInfo;
 import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.Toolbar;
 import com.example.deem.adapters.NewsListRecycleAdapter;

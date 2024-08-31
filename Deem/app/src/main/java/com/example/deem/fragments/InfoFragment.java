@@ -66,7 +66,8 @@ public class InfoFragment extends Fragment {
     public void init() {
         initToolbar();
 
-        if (!APIManager.getManager().statusInfo.isNewsListGot())
+        if (!APIManager.getManager().statusInfo.isNewsListGot() &&
+            !APIManager.statusCacheInfo.isListNewsLoaded())
             return;
 
         //init objects
@@ -136,6 +137,7 @@ public class InfoFragment extends Fragment {
             main_layout.findViewById(R.id.news_feed).setVisibility(View.VISIBLE);
         } else
             return;
+
 
         //Recycle
         recyclerView = main_layout.findViewById(R.id.news_feed);

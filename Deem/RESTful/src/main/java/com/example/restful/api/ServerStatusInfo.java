@@ -87,4 +87,6 @@ public class ServerStatusInfo {
     public boolean isClubListGot() {
         return ClubListGot;
     }
+
+
 }

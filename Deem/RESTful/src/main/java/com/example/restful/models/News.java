@@ -1,5 +1,12 @@
 package com.example.restful.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.restful.datebase.Converters;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
@@ -7,27 +14,28 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
 public class News {
+    @PrimaryKey(autoGenerate = true)
     private Long id;
-    //private String author; //name of group
+    @ColumnInfo(name = "content")
     private String content;
+    @ColumnInfo(name = "date")
+    @TypeConverters(Converters.class)
     private Date date;
+    @ColumnInfo(name = "idGroup")
     private Long idGroup;
+    @ColumnInfo(name = "faculty")
     private String faculty;
+    //private String author; //name of group
 
+
+    @Ignore
     private List<NewsImage> images;
-
-    /*public String getAuthor() {
-        return author;
-    }*/
 
     public String getContent() {
         return content;
     }
-
-    /*public void setAuthor(String author) {
-        this.author = author;
-    }*/
 
     public void setContent(String content) {
         this.content = content;
@@ -37,9 +45,7 @@ public class News {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public void setDate(Date date) { this.date = date; }
 
     public Long getIdGroup() {
         return idGroup;
@@ -71,5 +77,17 @@ public class News {
 
     public void setImages(List<NewsImage> images) {
         this.images = images;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", date=" + date +
+                ", idGroup=" + idGroup +
+                ", faculty='" + faculty + '\'' +
+                ", images=" + images +
+                '}';
     }
 }

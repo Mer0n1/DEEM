@@ -1,15 +1,25 @@
 package com.example.restful.models;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.restful.datebase.ConverterListLong;
+import com.example.restful.datebase.Converters;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
 public class Chat {
-
+    @PrimaryKey(autoGenerate = true)
     private int id;
+    @Ignore
     private List<Message> messages;
+    @TypeConverters(ConverterListLong.class)
     private List<Long> users;
 
     public Chat() {

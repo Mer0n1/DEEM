@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.deem.MainActivity;
 import com.example.deem.R;
 
+
 /** Сингдтон. Интерфейс тулбара. */
 public class Toolbar {
     private static MainActivity mainActivity;

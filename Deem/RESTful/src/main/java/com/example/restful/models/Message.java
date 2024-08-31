@@ -1,20 +1,48 @@
 package com.example.restful.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.restful.datebase.Converters;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Entity(
+        tableName = "message",
+        foreignKeys = @ForeignKey(
+                entity = Chat.class,
+                parentColumns = "id",
+                childColumns = "chatId",
+                onDelete = ForeignKey.CASCADE
+        )
+)
 public class Message {
+    @PrimaryKey(autoGenerate = true)
     private Long id;
+    @ColumnInfo(name = "text")
     private String text;
+    @ColumnInfo(name = "date")
+    @TypeConverters(Converters.class)
     private Date date;
+    @ColumnInfo(name = "author")
     private Long author;
-    private Chat chat;
 
+    @Ignore
+    private Chat chat;
+    @Ignore
     private List<MessageImage> images;
+    @Ignore
     private boolean NoMessages;
+
+    @ColumnInfo(name = "chatId", index = true)
+    private Long chatId;
 
     public Message() {}
 
@@ -44,6 +72,8 @@ public class Message {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+        if (chat != null)
+            chatId = (long) chat.getId();
     }
 
     public Long getAuthor() {
@@ -76,5 +106,13 @@ public class Message {
 
     public void setNoMessages(boolean noMessages) {
         NoMessages = noMessages;
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
     }
 }

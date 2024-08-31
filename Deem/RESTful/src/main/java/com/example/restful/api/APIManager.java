@@ -2,6 +2,8 @@ package com.example.restful.api;
 
 
 import com.example.restful.api.websocket.PushClient;
+import com.example.restful.datebase.CacheStatusInfo;
+import com.example.restful.datebase.CacheSystem;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
@@ -26,7 +28,7 @@ import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 
-import org.graalvm.compiler.api.replacements.Snippet;
+//import org.graalvm.compiler.api.replacements.Snippet;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 
@@ -52,6 +54,7 @@ public class APIManager {
     private static APIManager manager;
     private static PushClient pushClient;
     public  static ServerStatusInfo statusInfo;
+    public  static CacheStatusInfo statusCacheInfo;
 
     public volatile List<Account> listAccounts;
     public volatile List<Group> listGroups;
@@ -88,6 +91,20 @@ public class APIManager {
         dayliSchedules = new ArrayList<>();
         groupClubs = new ArrayList<>();
         listClubs = new ArrayList<>();
+
+
+        //test
+        statusCacheInfo = CacheSystem.getCacheSystem().getCacheStatusInfo(); //строчку не трогать :)
+        CacheSystem.getCacheSystem().loadAll();
+        CacheSystem.getCacheSystem(); //без этой строчки тоже не работает :)
+        /*
+        Кэш система нужна для уменьшения нагрузки на сервер.
+        Загрузка новостей: загружаем лишь актуальные новости. Актуальные это те дата которых позднее последней нашей новости, а также те которые были редактированы/удалены
+        Загрузка сообщений: также загружаем только на момент входа в чат с последнего сообщения (TODO)
+        Загрузка ивентов: старые ивенты храним в кэше или где то еще а новые без исключения загружаем из сервера
+        Загрузка групп и аккаунтов:
+        * */
+
     }
 
     public static APIManager getManager() {
@@ -204,11 +221,12 @@ public class APIManager {
         Repository.getInstance().getGroups().enqueue(new Callback<List<Group>>() {
             @Override
             public void onResponse(Call<List<Group>> call, Response<List<Group>> response) {
+                if (response.body() == null)
+                    return;
                 listGroups = response.body();
+                statusInfo.GroupsListGot = true;
                 buildGroups();
 
-                if (listGroups != null) {
-                    statusInfo.GroupsListGot = true;
 
                     //clubs
                     Repository.getInstance().getClubs().enqueue(new Callback<List<Club>>() {
@@ -226,8 +244,6 @@ public class APIManager {
 
                         }
                     });
-
-                }
             }
 
             @Override
@@ -240,9 +256,15 @@ public class APIManager {
         Repository.getInstance().getChats().enqueue(new Callback<List<Chat>>() {
             @Override
             public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
-                listChats = response.body();
-                if (listChats != null)
+                if (response.body() != null) {
+                    listChats = response.body();
                     statusInfo.ChatsListGot = true;
+
+                    buildChats();
+
+                    CacheSystem.getCacheSystem().saveChats();
+                    CacheSystem.getCacheSystem().saveMessages();
+                }
             }
 
             @Override
@@ -266,7 +288,12 @@ public class APIManager {
             }
         });*/
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
-        String dateStr = sdf.format(new Date(System.currentTimeMillis()));
+        String dateStr = null;
+        if (listNews.size() != 0) //для системы кэша
+            dateStr = sdf.format(listNews.get(listNews.size() - 1).getDate());
+        else
+            dateStr = sdf.format(new Date(System.currentTimeMillis()));
+
         updateNewsFeed(dateStr, new StandardCallback() {
             @Override
             public void call() {
@@ -278,11 +305,10 @@ public class APIManager {
         Repository.getInstance().getEvents().enqueue(new Callback<List<Event>>() {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                listEvents = response.body();
-
-                if (listEvents != null)
+                if (response.body() != null) {
+                    listEvents = response.body();
                     statusInfo.EventsListGot = true;
-
+                }
             }
 
             @Override
@@ -295,12 +321,10 @@ public class APIManager {
             @Override
             public void onResponse(Call<List<Class>> call, Response<List<Class>> response) {
 
-                if (response.body() == null)
-                    return;
-                else
+                if (response.body() != null) {
                     statusInfo.TeacherListClassesGot = true;
-
-                buildClasses(response.body());
+                    buildClasses(response.body());
+                }
             }
 
             @Override
@@ -321,6 +345,8 @@ public class APIManager {
                 if (response.body() != null) {
                     listNews.addAll(response.body());
                     callback.call();
+
+                    CacheSystem.getCacheSystem().saveAll();
                 }
             }
 
@@ -563,6 +589,16 @@ public class APIManager {
 
     private Account convertToAccount(PublicAccountDTO account) {
         return modelMapper.map(account, Account.class);
+    }
+
+    private void buildChats() {
+        if (listChats != null) {
+            for (Chat chat : listChats)
+                for (Message message : chat.getMessages()) {
+                    message.setChat(chat);
+                    message.setChatId((long)chat.getId());
+                }
+        }
     }
 
     private void buildGroups() {

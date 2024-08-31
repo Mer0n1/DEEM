@@ -48,7 +48,7 @@ public class MessengerServiceClient {
         this.environment = environment;
         this.chatService = chatService;
     }
-
+ 
     public void pushMessageTo(Message message) throws JsonProcessingException {
         MessagePush messagePush = new MessagePush();
         messagePush.setMessage(message);
