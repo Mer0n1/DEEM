@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,13 +20,12 @@ import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.databinding.FragmentGroupBinding;
 import com.example.restful.api.APIManager;
-import com.example.restful.models.Account;
 import com.example.restful.models.Club;
 import com.example.restful.models.Group;
 import com.example.restful.models.News;
+import com.example.restful.models.StandardCallback;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GroupFragment extends Fragment {
@@ -113,9 +113,9 @@ public class GroupFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     CreateNewsDialog createNewsDialog = new CreateNewsDialog();
-                    createNewsDialog.setNewsList(newsList);
+                    createNewsDialog.initialize(newsList, newsListRecycleAdapter);
                     createNewsDialog.show(getActivity().getSupportFragmentManager(), "creation_menu");
-                    newsListRecycleAdapter.notifyDataSetChanged();
+                    //newsListRecycleAdapter.notifyDataSetChanged();
                 }
             });
 
@@ -135,6 +135,15 @@ public class GroupFragment extends Fragment {
         recyclerView = main_layout.findViewById(R.id.list_news_group);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         recyclerView.setAdapter(newsListRecycleAdapter);
+
+        //Observer
+        APIManager.getManager().listNews.observe(getViewLifecycleOwner(), new Observer<List<News>>() {
+            @Override
+            public void onChanged(List<News> newsList) {
+                initNews();
+                newsListRecycleAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void initToolbar() {
@@ -143,8 +152,11 @@ public class GroupFragment extends Fragment {
     }
 
     public void initNews() {
-        List<News> allNews = APIManager.getManager().listNews;
-        newsList = new ArrayList<>();
+        List<News> allNews = APIManager.getManager().listNews.getValue();
+        if (newsList == null)
+            newsList = new ArrayList<>();
+        else
+            newsList.clear();
 
         if (allNews != null)
         for (News news : allNews)
@@ -171,7 +183,7 @@ public class GroupFragment extends Fragment {
                     group = APIManager.getManager().listGroups.stream().filter(
                             x -> x.getName().equals(name)).findAny().orElse(null);
                 } else if (bundle.getString("type").equals("club")) {
-                    Club club = APIManager.getManager().listClubs.stream().filter(
+                    Club club = APIManager.getManager().listClubs.getValue().stream().filter(
                             x -> x.getGroup().getName().equals(name)).findAny().orElse(null);
 
                     if (club != null)

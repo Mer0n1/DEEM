@@ -4,6 +4,7 @@ import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Club;
+import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -57,7 +58,7 @@ public class Repository {
 
     public Call<Void> sendNewChat(Chat chat) { return Handler.getInstance().getApi().sendNewChat(chat); }
 
-    public Call<Void> createNews(News news) { return Handler.getInstance().getApi().createNews(news);}
+    public Call<Void> createNews(CreateNewsDTO news) { return Handler.getInstance().getApi().createNews(news);}
 
     public Call<List<News>> getNews() { return Handler.getInstance().getApi().getNews(); }
 

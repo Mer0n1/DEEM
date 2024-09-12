@@ -22,15 +22,14 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_identefication_form);
-
+        CacheSystem.initialize(this.getApplicationContext()); //TODO
+        APIManager.initialize();
 
         if (checkRemember()) {
             SharedPreferences preferences = getSharedPreferences("auth", MODE_PRIVATE);
             ((TextView) findViewById(R.id.username_enter)).setText(preferences.getString("username", ""));
             ((TextView) findViewById(R.id.password_enter)).setText(preferences.getString("password", ""));
         }
-
-        CacheSystem.initialize(this.getApplicationContext()); //TODO
 
         View.OnClickListener onClickLogIn = new View.OnClickListener() {
             @Override

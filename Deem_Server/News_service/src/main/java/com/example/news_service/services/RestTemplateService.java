@@ -1,9 +1,9 @@
 package com.example.news_service.services;
 
+import com.example.news_service.models.News;
 import com.example.news_service.models.images.NewsImage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -22,7 +22,9 @@ public class RestTemplateService {
     private final Environment environment;
 
     @Value("http://localhost:8086/image")
-    private String authServiceUrl;
+    private String imageServiceUrl;
+    @Value("http://localhost:8087/push/sendNews")
+    private String pushServiceUrl;
 
     private String personal_key;
 
@@ -45,6 +47,15 @@ public class RestTemplateService {
                 .writeValueAsString(imgs);
         entity = new HttpEntity<>(jsonMessage, headers);
 
-        return restTemplate.exchange(authServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
+        return restTemplate.exchange(imageServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
+    }
+
+    public void pushNewsTo(News news) throws Exception {
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(news);
+
+        entity = new HttpEntity<>(jsonMessage, headers);
+
+        restTemplate.exchange(pushServiceUrl, HttpMethod.POST, entity, Void.class);
     }
 }

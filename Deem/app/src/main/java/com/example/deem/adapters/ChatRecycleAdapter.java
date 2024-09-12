@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.datebase.CacheSystem;
+import com.example.restful.models.Account;
 import com.example.restful.models.Image;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
+import com.example.restful.models.NewsImage;
+import com.example.restful.utils.DateUtil;
+import com.example.restful.utils.GeneratorUUID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,38 +101,60 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             views.clear();
 
             //Обновление Holder изображений
-            if (message.isNoMessages() || message.getImages() == null)
+            if (message.isNoImages() || message.getImages().getValue() == null)
                 recyclerView.setVisibility(View.GONE);
-            else
-                for (MessageImage image : message.getImages()) {
-                    Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(image.getImage().getImgEncode());
-                    ImageView imageView = new ImageView(activity);
-                    Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
-                    imageView.setImageBitmap(roundedBitmap);
 
-                    views.add(imageView);
-                    recyclerView.setVisibility(View.VISIBLE);
+            if (message.getImages().getValue().size() != 0) { //загружаем изображения те что есть
+                for (MessageImage image : message.getImages().getValue()) {
+                    setImageOnView(image.getImage().getImgEncode());
                     imagesListRecycleAdapter.notifyDataSetChanged();
                 }
+            } else {
 
-            //Lazy система подгрузки изображений
-            if (!message.isNoMessages() && (message.getImages() == null
-                    || message.getImages().size() == 0))
-                APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
-                    @Override
-                    public void onImageLoaded(String decodeStr) {
-                        if (decodeStr == null) return;
-                        Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                if (!message.isNoImages()) {
+                    Account account = APIManager.getManager().listAccounts.stream().filter(x -> x.getId()
+                            == message.getAuthor()).findAny().orElse(null);
 
-                        ImageView imageView = new ImageView(activity);
-                        Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
-                        imageView.setImageBitmap(roundedBitmap);
-                        views.add(imageView);
+                    String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
+                            DateUtil.getInstance().getDateToForm(message.getDate()), account.getUsername());
 
-                        recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size()));
-                        recyclerView.setVisibility(View.VISIBLE);
+                    Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID);
+
+                    if (image != null) {
+                        MessageImage messageImage = new MessageImage();
+                        messageImage.setImage(image);
+                        messageImage.setId_message(message.getId());
+                        messageImage.setUuid(UUID);
+                        if (message.getImages().getValue() == null)
+                            message.getImages().setValue(new ArrayList<>());
+                        message.getImages().getValue().add(messageImage);
+
+                        setImageOnView(image.getImgEncode());
+
+                    } else {
+                        //Lazy система подгрузки изображений
+                        APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
+                            @Override
+                            public void onImageLoaded(String decodeStr) {
+                                setImageOnView(decodeStr);
+                            }
+                        });
                     }
-                });
+                }
+            }
+
+        }
+
+        private void setImageOnView(String decodeStr) {
+            if (decodeStr == null) return;
+            Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+
+            ImageView imageView = new ImageView(activity);
+            Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
+            imageView.setImageBitmap(roundedBitmap);
+            views.add(imageView);
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size()));
         }
 
         public Bitmap getRoundedBitmap(Bitmap bitmap, int radius) {

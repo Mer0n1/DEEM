@@ -4,6 +4,7 @@ import com.example.push_notification_service.EndPoints.MainContainer;
 import com.example.push_notification_service.models.Client;
 import com.example.push_notification_service.models.EventPush;
 import com.example.push_notification_service.models.MessagePush;
+import com.example.push_notification_service.models.News;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,6 @@ public class WebSocketService {
 
     public void sendEventToClient(EventPush eventPush) throws JsonProcessingException {
         Set<Client> clients = MainContainer.clients;
-        System.out.println(clients.size());
 
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(eventPush.getEvent());
@@ -88,6 +88,22 @@ public class WebSocketService {
             //if (eventPush.getType() == EventPush.Extension.person) //требуются дополнительные данные id студента или группы
             //if (eventPush.getType() == EventPush.Extension.group);
         }
+    }
+
+
+    public void sendNews(News news) throws JsonProcessingException {
+
+        String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                .writeValueAsString(news);
+
+        Set<Client> clients = MainContainer.clients;
+
+        for (Client client : clients)
+            if (!news.getIdAuthor().equals(client.getPersonDetails().getId()))
+                if (client.getPersonDetails().getFaculty().equals(news.getFaculty()) /*&&
+                    client.getPersonDetails().getCourse().equals()*/) { //TODO course
+                    MainContainer.send(client.getSession(), jsonMessage, MainContainer.Type.News);
+                }
     }
 
 }

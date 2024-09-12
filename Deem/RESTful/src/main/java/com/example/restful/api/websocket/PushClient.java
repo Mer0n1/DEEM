@@ -1,10 +1,15 @@
 package com.example.restful.api.websocket;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Event;
+import com.example.restful.models.Group;
 import com.example.restful.models.Message;
+import com.example.restful.models.News;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,11 +49,14 @@ public class PushClient {
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
                         Message message = objectMapper.readValue(jsonObject.get("Type").toString(), Message.class);
+                        message.setImages(new MutableLiveData<>());
+
                         if (message != null) {
                             int id = message.getChat().getId();
-                            List<Chat> chats = APIManager.getManager().listChats;
+                            List<Chat> chats = APIManager.getManager().listChats.getValue();
                             Chat chat = chats.stream().filter(s -> s.getId() == id).findAny().orElse(null);
                             chat.getMessages().add(message);
+                            APIManager.getManager().listChats.postValue(chats); //update
                         }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
@@ -63,16 +71,47 @@ public class PushClient {
                     try {
                         Event event = objectMapper.readValue(jsonObject.get("Type").toString(), Event.class);
 
-                        for (Event event_ : APIManager.getManager().listEvents)
+                        //Если есть повторения то выходим
+                        for (Event event_ : APIManager.getManager().listEvents.getValue())
                             if (event_.getId() == event.getId())
                                 return;
 
-                        APIManager.getManager().listEvents.add(event);
+                        List<Event> events = APIManager.getManager().listEvents.getValue();
+                        events.add(event);
+                        APIManager.getManager().listEvents.postValue(events);
 
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
+                }
 
+                //News protocol
+                if (protocol.equals("\"News\"")) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    try {
+                        News news = objectMapper.readValue(jsonObject.get("Type").toString(), News.class);
+
+                        for (News news_ : APIManager.getManager().listNews.getValue())
+                            if (news_.getId() == news.getId())
+                                return;
+
+                        Group group = APIManager.getManager().listGroups.stream().filter(
+                                x->x.getId().equals(news.getIdGroup())).findAny().orElse(null);
+                        if (group == null)
+                            return;
+                        news.setImages(new MutableLiveData<>());
+                        news.setGroup(group);
+
+                        List<News> list = APIManager.getManager().listNews.getValue();
+                        list.add(0, news);
+                        APIManager.getManager().listNews.postValue(list);
+
+                    } catch (JsonMappingException e) {
+                        e.printStackTrace();
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

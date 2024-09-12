@@ -2,6 +2,7 @@ package com.example.push_notification_service.controllers;
 
 import com.example.push_notification_service.models.EventPush;
 import com.example.push_notification_service.models.MessagePush;
+import com.example.push_notification_service.models.News;
 import com.example.push_notification_service.services.WebSocketService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
@@ -46,6 +47,17 @@ public class PushController {
 
         try {
             webSocketService.sendEventToClient(eventPush);
+            return ResponseEntity.ok().build();
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/sendNews")
+    public ResponseEntity<?> sendNews(@RequestBody News news) {
+
+        try {
+            webSocketService.sendNews(news);
             return ResponseEntity.ok().build();
         } catch (JsonProcessingException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

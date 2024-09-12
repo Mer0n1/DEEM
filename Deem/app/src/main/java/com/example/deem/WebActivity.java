@@ -33,7 +33,7 @@ public class WebActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
 
         Long examId = getIntent().getLongExtra("EXAM_ID",0);
-        event = APIManager.getManager().listEvents.stream().filter(x->x.getId()==examId).findAny().orElse(null);
+        event = APIManager.getManager().listEvents.getValue().stream().filter(x->x.getId()==examId).findAny().orElse(null);
         loadExamHtml();
     }
 

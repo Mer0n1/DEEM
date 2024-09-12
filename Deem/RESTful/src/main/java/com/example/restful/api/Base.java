@@ -4,6 +4,7 @@ import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Club;
+import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -59,7 +60,7 @@ public interface Base {
     @GET("/news/getNews")
     Call<List<News>> getNews();
     @POST("/news/createNews")
-    Call<Void> createNews(@Body News news);
+    Call<Void> createNews(@Body CreateNewsDTO news);
     @GET("/news/getNewsFeed")
     Call<List<News>> getNewsFeed(@Query("date") String date);
 

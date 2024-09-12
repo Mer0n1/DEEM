@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -86,8 +87,8 @@ public class FirstPageFragment extends Fragment {
     }
 
     private void initEvent() {
-        if (APIManager.statusInfo.isEventsListGot()) {
-            List<Event> events = APIManager.getManager().listEvents;
+        if (APIManager.getManager().statusInfo.isEventsListGot()) {
+            List<Event> events = APIManager.getManager().listEvents.getValue();
             Event event = events.get(events.size()-1);
 
             Date date_exam = event.getStart_date();
@@ -99,9 +100,9 @@ public class FirstPageFragment extends Fragment {
     }
 
     private void initListNews() {
-        if (APIManager.getManager().statusInfo.isGroupsListGot() && APIManager.getManager().statusInfo.isNewsListGot()) {
+        if (APIManager.statusInfo.isGroupsListGot() && APIManager.getManager().statusInfo.isNewsListGot()) {
             adminNews = new ArrayList<>();
-            List<News> news = APIManager.getManager().listNews;
+            List<News> news = APIManager.getManager().listNews.getValue();
             List<Group> adminGroups = APIManager.getManager().adminGroups;
 
             for (News news1 : news)

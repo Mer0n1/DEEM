@@ -1,4 +1,4 @@
-package com.example.restful.datebase;
+package com.example.restful.datebase.converters;
 
 import androidx.room.TypeConverter;
 

@@ -37,4 +37,14 @@ public class NewsImage {
     public void setImage(Image image) {
         this.image = image;
     }
+
+    @Override
+    public String toString() {
+        return "NewsImage{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", id_news=" + id_news +
+                ", image=" + image +
+                '}';
+    }
 }

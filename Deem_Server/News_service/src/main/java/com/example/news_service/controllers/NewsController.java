@@ -1,35 +1,21 @@
 package com.example.news_service.controllers;
 
 import com.example.news_service.config.PersonDetails;
+import com.example.news_service.models.CreateNewsDTO;
 import com.example.news_service.models.News;
 import com.example.news_service.services.NewsService;
 import com.example.news_service.services.RestTemplateService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.io.Resources;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
-import java.text.SimpleDateFormat;
 import java.util.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/news")
@@ -39,6 +25,8 @@ public class NewsController {
     private NewsService newsService;
     @Autowired
     private RestTemplateService restTemplateService;
+    @Autowired
+    private ModelMapper modelMapper;
 
 
    /* @GetMapping("/getAllNews")
@@ -54,13 +42,15 @@ public class NewsController {
     @GetMapping("/getNewsFeed")
     public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
                                   @AuthenticationPrincipal PersonDetails personDetails) {
-        return newsService.getNewsFeed(personDetails.getFaculty(), date);
+        return newsService.getNewsFeed(personDetails.getFaculty(), date); //TODO чекнуть на фильтрацию курса внутри факультета
     }
 
 
     @PostMapping("/createNews")
-    public ResponseEntity<?> createNews(@RequestBody @Valid News news,
+    public ResponseEntity<?> createNews(@RequestBody @Valid CreateNewsDTO dto,
                            BindingResult bindingResult) {
+        News news = modelMapper.map(dto, News.class);
+
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
@@ -78,6 +68,10 @@ public class NewsController {
                     return ResponseEntity.badRequest().body(e.getMessage());
                 }
             }
+
+        try {
+            restTemplateService.pushNewsTo(news);
+        } catch (Exception e) {}
 
         return ResponseEntity.ok().build();
     }

@@ -35,6 +35,10 @@ public class News {
     @Column(name = "date")
     private Date date;
 
+    @NotNull
+    @Column(name = "author")
+    private Long idAuthor;
+
     @Transient
     private List<NewsImage> images;
 }

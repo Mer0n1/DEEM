@@ -45,7 +45,7 @@ public class ClubsFragment extends Fragment {
     private void init() {
 
         if (APIManager.statusInfo.isClubListGot()) {
-            clubs = APIManager.getManager().listClubs;
+            clubs = APIManager.getManager().listClubs.getValue();
             main_layout.findViewById(R.id.clubs_recycle).setVisibility(View.VISIBLE);
 
             recycleAdapterClubs = new ClubsRecycleAdapter(clubs, this);

@@ -1,5 +1,6 @@
 package com.example.restful.models;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -7,7 +8,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.restful.datebase.Converters;
+import com.example.restful.datebase.converters.Converters;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -37,9 +38,9 @@ public class Message {
     @Ignore
     private Chat chat;
     @Ignore
-    private List<MessageImage> images;
+    private MutableLiveData<List<MessageImage>> images;
     @Ignore
-    private boolean NoMessages;
+    private boolean NoImages;
 
     @ColumnInfo(name = "chatId", index = true)
     private Long chatId;
@@ -84,11 +85,11 @@ public class Message {
         this.author = author;
     }
 
-    public List<MessageImage> getImages() {
+    public MutableLiveData<List<MessageImage>> getImages() {
         return images;
     }
 
-    public void setImages(List<MessageImage> images) {
+    public void setImages(MutableLiveData<List<MessageImage>> images) {
         this.images = images;
     }
 
@@ -100,12 +101,12 @@ public class Message {
         this.id = id;
     }
 
-    public boolean isNoMessages() {
-        return NoMessages;
+    public boolean isNoImages() {
+        return NoImages;
     }
 
-    public void setNoMessages(boolean noMessages) {
-        NoMessages = noMessages;
+    public void setNoImages(boolean noImages) {
+        NoImages = noImages;
     }
 
     public Long getChatId() {

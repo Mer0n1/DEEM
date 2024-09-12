@@ -1,6 +1,8 @@
 package com.example.restful.api;
 
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.restful.api.websocket.PushClient;
 import com.example.restful.datebase.CacheStatusInfo;
 import com.example.restful.datebase.CacheSystem;
@@ -8,6 +10,7 @@ import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Club;
+import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.IconImage;
@@ -24,12 +27,10 @@ import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
 import com.example.restful.models.curriculum.Class;
 import com.example.restful.models.curriculum.DayliSchedule;
-import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 
 //import org.graalvm.compiler.api.replacements.Snippet;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
@@ -37,12 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,10 +57,10 @@ public class APIManager {
     public volatile List<Group> listGroups;
     public volatile List<Group> listGroupsOfFaculty;
     public volatile List<Group> adminGroups;
-    public volatile List<Chat> listChats;
-    public volatile List<News> listNews;
-    public volatile List<Event> listEvents;
-    public volatile List<Club> listClubs;
+    public volatile MutableLiveData<List<Chat>> listChats;
+    public volatile MutableLiveData<List<News>> listNews;
+    public volatile MutableLiveData<List<Event>> listEvents;
+    public volatile MutableLiveData<List<Club>> listClubs;
     public volatile List<DayliSchedule> dayliSchedules;
     private volatile TopsUsers topsUsers;
     private volatile List<Group> groupClubs;
@@ -80,31 +77,20 @@ public class APIManager {
         statusInfo = new ServerStatusInfo();
         modelMapper = new ModelMapper();
 
-        myAccount = new Account();
+        myAccount    = new Account();
         listAccounts = new ArrayList<>();
-        listGroups = new ArrayList<>();
+        listGroups   = new ArrayList<>();
         listGroupsOfFaculty = new ArrayList<>();
-        listChats = new ArrayList<>();
-        listNews = new ArrayList<>();
-        listEvents = new ArrayList<>();
+        listChats = new MutableLiveData<>();
+        listNews  = new MutableLiveData<>();
+        listEvents  = new MutableLiveData<>();
         adminGroups = new ArrayList<>();
         dayliSchedules = new ArrayList<>();
         groupClubs = new ArrayList<>();
-        listClubs = new ArrayList<>();
+        listClubs  = new MutableLiveData<>();
 
 
-        //test
-        statusCacheInfo = CacheSystem.getCacheSystem().getCacheStatusInfo(); //строчку не трогать :)
-        CacheSystem.getCacheSystem().loadAll();
-        CacheSystem.getCacheSystem(); //без этой строчки тоже не работает :)
-        /*
-        Кэш система нужна для уменьшения нагрузки на сервер.
-        Загрузка новостей: загружаем лишь актуальные новости. Актуальные это те дата которых позднее последней нашей новости, а также те которые были редактированы/удалены
-        Загрузка сообщений: также загружаем только на момент входа в чат с последнего сообщения (TODO)
-        Загрузка ивентов: старые ивенты храним в кэше или где то еще а новые без исключения загружаем из сервера
-        Загрузка групп и аккаунтов:
-        * */
-
+        
     }
 
     public static APIManager getManager() {
@@ -112,6 +98,12 @@ public class APIManager {
             manager = new APIManager();
 
         return manager;
+    }
+
+    public static void initialize() {
+        //инициализируем в основном автоматическую систему кэша
+        //statusCacheInfo = CacheSystem.getCacheSystem().getCacheStatusInfo(); //строчку не трогать :)
+        //CacheSystem.getCacheSystem().loadAll();
     }
 
     public boolean isAuth() {
@@ -147,6 +139,27 @@ public class APIManager {
         pushClient.auth(jwtKey);
     }
 
+    public void UpdateData() {
+
+        getMyAccountExecute();
+        updateAccounts();
+        updateGroups();
+        updateChats();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+        String dateStr = null;
+        if (listNews.getValue() != null && listNews.getValue().size() != 0) //для системы кэша
+            dateStr = sdf.format(listNews.getValue().get(listNews.getValue().size() - 1).getDate());
+        else
+            dateStr = sdf.format(new Date(System.currentTimeMillis()));
+
+        updateNewsFeed(dateStr, new StandardCallback() { @Override  public void call() { } });
+
+        updateEvents();
+        updateClasses();
+    }
+
+    /** updates */
     public void getMyAccount() {
         Call<PublicAccountDTO> str = Repository.getInstance().getMyAccount(Handler.getToken());
         Callback<PublicAccountDTO> cl = new Callback<PublicAccountDTO>() {
@@ -167,9 +180,7 @@ public class APIManager {
         str.enqueue(cl);
     }
 
-
-    public void UpdateData() {
-
+    public void getMyAccountExecute() {
         final Call<PublicAccountDTO> str = Repository.getInstance().getMyAccount();
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -191,32 +202,36 @@ public class APIManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
+    public void updateAccounts() {
         //Update accounts
         Repository.getInstance().getAccounts()
                 .enqueue(new Callback<List<PrivateAccountDTO>>() {
-                    @Override
-                    public void onResponse(Call<List<PrivateAccountDTO>> call, Response<List<PrivateAccountDTO>> response) {
-                        List<PrivateAccountDTO> listDto = response.body();
+                             @Override
+                             public void onResponse(Call<List<PrivateAccountDTO>> call, Response<List<PrivateAccountDTO>> response) {
 
-                        listAccounts.clear();
+                                 if (response.body() != null && response.body().size() != 0) {
+                                     List<PrivateAccountDTO> listDto = response.body();
 
-                        for (PrivateAccountDTO dto : listDto)
-                            listAccounts.add(convertToAccount(dto));
+                                     listAccounts.clear();
 
-                        if (listAccounts.size() != 0)
-                            statusInfo.AccountListGot = true;
+                                     for (PrivateAccountDTO dto : listDto)
+                                         listAccounts.add(convertToAccount(dto));
 
-                    }
+                                     statusInfo.AccountListGot = true;
+                                 }
+                             }
 
-                    @Override
-                    public void onFailure(Call<List<PrivateAccountDTO>> call, Throwable t) {
+                             @Override
+                             public void onFailure(Call<List<PrivateAccountDTO>> call, Throwable t) {
 
-                    }
-                }
-        );
+                             }
+                         }
+                );
+    }
 
-
+    public void updateGroups() {
         //
         Repository.getInstance().getGroups().enqueue(new Callback<List<Group>>() {
             @Override
@@ -228,22 +243,22 @@ public class APIManager {
                 buildGroups();
 
 
-                    //clubs
-                    Repository.getInstance().getClubs().enqueue(new Callback<List<Club>>() {
-                        @Override
-                        public void onResponse(Call<List<Club>> call, Response<List<Club>> response) {
-                            if (response.body() != null) {
-                                statusInfo.ClubListGot = true;
-                                listClubs = response.body();
-                                buildClubs();
-                            }
+                //clubs
+                Repository.getInstance().getClubs().enqueue(new Callback<List<Club>>() {
+                    @Override
+                    public void onResponse(Call<List<Club>> call, Response<List<Club>> response) {
+                        if (response.body() != null && response.body().size() != 0) {
+                            statusInfo.ClubListGot = true;
+                            listClubs.postValue(response.body());
+                            buildClubs();
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<List<Club>> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<List<Club>> call, Throwable t) {
 
-                        }
-                    });
+                    }
+                });
             }
 
             @Override
@@ -251,19 +266,18 @@ public class APIManager {
                 System.err.println("Failure ошибка групп " + t.getMessage());
             }
         });
+    }
 
+    public void updateChats() {
         //
         Repository.getInstance().getChats().enqueue(new Callback<List<Chat>>() {
             @Override
             public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
-                if (response.body() != null) {
-                    listChats = response.body();
+                if (response.body() != null && response.body().size() != 0) {
+                    List<Chat> cChats = response.body();
+                    buildChats(cChats);
+                    listChats.postValue(cChats);
                     statusInfo.ChatsListGot = true;
-
-                    buildChats();
-
-                    CacheSystem.getCacheSystem().saveChats();
-                    CacheSystem.getCacheSystem().saveMessages();
                 }
             }
 
@@ -272,41 +286,14 @@ public class APIManager {
                 System.err.println("Failure ошибка чатов " + t.getMessage());
             }
         });
+    }
 
-
-        /*Repository.getInstance().getNews().enqueue(new Callback<List<News>>() {
-            @Override
-            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-                listNews = response.body();
-                if (listNews != null)
-                    statusInfo.NewsListGot = true;
-            }
-
-            @Override
-            public void onFailure(Call<List<News>> call, Throwable t) {
-
-            }
-        });*/
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
-        String dateStr = null;
-        if (listNews.size() != 0) //для системы кэша
-            dateStr = sdf.format(listNews.get(listNews.size() - 1).getDate());
-        else
-            dateStr = sdf.format(new Date(System.currentTimeMillis()));
-
-        updateNewsFeed(dateStr, new StandardCallback() {
-            @Override
-            public void call() {
-                statusInfo.NewsListGot = true;
-            }
-        });
-
-
+    public void updateEvents() {
         Repository.getInstance().getEvents().enqueue(new Callback<List<Event>>() {
             @Override
             public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                if (response.body() != null) {
-                    listEvents = response.body();
+                if (response.body() != null && response.body().size() != 0) {
+                    listEvents.postValue(response.body());
                     statusInfo.EventsListGot = true;
                 }
             }
@@ -316,12 +303,14 @@ public class APIManager {
 
             }
         });
+    }
 
+    public void updateClasses() {
         Repository.getInstance().getClasses().enqueue(new Callback<List<Class>>() {
             @Override
             public void onResponse(Call<List<Class>> call, Response<List<Class>> response) {
 
-                if (response.body() != null) {
+                if (response.body() != null && response.body().size() != 0) {
                     statusInfo.TeacherListClassesGot = true;
                     buildClasses(response.body());
                 }
@@ -332,21 +321,28 @@ public class APIManager {
 
             }
         });
-
-
     }
 
-
-    //---
     public void updateNewsFeed(String date, StandardCallback callback) {
         Repository.getInstance().getNewsFeed(date).enqueue(new Callback<List<News>>() {
             @Override
             public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-                if (response.body() != null) {
-                    listNews.addAll(response.body());
-                    callback.call();
 
-                    CacheSystem.getCacheSystem().saveAll();
+                if (response.body() != null && response.body().size() != 0) {
+                    List<News> newsList_ = response.body();
+                    buildNews(newsList_);
+
+                    if (listNews.getValue() == null)
+                        listNews.setValue(newsList_);
+                    else if (listNews.getValue().size() == 0)
+                        listNews.setValue(newsList_);
+                    else {
+                        List<News> cNews = listNews.getValue();
+                        cNews.addAll(newsList_);
+                        listNews.setValue(cNews);
+                    }
+                    callback.call();
+                    statusInfo.NewsListGot = true;
                 }
             }
 
@@ -385,7 +381,7 @@ public class APIManager {
         });
     }
 
-    public void addNews(News news) {
+    public void addNews(CreateNewsDTO news) {
         Repository.getInstance().createNews(news).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -429,46 +425,15 @@ public class APIManager {
         });
     }
 
-    //
-    public void getTopStudentsFaculty(TopLoadCallback callback) {
-        Repository.getInstance().getTopStudentsFaculty().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                topsUsers.topsUsersFaculty = response.body();
-                callback.LoadTop(topsUsers);
-                statusInfo.TopsListUsersUniversityGot = true;
-            }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    public void getTopStudentsUniversity(TopLoadCallback callback) {
-        Repository.getInstance().getTopStudentsUniversity().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                topsUsers.topsUsersUniversity = response.body();
-                callback.LoadTop(topsUsers);
-                statusInfo.TopsListUsersFacultyGot = true;
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
-            }
-        });
-    }
 
     /** Lazy метод. Подгружаем картинки для новости и храним их в кэше*/
     public void getNewsImagesLazy(News news, ImageLoadCallback imageLoadCallback) {
 
         if (news == null) return;
-        if (news.getImages() == null)
-            news.setImages(new ArrayList<>());
-        news.getImages().clear();
+        if (news.getImages().getValue() == null)
+            news.getImages().setValue(new ArrayList<>());
+        news.getImages().getValue().clear();
 
         Repository.getInstance().getCountImages(news.getId(), "news_image").enqueue(new Callback<Integer>() {
             @Override
@@ -478,11 +443,11 @@ public class APIManager {
                 if (count == null) return;
 
                 for (int j = 0; j < count; j++) {
-                    Group group = listGroups.stream().filter(x->x.getId()==news.getIdGroup()).findAny().orElse(null);
-                    if (group == null) return;
-                    String author = group.getName();
+                    if (news.getGroup() == null)
+                        return;
+                    String author = news.getGroup().getName();
 
-                    String UUID = GeneratorUUID.getInstance().generateUUIDForNews(
+                    String UUID = GeneratorUUID.getInstance().generateUUIDForNews( //генерация uuid
                             DateUtil.getInstance().getDateToForm(news.getDate()), author);
 
                     Repository.getInstance().getImage(UUID, "news_image").enqueue(new Callback<Image>() {
@@ -491,8 +456,11 @@ public class APIManager {
                             if (response.body() != null) {
                                 NewsImage newsImage = new NewsImage();
                                 newsImage.setImage(response.body());
+                                newsImage.setUuid(UUID);
 
-                                news.getImages().add(newsImage);
+                                List<NewsImage> imageList = news.getImages().getValue();
+                                imageList.add(newsImage);
+                                news.getImages().postValue(imageList);
                                 imageLoadCallback.onImageLoaded(response.body().getImgEncode());
                             }
                         }
@@ -534,8 +502,9 @@ public class APIManager {
 
     public void getMessageImagesLazy(Message message, ImageLoadCallback imageLoadCallback) {
         if (message == null) return;
-        if (message.getImages() == null)
-            message.setImages(new ArrayList<>());
+        if (message.getImages().getValue() == null)
+            message.getImages().setValue(new ArrayList<>());
+        message.getImages().getValue().clear();
 
         Repository.getInstance().getCountImages(message.getId(), "message_image").enqueue(new Callback<Integer>() {
             @Override
@@ -543,7 +512,7 @@ public class APIManager {
                 Integer count = response.body();
                 if (count == null) return;
                 if (count == 0)
-                    message.setNoMessages(true);
+                    message.setNoImages(true);
 
                 for (int j = 0; j < count; j++) {
                     Account account = listAccounts.stream().filter(x->x.getId()
@@ -560,8 +529,12 @@ public class APIManager {
                             if (response.body() != null) {
                                 MessageImage messageImage = new MessageImage();
                                 messageImage.setImage(response.body());
+                                messageImage.setUuid(UUID);
 
-                                message.getImages().add(messageImage);
+                                List<MessageImage> messageImages = message.getImages().getValue();
+                                messageImages.add(messageImage);
+                                message.getImages().postValue(messageImages);
+
                                 imageLoadCallback.onImageLoaded(response.body().getImgEncode());
                             }
                         }
@@ -581,6 +554,42 @@ public class APIManager {
         });
     }
 
+    //--------------------
+    public void getTopStudentsFaculty(TopLoadCallback callback) {
+        Repository.getInstance().getTopStudentsFaculty().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.body() != null) {
+                    topsUsers.topsUsersFaculty = response.body();
+                    callback.LoadTop(topsUsers);
+                    statusInfo.TopsListUsersUniversityGot = true;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getTopStudentsUniversity(TopLoadCallback callback) {
+        Repository.getInstance().getTopStudentsUniversity().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                if (response.body() != null) {
+                    topsUsers.topsUsersUniversity = response.body();
+                    callback.LoadTop(topsUsers);
+                    statusInfo.TopsListUsersFacultyGot = true;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
+            }
+        });
+    }
 
     ///////////////////////////////////////////
     private Account convertToAccount(PrivateAccountDTO dto) {
@@ -591,18 +600,29 @@ public class APIManager {
         return modelMapper.map(account, Account.class);
     }
 
-    private void buildChats() {
+    private void buildChats(List<Chat> listChats) {
         if (listChats != null) {
             for (Chat chat : listChats)
                 for (Message message : chat.getMessages()) {
                     message.setChat(chat);
                     message.setChatId((long)chat.getId());
+                    message.setImages(new MutableLiveData<>());
+                    message.getImages().postValue(new ArrayList<>());
                 }
         }
     }
 
-    private void buildGroups() {
+    private void buildNews(List<News> newsList) {
+        for (News news : newsList) {
+            news.setImages(new MutableLiveData<>());
 
+            Group group = listGroups.stream().filter(x->x.getId() == news.getIdGroup()).findAny().orElse(null);
+            if (group != null)
+                news.setGroup(group);
+        }
+    }
+
+    private void buildGroups() {
         if (listGroups != null) {
 
             //разделим клубы и стандартные группы
@@ -612,7 +632,7 @@ public class APIManager {
                     listGroups.remove(listGroups.get(j));
                 }
 
-            //распределим аккаунты на каждую группу и группу на каждый аккаунт
+            //распределим аккаунты на каждую группу и группу на каждый аккаунт и также для новостей
             if (listAccounts != null)
                 for (Group group : listGroups) {
                     if (group.getAccounts() != null)
@@ -630,6 +650,15 @@ public class APIManager {
                     }
 
                     group.setAccounts(accounts);
+
+                    //распределим группу на каждую новость если значения group новости = null
+                    List<News> listNews_ = listNews.getValue();
+                    if (listNews_ != null) {
+                        listNews_.stream().forEach(x -> {
+                            if (x.getIdGroup().equals(group.getId()) && x.getGroup() == null)
+                                x.setGroup(group);
+                        });
+                    }
                 }
 
             //Сортировка по баллам сразу
@@ -655,6 +684,7 @@ public class APIManager {
             }
 
         }
+
 
     }
 
@@ -698,7 +728,7 @@ public class APIManager {
 
         if (!groupClubs.isEmpty()) {
 
-            for (Club club : listClubs) {
+            for (Club club : listClubs.getValue()) {
                 for (Group group : groupClubs) //определяем группу для клуба
                     if (club.getId_group() == group.getId()) {
                         club.setGroup(group);

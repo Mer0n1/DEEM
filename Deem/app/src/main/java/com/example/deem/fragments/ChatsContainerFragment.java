@@ -47,7 +47,7 @@ public class ChatsContainerFragment extends Fragment {
             !APIManager.statusCacheInfo.isListChatsLoaded())
             return;
 
-        listChats = APIManager.getManager().listChats;
+        listChats = APIManager.getManager().listChats.getValue();
         initListAndRecycle();
 
         //View.inflate(getContext(), R.layout.item_chat_story, layout);

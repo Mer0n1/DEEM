@@ -46,7 +46,7 @@ public class AdminController {
         exclusionStoryService.save(form);
         return ResponseEntity.ok().build();
     }
-
+  
     @PostMapping("/transferStudent")
     public ResponseEntity<?> transferStudent(@RequestBody @Valid TransferForm form,
                                 BindingResult bindingResult) {

@@ -1,5 +1,6 @@
 package com.example.deem.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,11 +25,10 @@ import com.example.restful.models.News;
 import com.example.restful.models.StandardCallback;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Stack;
+import androidx.lifecycle.MutableLiveData;
+
 
 /**
  * Фрагмент информации: новости групп, список топов (людей и групп), список участников
@@ -71,7 +72,7 @@ public class InfoFragment extends Fragment {
             return;
 
         //init objects
-        listNews = APIManager.getManager().listNews;
+        listNews = APIManager.getManager().listNews.getValue();
         listUsersFragment = new ListUsersFragment();
         listGroupsFragment = new ListGroupsFragment();
         listTopsFragment = new ListTopsFragment();
@@ -170,6 +171,13 @@ public class InfoFragment extends Fragment {
             }
         });
 
+        //Observer
+        APIManager.getManager().listNews.observe(getViewLifecycleOwner(), new Observer<List<News>>() {
+            @Override
+            public void onChanged(List<News> newsList) {
+                newsListRecycleAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 }

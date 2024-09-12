@@ -2,6 +2,7 @@ package com.example.news_service.config;
 
 
 import com.google.common.cache.CacheBuilder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
@@ -52,6 +53,11 @@ class WebSecurityConfiguration {
         return new RestTemplate();
     }
 
+    @Bean
+    public ModelMapper ModelMapper() {
+        return new ModelMapper();
+    }
+
     @Bean("habrCacheManager")
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager() {
@@ -66,4 +72,5 @@ class WebSecurityConfiguration {
             }
         };
     }
+
 }

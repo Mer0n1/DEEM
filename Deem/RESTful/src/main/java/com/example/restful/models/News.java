@@ -1,17 +1,22 @@
 package com.example.restful.models;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.restful.datebase.Converters;
+import com.example.restful.datebase.converters.Converters;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import kotlin.jvm.Transient;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -25,13 +30,21 @@ public class News {
     private Date date;
     @ColumnInfo(name = "idGroup")
     private Long idGroup;
+    @ColumnInfo(name = "author")
+    private Long idAuthor;
     @ColumnInfo(name = "faculty")
     private String faculty;
-    //private String author; //name of group
-
 
     @Ignore
-    private List<NewsImage> images;
+    @JsonIgnore
+    private MutableLiveData<List<NewsImage>> images;
+    @Ignore
+    private transient Group group;
+    /** Переменная обозначающая конечное состояние новости. Новость может быт
+     *  созданной или же полностью загруженной/обновленной. True значение
+     *  означает, что для этой новости мы не загружаем обновления из сервера или кэша */
+    @Ignore
+    private boolean isCompleted;
 
     public String getContent() {
         return content;
@@ -71,12 +84,36 @@ public class News {
         this.faculty = faculty;
     }
 
-    public List<NewsImage> getImages() {
+    public MutableLiveData<List<NewsImage>> getImages() {
         return images;
     }
 
-    public void setImages(List<NewsImage> images) {
+    public void setImages(MutableLiveData<List<NewsImage>> images) {
         this.images = images;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
+    public Long getIdAuthor() {
+        return idAuthor;
+    }
+
+    public void setIdAuthor(Long idAuthor) {
+        this.idAuthor = idAuthor;
     }
 
     @Override

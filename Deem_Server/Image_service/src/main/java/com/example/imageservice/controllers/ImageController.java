@@ -66,6 +66,7 @@ public class ImageController {
 
     @PostMapping("/addImagesNews")
     public ResponseEntity<?> addImagesNews(@RequestBody List<NewsImage> imgs) throws IOException {
+
         if (validator.hasErrorsNewsImages(imgs))
             return ResponseEntity.badRequest().body("Некорректный запрос");
 

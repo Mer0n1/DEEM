@@ -28,7 +28,7 @@ public class MainContainer {
     /** Неавторизированные клиенты */
     public static final Set<Client> queue  = Collections.synchronizedSet(new HashSet<Client>());
 
-    public enum Type { Message, GroupNotice, Event }
+    public enum Type { Message, GroupNotice, Event, News }
 
     @javax.websocket.OnOpen
     public void onOpen(Session session) {
@@ -72,10 +72,11 @@ public class MainContainer {
     public static void send(Session session, String jsonMessage, Type type) {
         System.out.println("try send");
 
-        if (type == Type.Message)
+        jsonMessage = "{\"Protocol\":\"" + type + "\",\"Type\":" + jsonMessage + "}";
+        /*if (type == Type.Message)
             jsonMessage = "{\"Protocol\":\"Message\",\"Type\":" + jsonMessage + "}";
         if (type == Type.Event)
-            jsonMessage = "{\"Protocol\":\"Event\",\"Type\":" + jsonMessage + "}";
+            jsonMessage = "{\"Protocol\":\"Event\",\"Type\":" + jsonMessage + "}";*/
 
         if (session.isOpen()) {
 

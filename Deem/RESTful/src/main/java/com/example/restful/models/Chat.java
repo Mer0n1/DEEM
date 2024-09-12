@@ -5,8 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.restful.datebase.ConverterListLong;
-import com.example.restful.datebase.Converters;
+import com.example.restful.datebase.converters.ConverterListLong;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;

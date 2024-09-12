@@ -14,17 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.restful.datebase.CacheSystem;
+import com.example.restful.models.Image;
 import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
-import com.example.restful.models.Group;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.utils.DateUtil;
+import com.example.restful.utils.GeneratorUUID;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycleAdapter.ItemNews> {
 
@@ -55,9 +57,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
     }
 
 
-
-
-class ItemNews extends RecyclerView.ViewHolder {
+    class ItemNews extends RecyclerView.ViewHolder {
         private TextView date;
         private TextView content;
         private TextView name_group;
@@ -90,56 +90,65 @@ class ItemNews extends RecyclerView.ViewHolder {
             date.setText(DateTranslator.getInstance().toString(news.getDate()));
             content.setText(news.getContent());
 
-            if (APIManager.getManager().listGroups != null) { //установим иконку для группы
-                List<Group> list = APIManager.getManager().listGroups;
-                Long idGroup = news.getIdGroup();
-                Optional<Group> group = list.stream().filter(x->x.getId() == idGroup).findAny();
-
-                if (!group.isEmpty())
-                    icon.setText(group.get().getName());
+            if (news.getGroup() != null) {
+                name_group.setText(news.getGroup().getName());
+                icon      .setText(news.getGroup().getName());
             }
-
-            List<Group> listGroups = APIManager.getManager().listGroups;
-            Group group = null;
-
-            if (listGroups != null)
-                group = listGroups.stream()
-                    .filter(s->s.getId() == news.getIdGroup()).findAny().orElse(null);
-
-            if (group != null)
-                name_group.setText(group.getName());
 
             //Загрузка изображений
             if (fragment.getContext() != null)
-            if (news.getImages() != null) {
-                if (news.getImages().size() != 0) {
-                    List<ImageView> imageViews = new ArrayList<>();
+            if (news.getImages().getValue() != null && news.getImages().getValue().size() != 0) {
+                List<ImageView> imageViews = new ArrayList<>();
 
-                    for (NewsImage newsImage : news.getImages()) {
-                        ImageView imageView = new ImageView(content.getContext());
-                        imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
-                                newsImage.getImage().getImgEncode()));
-                        imageViews.add(imageView);
-                    }
-
-                    initRecycle(imageViews.size(), imageViews);
+                for (NewsImage newsImage : news.getImages().getValue()) {
+                    ImageView imageView = new ImageView(content.getContext());
+                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
+                            newsImage.getImage().getImgEncode()));
+                    imageViews.add(imageView);
                 }
-            } else {
+
+                initRecycle(imageViews.size(), imageViews);
+
+            } else if (!news.isCompleted()) { //загружаем новые изображения
                 List<ImageView> imageViews = new ArrayList<>();
                 initRecycle(1, imageViews);
 
-                APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
-                    @Override
-                    public void onImageLoaded(String decodeStr) {
-                        if (fragment.getContext() != null && fragment.getContext().getResources() != null) { //баг
-                            ImageView imageView = new ImageView(fragment.getContext());
-                            imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
-                            imageViews.add(imageView);
+                //сначала пробуем загрузить из кэша.
+                String UUID = GeneratorUUID.getInstance().generateUUIDForNews( //генерация uuid
+                        DateUtil.getInstance().getDateToForm(news.getDate()), news.getGroup().getName());
 
-                            recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
+                Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID);
+
+                if (image != null) {
+                    NewsImage newsImage = new NewsImage();
+                    newsImage.setImage(image);
+                    newsImage.setId_news(news.getId());
+                    newsImage.setUuid(UUID);
+                    if (news.getImages().getValue() == null)
+                        news.getImages().setValue(new ArrayList<>()); //TODO нам бы в конструкторе инициализировать список изображений каждой новости
+                    news.getImages().getValue().add(newsImage);
+
+                    imageLoad(imageViews, image.getImgEncode());
+
+                } else { //если в кэше нет такого изображения то обращаемся к серверу
+
+                    APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
+                        @Override
+                        public void onImageLoaded(String decodeStr) {
+                            imageLoad(imageViews, decodeStr);
                         }
-                    }
-                });
+                    });
+                }
+            }
+        }
+
+        private void imageLoad(List<ImageView> imageViews, String decodeStr) {
+            if (fragment.getContext() != null && fragment.getContext().getResources() != null) { //баг
+                ImageView imageView = new ImageView(fragment.getContext());
+                imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
+                imageViews.add(imageView);
+
+                recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
             }
         }
 

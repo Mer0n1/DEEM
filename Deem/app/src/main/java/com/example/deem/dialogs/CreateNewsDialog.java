@@ -1,51 +1,44 @@
 package com.example.deem.dialogs;
 
-import static android.app.Activity.RESULT_OK;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
-import com.example.deem.databinding.DialogNewNewsBinding;
-import com.example.deem.fragments.GroupFragment;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Image;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.models.StandardCallback;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 public class CreateNewsDialog extends DialogFragment {
 
-    private List<News> newsList;
+    private List<News> newsListGroup;
+    private NewsListRecycleAdapter updateAddedNews;
     private ConstraintLayout main_layout;
 
     private static List<Drawable> listDrawables;
@@ -56,7 +49,6 @@ public class CreateNewsDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         main_layout = (ConstraintLayout)inflater.inflate(R.layout.dialog_new_news, container, false);
         listDrawables = new ArrayList<>();
-        newsList = APIManager.getManager().listNews;
         imgInfo = main_layout.findViewById(R.id.test_image_loaded);
 
         return main_layout;
@@ -71,14 +63,15 @@ public class CreateNewsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
 
-                if (newsList != null)
+                if (newsListGroup != null)
                 {
-                    News news = new News();
+                    CreateNewsDTO news = new CreateNewsDTO();
                     news.setContent(((TextView)view.findViewById(R.id.editTextContentMessage)).getText().toString());
                     news.setDate(new Date(System.currentTimeMillis()));
                     news.setFaculty(APIManager.getManager().myAccount.getGroup().getFaculty());
+                    news.setIdAuthor(APIManager.getManager().myAccount.getId());
                     news.setIdGroup(APIManager.getManager().myAccount.getGroup().getId());
-                    newsList.add(news);
+                    news.setImages(new ArrayList<>());
 
                     for (Drawable drawable : listDrawables) {
                         String str = ImageUtil.getInstance().ConvertToString(drawable);
@@ -88,14 +81,31 @@ public class CreateNewsDialog extends DialogFragment {
 
                         NewsImage newsImage = new NewsImage();
                         newsImage.setImage(image);
-                        newsImage.setUuid(GeneratorUUID.getInstance().generateUUIDForNews
-                                (DateUtil.getInstance().getDate(), APIManager.getManager().myAccount.getGroup().getName()));
+                        newsImage.setUuid(GeneratorUUID.getInstance().generateUUIDForNews(
+                                DateUtil.getInstance().getDateToForm(news.getDate()), APIManager.getManager().myAccount.getGroup().getName()));
+                        newsImage.setId_news(news.getId());
 
-                        news.setImages(new ArrayList<>());
                         news.getImages().add(newsImage);
                     }
 
                     APIManager.getManager().addNews(news);
+
+                    //convert to News
+                    News NaturalNews = new News();
+                    NaturalNews.setCompleted(true);
+                    NaturalNews.setImages(new MutableLiveData<>());
+                    NaturalNews.getImages().setValue(news.getImages());
+                    NaturalNews.setIdGroup(news.getIdGroup());
+                    NaturalNews.setGroup(APIManager.getManager().listGroups.stream().filter
+                            (x->x.getId().equals(news.getIdGroup())).findAny().orElse(null));
+                    NaturalNews.setFaculty(news.getFaculty());
+                    NaturalNews.setDate(news.getDate());
+                    NaturalNews.setContent(news.getContent());
+                    NaturalNews.setIdAuthor(news.getIdAuthor());
+
+                    newsListGroup.add(0, NaturalNews);
+
+                    updateAddedNews.notifyDataSetChanged();
                     dismiss();
                 }
             }
@@ -111,8 +121,9 @@ public class CreateNewsDialog extends DialogFragment {
     }
 
 
-    public void setNewsList(List<News> newsList) {
-        this.newsList = newsList;
+    public void initialize(List<News> newsList, NewsListRecycleAdapter updateAddedNews) {
+        this.newsListGroup = newsList;
+        this.updateAddedNews = updateAddedNews;
     }
 
     public static void addDrawable(Drawable drawable) {

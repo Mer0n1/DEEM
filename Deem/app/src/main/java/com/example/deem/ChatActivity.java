@@ -14,6 +14,7 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
 import com.example.restful.models.Group;
 import com.example.restful.models.MessageImage;
+import com.example.restful.models.News;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 import com.example.deem.utils.ImageUtil;
@@ -89,22 +91,14 @@ public class ChatActivity extends AppCompatActivity {
         initRecycle();
         SetListeners();
 
-        //Хэндлер для обновления приходящих сообщений
-        handler = new Handler();
-        updateRunnable = new Runnable() {
+        //Подпись на наблюдение за новыми сообщениями
+        APIManager.getManager().listChats.observe(this, new Observer<List<Chat>>() {
             @Override
-            public void run() {
-                // Обновить RecycleView
-                if (messages.size() > CurrentMessages) {
-                    chatRecycleAdapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
-                    CurrentMessages = messages.size();
-                }
-                // Запустить этот Runnable снова через некоторое время
-                handler.postDelayed(this, 1000);
+            public void onChanged(List<Chat> newsList) {
+                chatRecycleAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
             }
-        };
-        updateRunnable.run();
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -168,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
         if (name.isEmpty()) return;
 
         // имеем ли мы чат с этим пользователем
-        List<Chat> chats = APIManager.getManager().listChats;
+        List<Chat> chats = APIManager.getManager().listChats.getValue();
         List<Account> accounts = APIManager.getManager().listAccounts;
 
         //
@@ -238,7 +232,7 @@ public class ChatActivity extends AppCompatActivity {
         Message message = new Message();
         message.setText(content);
         message.setAuthor(APIManager.getManager().myAccount.getId());
-        message.setImages(FixedImages);
+        message.getImages().setValue(FixedImages);
         message.setDate(new Date(System.currentTimeMillis()));
 
         //Создание uuid
