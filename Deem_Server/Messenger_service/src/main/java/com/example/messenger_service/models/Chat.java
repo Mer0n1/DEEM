@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.ToString;
 
 import java.util.List;
 
 @Entity
 @Table(name = "chat")
 //@Data
-//@ToString
+@ToString
 public class Chat {
 
     @Id

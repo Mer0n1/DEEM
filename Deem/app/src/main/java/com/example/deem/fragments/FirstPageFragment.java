@@ -29,6 +29,7 @@ import com.example.restful.models.News;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FirstPageFragment extends Fragment {
 
@@ -88,19 +89,24 @@ public class FirstPageFragment extends Fragment {
 
     private void initEvent() {
         if (APIManager.getManager().statusInfo.isEventsListGot()) {
-            List<Event> events = APIManager.getManager().listEvents.getValue();
-            Event event = events.get(events.size()-1);
+            List<Event> events = APIManager.getManager().listEvents.getValue().stream()
+                    .filter(x->x.getStart_date().after(new Date(System.currentTimeMillis())))
+                    .collect(Collectors.toList());
 
-            Date date_exam = event.getStart_date();
-            TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
-            TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
-            text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
-            text_name_exam.setText(event.getNameExam());
+            if (events != null && events.size() != 0) {
+                Event event = events.get(events.size() - 1);
+
+                Date date_exam = event.getStart_date();
+                TextView text_name_exam = main_layout.findViewById(R.id.text_exam_first);
+                TextView text_date_exam = main_layout.findViewById(R.id.text_date_first);
+                text_date_exam.setText(DateTranslator.getInstance().toString(date_exam));
+                text_name_exam.setText(event.getNameExam());
+            }
         }
     }
 
     private void initListNews() {
-        if (APIManager.statusInfo.isGroupsListGot() && APIManager.getManager().statusInfo.isNewsListGot()) {
+        if (APIManager.statusInfo.isGroupsListGot() && APIManager.statusInfo.isNewsListGot()) {
             adminNews = new ArrayList<>();
             List<News> news = APIManager.getManager().listNews.getValue();
             List<Group> adminGroups = APIManager.getManager().adminGroups;

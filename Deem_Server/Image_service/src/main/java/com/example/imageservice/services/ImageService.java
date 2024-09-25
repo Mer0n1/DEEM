@@ -72,7 +72,7 @@ public class ImageService {
             projection = messageImageRepository.findByUuid(UUID);
 
         if (projection != null)
-            path = projection.getPath();
+            path = projection.getPath(); //TODO проконтролировать исключение в случае ненаходки
 
         if (!path.isEmpty())
             image.setImgEncode(encodeImage(path));

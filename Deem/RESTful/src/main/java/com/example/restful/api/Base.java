@@ -4,6 +4,7 @@ import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Club;
+import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
@@ -52,7 +53,7 @@ public interface Base {
     @GET("/chat/getChats")
     Call<List<Chat>> getChats();
     @POST("/message/sendMessage")
-    Call<Void> sendMessage(@Body Message message);
+    Call<Void> sendMessage(@Body CreateMessageDTO message);
     @POST("/chat/createChat")
     Call<Void> sendNewChat(@Body Chat chat);
 

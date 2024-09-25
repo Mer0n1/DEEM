@@ -24,6 +24,7 @@ import com.example.restful.models.Image;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
 import com.example.restful.models.StandardCallback;
+import com.example.restful.utils.ConverterDTO;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -88,24 +89,18 @@ public class CreateNewsDialog extends DialogFragment {
                         news.getImages().add(newsImage);
                     }
 
-                    APIManager.getManager().addNews(news);
+                    APIManager.getManager().addNews(news); //отправляем на сервер
 
                     //convert to News
-                    News NaturalNews = new News();
+                    News NaturalNews = ConverterDTO.CreateNewsDTOToNews(news);
                     NaturalNews.setCompleted(true);
-                    NaturalNews.setImages(new MutableLiveData<>());
-                    NaturalNews.getImages().setValue(news.getImages());
-                    NaturalNews.setIdGroup(news.getIdGroup());
-                    NaturalNews.setGroup(APIManager.getManager().listGroups.stream().filter
-                            (x->x.getId().equals(news.getIdGroup())).findAny().orElse(null));
-                    NaturalNews.setFaculty(news.getFaculty());
-                    NaturalNews.setDate(news.getDate());
-                    NaturalNews.setContent(news.getContent());
-                    NaturalNews.setIdAuthor(news.getIdAuthor());
 
+                    List<News> allNews = APIManager.getManager().listNews.getValue();
+                    allNews.add(0, NaturalNews);
+                    APIManager.getManager().listNews.setValue(allNews);
                     newsListGroup.add(0, NaturalNews);
-
                     updateAddedNews.notifyDataSetChanged();
+
                     dismiss();
                 }
             }

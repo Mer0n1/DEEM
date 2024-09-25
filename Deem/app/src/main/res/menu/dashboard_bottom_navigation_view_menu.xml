@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/firstFragment"
+        android:icon="@drawable/ic_firstpage_selector"
+        android:title="" />
+
+    <item
+        android:id="@+id/messengerFragment"
+        android:icon="@drawable/ic_messenger_selector"
+        android:title="" />
+
+    <item
+        android:id="@+id/groupFragment"
+        android:icon="@drawable/ic_group_selector"
+        android:title="" />
+
+    <item
+        android:id="@+id/newsFragment"
+        android:icon="@drawable/ic_news_selector"
+        android:title="" />
+
+    <item
+        android:id="@+id/eventFragment"
+        android:icon="@drawable/ic_event_selector"
+        android:title="" />
+
+</menu>

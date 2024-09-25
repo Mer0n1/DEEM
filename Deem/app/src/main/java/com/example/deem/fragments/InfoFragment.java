@@ -81,18 +81,6 @@ public class InfoFragment extends Fragment {
     }
 
 
-    /*public void includeButtonBack() {
-        //listener
-        View.OnClickListener onClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                this_activity.OpenFragment(InfoFragment.this, R.id.fragment_main, true);
-                Toolbar.getInstance().TurnOffButtonBack();
-            }
-        };
-        Toolbar.getInstance().includeButtonBack().setOnClickListener(onClick);
-    }*/
-
     public void initToolbar() {
         Toolbar.getInstance().reset();
         Toolbar.getInstance().setTitle("Новости");

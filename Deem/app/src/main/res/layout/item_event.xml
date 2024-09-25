@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Теоретический экзамен по математике"
-            android:textSize="22dp"
+            android:textSize="24dp"
+            android:fontFamily="@font/calibri"
             android:textStyle="bold"
             android:textColor="#000000"
             android:gravity="center"
@@ -49,8 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="Теоретический внутренний экзамен. Максимальное количество баллов которое можно набрать - 100. Подсчет баллов начинаются от 50. Тоесть 45 набранных баллов означает -5 штрафа, а 55 +5 баллов."
-            android:textSize="16dp"
-
+            android:textSize="18dp"
+            android:fontFamily="@font/calibri"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_header_info" />
@@ -61,7 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="Начало 01.01.2031   9:00"
-            android:textSize="20dp"
+            android:textSize="22dp"
+            android:fontFamily="@font/calibri"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_content_info" />

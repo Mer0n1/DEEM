@@ -1,9 +1,16 @@
 package com.example.deem.adapters;
 
+import static java.security.AccessController.getContext;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +33,7 @@ import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycleAdapter.ItemNews> {
@@ -100,16 +108,12 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             if (news.getImages().getValue() != null && news.getImages().getValue().size() != 0) {
                 List<ImageView> imageViews = new ArrayList<>();
 
-                for (NewsImage newsImage : news.getImages().getValue()) {
-                    ImageView imageView = new ImageView(content.getContext());
-                    imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(
-                            newsImage.getImage().getImgEncode()));
-                    imageViews.add(imageView);
-                }
+                for (NewsImage newsImage : news.getImages().getValue())
+                    imageLoad(imageViews, newsImage.getImage().getImgEncode());
 
                 initRecycle(imageViews.size(), imageViews);
 
-            } else if (!news.isCompleted()) { //загружаем новые изображения
+            } else if (!news.isCompleted()) { //загружаем новые изображения из сервера или кэша
                 List<ImageView> imageViews = new ArrayList<>();
                 initRecycle(1, imageViews);
 
@@ -139,13 +143,15 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                         }
                     });
                 }
-            }
+            } else
+                recyclerView.setVisibility(View.GONE); //если изображений нет то отключаем recycle
         }
 
         private void imageLoad(List<ImageView> imageViews, String decodeStr) {
             if (fragment.getContext() != null && fragment.getContext().getResources() != null) { //баг
                 ImageView imageView = new ImageView(fragment.getContext());
-                imageView.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(decodeStr));
+                Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                imageView.setImageBitmap(getScaledBitmap(bitmap));
                 imageViews.add(imageView);
 
                 recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
@@ -159,5 +165,19 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             recyclerView.setAdapter(imagesListRecycleAdapter);
             recyclerView.scrollToPosition(1);
         }
+
+        private Bitmap getScaledBitmap(Bitmap bitmap) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            fragment.getActivity().getWindowManager()
+                    .getDefaultDisplay()
+                    .getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels;
+
+            float aspectRatio = (float) width / (float) bitmap.getWidth();
+            int targetHeight = Math.round(bitmap.getHeight() * aspectRatio);
+
+            return Bitmap.createScaledBitmap(bitmap, width, targetHeight, true);
+        }
+
     }
 }

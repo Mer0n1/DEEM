@@ -61,7 +61,7 @@ public class ListUsersFragment extends Fragment {
     }
 
     private void init() {
-        Toolbar.getInstance().setTitle("Пользователи", 16);
+        Toolbar.getInstance().setTitle("Пользователи", 18);
 
         if (!APIManager.getManager().statusInfo.isAccountListGot())
             return;

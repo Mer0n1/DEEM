@@ -10,6 +10,7 @@ public class CreateMessageDTO {
     private Long author;
     private List<MessageImage> images;
     private Chat chat;
+    private boolean newChat;
 
     public CreateMessageDTO() {}
 
@@ -59,5 +60,13 @@ public class CreateMessageDTO {
 
     public void setImages(List<MessageImage> images) {
         this.images = images;
+    }
+
+    public boolean isNewChat() {
+        return newChat;
+    }
+
+    public void setNewChat(boolean newChat) {
+        this.newChat = newChat;
     }
 }

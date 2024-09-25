@@ -44,20 +44,6 @@ public class ChatController {
         return chatService.getListChats(principal.getName());
     }
 
-
-    /** При создании чата пользователь создает всего 1 сообщение */
-    @PostMapping("/createChat")
-    public ResponseEntity<?> createChat(@RequestBody @Valid Chat chat,
-                           BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(getErrors(bindingResult));
-
-        chatService.CreateNewChat(chat);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/linkAccountToGroupChat")
     public ResponseEntity<?> linkAccountToGroupChat(@RequestBody Chat chat) {

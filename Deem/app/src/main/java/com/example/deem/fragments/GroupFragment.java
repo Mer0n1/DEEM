@@ -2,6 +2,7 @@ package com.example.deem.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,7 @@ public class GroupFragment extends Fragment {
             itsMyGroup = true;
             group.setRank(APIManager.getManager().listGroups.indexOf(group) + 1);
             score.setText("Баллов: " + String.valueOf(group.getScore()));
-            place.setText(String.valueOf("Позиция: " + group.getRank()));
+            place.setText(String.valueOf("Рейтинг: " + group.getRank()));
 
             main_layout.findViewById(R.id.chat_button_group).setVisibility(View.VISIBLE);
             main_layout.findViewById(R.id.create_news).setVisibility(View.VISIBLE);
@@ -115,7 +116,6 @@ public class GroupFragment extends Fragment {
                     CreateNewsDialog createNewsDialog = new CreateNewsDialog();
                     createNewsDialog.initialize(newsList, newsListRecycleAdapter);
                     createNewsDialog.show(getActivity().getSupportFragmentManager(), "creation_menu");
-                    //newsListRecycleAdapter.notifyDataSetChanged();
                 }
             });
 

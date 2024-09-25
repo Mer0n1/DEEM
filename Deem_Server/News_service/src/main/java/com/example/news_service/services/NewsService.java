@@ -33,9 +33,9 @@ public class NewsService {
     }
 
     @Cacheable("newsFeed")
-    public List<News> getNewsFeed(String faculty, Date date) {
+    public List<News> getNewsFeed(String faculty, Date date, Integer course) {
         Pageable pageable = PageRequest.of(0, FeedCount, Sort.by("date").descending());
-        return repository.findAllByFacultyAndDate(faculty, date, pageable);
+        return repository.findAllByFacultyAndDate(faculty, date, course, pageable);
     }
 
     @Transactional

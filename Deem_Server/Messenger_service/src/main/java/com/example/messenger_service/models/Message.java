@@ -8,12 +8,15 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "message")
 @Data
+//@ToString
 public class Message {
 
     @Id

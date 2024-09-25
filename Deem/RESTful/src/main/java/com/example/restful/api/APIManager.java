@@ -10,6 +10,7 @@ import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Club;
+import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
@@ -90,7 +91,36 @@ public class APIManager {
         listClubs  = new MutableLiveData<>();
 
 
-        
+        /*
+        Кэш система нужна для уменьшения нагрузки на сервер.
+        Загрузка новостей: загружаем лишь актуальные новости. Актуальные это те дата которых позднее последней нашей новости, а также те которые были редактированы/удалены  ОК
+        Загрузка сообщений: также загружаем только на момент входа в чат с последнего сообщения  ОК
+        Загрузка ивентов: старые ивенты храним в кэше или где то еще а новые без исключения загружаем из сервера
+        Загрузка групп и аккаунтов:
+        Загрузка изображений: callback можно не заменять, однако думаю можно добавить LiveData на отслеживание списка изображений и обновлять кэш  ОК
+        * */
+        //сам подход buildData поменялся. Теперь мы билдим не единоразовую информацию, а только полученную. Иными словами
+        //если раньше мы загружали весь список чатов для аккаунта который есть у нас, то теперь мы можем загружать его периодически
+        //что означает что обновлять и билдить нужно только response.body
+
+        //могут возникать ошибки в LiveData связанные с null и решение - делать setValue в конструкторе, тоесть здесь
+        //мне кажется неверным подход с создание new MutableData и по идее это должно создаваться в констуркторе
+
+        //нужно подумать над загрузкой переписки таким же методом как загузка новостной ленты
+        //HalpPrivateAccount - аккаунт одногруппника где есть видимость баллов (либо сделать в PrivateAccountDTO)
+        /*
+
+        баги:
+        баг с переписками. Групповая переписка
+        баг. Иногда push не отправляется //как я понял основа этого не принятие запроса в сам контроллер но при этом сохранение сообщений
+        исключения e.printStackTrace();  крашат приложения хотя можно сделать так чтобы мы обрабатывали ситуацию а не крашили, сейчас это тестирование
+        баг который я так и не смог найти - изменение размера собственных item сообщений при пролистывании - вроде как какой то view перекрывает это
+
+        тестирование
+
+        Изменение дизайна
+        сделать рейтинг в профиле
+         */
     }
 
     public static APIManager getManager() {
@@ -102,7 +132,7 @@ public class APIManager {
 
     public static void initialize() {
         //инициализируем в основном автоматическую систему кэша
-        //statusCacheInfo = CacheSystem.getCacheSystem().getCacheStatusInfo(); //строчку не трогать :)
+        statusCacheInfo = CacheSystem.getCacheSystem().getCacheStatusInfo(); //строчку не трогать :)
         //CacheSystem.getCacheSystem().loadAll();
     }
 
@@ -249,8 +279,9 @@ public class APIManager {
                     public void onResponse(Call<List<Club>> call, Response<List<Club>> response) {
                         if (response.body() != null && response.body().size() != 0) {
                             statusInfo.ClubListGot = true;
-                            listClubs.postValue(response.body());
-                            buildClubs();
+                            List<Club> clubList = response.body();
+                            buildClubs(clubList);
+                            listClubs.postValue(clubList);
                         }
                     }
 
@@ -273,11 +304,11 @@ public class APIManager {
         Repository.getInstance().getChats().enqueue(new Callback<List<Chat>>() {
             @Override
             public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
-                if (response.body() != null && response.body().size() != 0) {
+                if (response.body() != null) {
                     List<Chat> cChats = response.body();
+                    statusInfo.ChatsListGot = true;
                     buildChats(cChats);
                     listChats.postValue(cChats);
-                    statusInfo.ChatsListGot = true;
                 }
             }
 
@@ -355,7 +386,7 @@ public class APIManager {
 
     //--------send
 
-    public void sendMessage(Message message) {
+    public void sendMessage(CreateMessageDTO message) {
         Repository.getInstance().sendMessage(message).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -723,12 +754,12 @@ public class APIManager {
         }
     }
 
-    public void buildClubs() {
+    public void buildClubs(List<Club> clubList) {
 
 
         if (!groupClubs.isEmpty()) {
 
-            for (Club club : listClubs.getValue()) {
+            for (Club club : clubList) {
                 for (Group group : groupClubs) //определяем группу для клуба
                     if (club.getId_group() == group.getId()) {
                         club.setGroup(group);

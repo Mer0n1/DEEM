@@ -51,4 +51,8 @@ public class DateTranslator {
 
         return String.format("%02d:%02d", hours, minutes);
     }
+
+    public String DayMonthToString(Date date) {
+        return date.getDate() + " " + IntToStringMonth(date.getMonth());
+    }
 }

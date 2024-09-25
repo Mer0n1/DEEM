@@ -28,4 +28,12 @@ public class MessagePush {
     public void setMessage(Message message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "MessagePush{" +
+                "receivers=" + receivers +
+                ", message=" + message +
+                '}';
+    }
 }

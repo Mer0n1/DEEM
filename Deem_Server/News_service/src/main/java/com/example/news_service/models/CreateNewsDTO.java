@@ -2,6 +2,8 @@ package com.example.news_service.models;
 
 import com.example.news_service.models.images.NewsImage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
@@ -14,8 +16,11 @@ public class CreateNewsDTO {
     private Long id;
     private String content;
     private Date date;
+    @NotNull
     private Long idGroup;
+    @NotNull
     private Long idAuthor;
+    @NotEmpty
     private String faculty;
     private List<NewsImage> images;
 }

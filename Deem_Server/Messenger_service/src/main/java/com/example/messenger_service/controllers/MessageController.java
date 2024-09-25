@@ -1,11 +1,13 @@
 package com.example.messenger_service.controllers;
 
+import com.example.messenger_service.models.CreateMessageDTO;
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.services.ChatService;
 import com.example.messenger_service.services.MessageService;
 import com.example.messenger_service.services.MessengerServiceClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.example.messenger_service.util.ResponseValidator.getErrors;
@@ -27,13 +31,25 @@ public class MessageController {
     private MessengerServiceClient messengerServiceClient;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @PostMapping("/sendMessage")
-    public ResponseEntity<?> sendMessage(@RequestBody @Valid Message message,
+    public ResponseEntity<?> sendMessage(@RequestBody @Valid CreateMessageDTO dto,
                                       BindingResult bindingResult) throws JsonProcessingException {
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
+
+        Message message = modelMapper.map(dto, Message.class);
+
+        //проверим существует ли чат этого сообщения или нет
+        if (dto.isNewChat()) { //создаем новый чат если не существует
+            List<Message> messageList = new ArrayList<>(); //TODO на случай проверить account_chat на наличие переписки
+            messageList.add(message);
+            dto.getChat().setMessages(messageList);
+            chatService.CreateNewChat(dto.getChat());
+        }
 
         Message actualObject = messageService.save(message);
 

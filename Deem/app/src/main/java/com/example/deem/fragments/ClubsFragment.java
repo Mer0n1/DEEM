@@ -14,6 +14,7 @@ import com.example.deem.MainActivity;
 import com.example.deem.R;
 import com.example.deem.adapters.ClubsRecycleAdapter;
 import com.example.deem.adapters.GroupsListRecycleAdapter;
+import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Club;
 
@@ -43,6 +44,8 @@ public class ClubsFragment extends Fragment {
     }
 
     private void init() {
+
+        Toolbar.getInstance().setTitle("Клубы", 18);
 
         if (APIManager.statusInfo.isClubListGot()) {
             clubs = APIManager.getManager().listClubs.getValue();

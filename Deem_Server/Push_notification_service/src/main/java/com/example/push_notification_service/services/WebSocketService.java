@@ -38,6 +38,7 @@ public class WebSocketService {
     }
 
     public void sendMessageToClient(MessagePush messagePush) throws JsonProcessingException {
+
         //нужно вернуть лист никнеймов людей в чате
         List<String> list = new ArrayList<>();
         Set<Client> clients = MainContainer.clients;
@@ -100,8 +101,8 @@ public class WebSocketService {
 
         for (Client client : clients)
             if (!news.getIdAuthor().equals(client.getPersonDetails().getId()))
-                if (client.getPersonDetails().getFaculty().equals(news.getFaculty()) /*&&
-                    client.getPersonDetails().getCourse().equals()*/) { //TODO course
+                if (client.getPersonDetails().getFaculty().equals(news.getFaculty()) &&
+                    client.getPersonDetails().getCourse().equals(news.getCourse())) {
                     MainContainer.send(client.getSession(), jsonMessage, MainContainer.Type.News);
                 }
     }

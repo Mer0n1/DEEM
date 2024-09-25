@@ -28,6 +28,7 @@ import com.example.deem.fragments.InfoFragment;
 import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -35,7 +36,6 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    //bottom_
     private FragmentTransaction fragmentTransaction;
     private GroupFragment groupFragment;
     private InfoFragment infoFragment;
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     public enum FragmentType { first, group, info_, messenger, events }
 
+    private int currentFragmentId = R.id.firstFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,26 +63,37 @@ public class MainActivity extends AppCompatActivity {
         OpenMenu(FragmentType.first);
 
 
-        View.OnClickListener onClickBottom = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
 
-                if (v == findViewById(R.id.bottom_first))
+            if (item.getItemId() == currentFragmentId)
+                return false;
+            currentFragmentId = item.getItemId();
+
+
+            switch (item.getItemId()) {
+                case R.id.firstFragment:
                     OpenMenu(FragmentType.first);
-                if (v == findViewById(R.id.bottom_info))
-                    OpenMenu(FragmentType.info_);
-                if (v == findViewById(R.id.bottom_message))
+                    return true;
+                case R.id.messengerFragment:
                     OpenMenu(FragmentType.messenger);
-                if (v == findViewById(R.id.bottom_events))
-                    OpenMenu(FragmentType.events);
-                if (v == findViewById(R.id.bottom_group)) {
+                    return true;
+                case R.id.groupFragment:
                     Bundle bundle = new Bundle();
                     bundle.putString("name", APIManager.getManager().myAccount.getGroup().getName());
                     OpenMenu(FragmentType.group, bundle);
-                }
+                    return true;
+                case R.id.newsFragment:
+                     OpenMenu(FragmentType.info_);
+                     return true;
+                case R.id.eventFragment:
+                     OpenMenu(FragmentType.events);
+                    return true;
 
             }
-        };
+            return false;
+        });
+
         View.OnClickListener onClickOther = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,12 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
-        findViewById(R.id.bottom_first).setOnClickListener(onClickBottom);
-        findViewById(R.id.bottom_message).setOnClickListener(onClickBottom);
-        findViewById(R.id.bottom_group).setOnClickListener(onClickBottom);
-        findViewById(R.id.bottom_info).setOnClickListener(onClickBottom);
-        findViewById(R.id.bottom_events).setOnClickListener(onClickBottom);
 
         findViewById(R.id.profile_icon).setOnClickListener(onClickOther);
     }
@@ -133,18 +139,6 @@ public class MainActivity extends AppCompatActivity {
         if (fragmentType == FragmentType.events)
             fragment = eventsFragment;
 
-
-        if (fragment.getClass() == FirstPageFragment.class)
-            changeDesignOfIcon(-1);
-        if (fragment.getClass() == GroupFragment.class)
-            changeDesignOfIcon(R.id.bottom_group);
-        if (fragment.getClass() == EventsFragment.class)
-            changeDesignOfIcon(R.id.bottom_events);
-        if (fragment.getClass() == InfoFragment.class)
-            changeDesignOfIcon(R.id.bottom_info);
-        if (fragment.getClass() == ChatsContainerFragment.class)
-            changeDesignOfIcon(R.id.bottom_message);
-
         fragment.setArguments(bundle);
         OpenFragment(fragment, R.id.fragment_main, false);
     }
@@ -166,30 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
     public InfoFragment getInfoFragment() {
         return infoFragment;
-    }
-
-    /* Изменение дизайна иконок */
-    public void changeDesignOfIcon(int RId) {
-        ImageView bottom_message = findViewById(R.id.bottom_message);
-        ImageView bottom_group = findViewById(R.id.bottom_group);
-        ImageView bottom_events = findViewById(R.id.bottom_events);
-        ImageView bottom_info = findViewById(R.id.bottom_info);
-
-        bottom_message.setBackgroundResource(R.drawable.icon_messenger);
-        bottom_group.setBackgroundResource(R.drawable.icon_group);
-        bottom_events.setBackgroundResource(R.drawable.icon_events);
-        bottom_info.setBackgroundResource(R.drawable.icon_news);
-
-        switch (RId) {
-            case R.id.bottom_message:
-                bottom_message.setBackgroundResource(R.drawable.icon_messenger_pressed); break;
-            case R.id.bottom_group:
-                bottom_group.setBackgroundResource(R.drawable.icon_group_pressed); break;
-            case R.id.bottom_info:
-                bottom_info.setBackgroundResource(R.drawable.icon_news_pressed); break;
-            case R.id.bottom_events:
-                bottom_events.setBackgroundResource(R.drawable.icon_events_pressed);break;
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

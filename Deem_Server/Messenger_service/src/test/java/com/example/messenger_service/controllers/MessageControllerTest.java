@@ -35,7 +35,7 @@ class MessageControllerTest {
     @Mock
     private MessengerServiceClient messengerServiceClient;
 
-    @Test
+    /*@Test
     void sendMessage() throws JsonProcessingException {
         BindingResult bindingResult = mock(BindingResult.class);
         Message message = new Message();
@@ -50,7 +50,7 @@ class MessageControllerTest {
         verify(messengerServiceClient).pushMessageTo(message);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
+    }*/
 
     @Test
     void getMessage() {

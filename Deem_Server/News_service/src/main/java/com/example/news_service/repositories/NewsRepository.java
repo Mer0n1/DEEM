@@ -13,6 +13,7 @@ import java.util.List;
 public interface NewsRepository extends JpaRepository<News, Integer> {
     List<News> findAllByFaculty(String faculty);
 
-    @Query("SELECT n FROM News n WHERE n.faculty = ?1 AND n.date < ?2")
-    List<News> findAllByFacultyAndDate(String faculty, Date date, Pageable pageable);
+    //@Query("SELECT n FROM News n WHERE n.faculty = ?1 AND n.date < ?2 AND n.course =?3")
+    @Query("SELECT n FROM News n WHERE n.faculty = ?1 AND n.date < ?2 AND (n.course = ?3 OR n.course IS NULL)")
+    List<News> findAllByFacultyAndDate(String faculty, Date date, Integer course, Pageable pageable);
 }

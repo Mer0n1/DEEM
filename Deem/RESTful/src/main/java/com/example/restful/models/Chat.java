@@ -6,7 +6,9 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.restful.datebase.converters.ConverterListLong;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.List;

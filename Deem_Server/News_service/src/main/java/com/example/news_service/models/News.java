@@ -39,6 +39,9 @@ public class News {
     @Column(name = "author")
     private Long idAuthor;
 
+    @Column(name = "course")
+    private Integer course;
+
     @Transient
     private List<NewsImage> images;
 }

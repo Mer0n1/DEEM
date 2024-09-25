@@ -4,17 +4,21 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Chat;
+import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
+import com.example.restful.utils.ConverterDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -46,18 +50,31 @@ public class PushClient {
                 String protocol = jsonObject.get("Protocol").toString();
 
                 if (protocol.equals("\"Message\"")) {
+
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
-                        Message message = objectMapper.readValue(jsonObject.get("Type").toString(), Message.class);
-                        message.setImages(new MutableLiveData<>());
+                        CreateMessageDTO dto = objectMapper.readValue(jsonObject.get("Type").toString(), CreateMessageDTO.class);
 
-                        if (message != null) {
-                            int id = message.getChat().getId();
-                            List<Chat> chats = APIManager.getManager().listChats.getValue();
-                            Chat chat = chats.stream().filter(s -> s.getId() == id).findAny().orElse(null);
+                        Message message = ConverterDTO.CreateMessageDTOToMessage(dto);
+                        message.getImages().postValue(dto.getImages());
+
+                        //билд чатов
+                        int id = message.getChat().getId();
+                        List<Chat> chats = APIManager.getManager().listChats.getValue();
+                        Chat chat = chats.stream().filter(s -> s.getId() == id).findAny().orElse(null);
+
+                        if (chat != null)
                             chat.getMessages().add(message);
-                            APIManager.getManager().listChats.postValue(chats); //update
+                        else {
+                            Chat chat1 = message.getChat();
+                            chat1.setMessages(new ArrayList<>());
+                            chat1.getMessages().add(message);
+                            chats.add(chat1);
                         }
+
+                        //update
+                        APIManager.getManager().listChats.postValue(chats);
+
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }

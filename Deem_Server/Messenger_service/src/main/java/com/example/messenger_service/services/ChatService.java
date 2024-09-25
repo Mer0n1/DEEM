@@ -54,10 +54,9 @@ public class ChatService {
 
     @Transactional
     public void CreateNewChat(Chat chat) {
-
         Message firstMessage = chat.getMessages().get(0);
-
         chat.getMessages().clear();
+
         //создание чата в таблице чатов
         Chat updatedChat = save(chat);
         //создание сообщения в таблице сообщений

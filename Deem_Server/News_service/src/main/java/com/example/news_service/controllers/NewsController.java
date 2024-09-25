@@ -39,22 +39,25 @@ public class NewsController {
         return newsService.getNews(personDetails.getFaculty());
     }*/
 
+    /** Отправляет обновленный список новостей для текущего курса и факультета. Все админ-новости также отправляем*/
     @GetMapping("/getNewsFeed")
     public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
                                   @AuthenticationPrincipal PersonDetails personDetails) {
-        return newsService.getNewsFeed(personDetails.getFaculty(), date); //TODO чекнуть на фильтрацию курса внутри факультета
+        return newsService.getNewsFeed(personDetails.getFaculty(), date, personDetails.getCourse());
     }
 
 
     @PostMapping("/createNews")
     public ResponseEntity<?> createNews(@RequestBody @Valid CreateNewsDTO dto,
-                           BindingResult bindingResult) {
-        News news = modelMapper.map(dto, News.class);
+                           BindingResult bindingResult, @AuthenticationPrincipal PersonDetails personDetails) {
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        News nnews = newsService.createNews(news);
+        News news = modelMapper.map(dto, News.class);
+        news.setCourse(personDetails.getCourse());
+        news.setFaculty(personDetails.getFaculty());
+        News nnews = newsService.createNews(news); //actual with fixed id
 
         //Сохранение изображений
         if (news.getImages() != null)

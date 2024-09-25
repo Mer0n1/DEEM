@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.restful.datebase.converters.Converters;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -38,6 +39,7 @@ public class Message {
     @Ignore
     private Chat chat;
     @Ignore
+    @JsonIgnore
     private MutableLiveData<List<MessageImage>> images;
     @Ignore
     private boolean NoImages;

@@ -9,25 +9,28 @@
 Есть встроенная веб-форма для экзамена. Особые экзамены могут иметь собственный сервис для взаимодействия с БД и участниками экзамена. Таким образом веб-форма будет отображать интерфейс открытого в приложении экзамена. 
 
 ### Запуск
-На данный момент сервер недоступен, но в будущем планируется запуск в Google Play Market.
+На данный момент сервер недоступен для использования, но в будущем планируется запуск в Google Play Market.
+
+Инструкция для запуска сервера и приложения из собранных файлов:
+1. Загрузить jar-файлы по ссылке https://disk.yandex.ru/d/JGLIQJLDRyr1HA
+2. Настроить локальный ip собственного компьютера как 192.168.0.103
+3. Запустить bash скрипт start.sh.
+4. Скачать и установить приложение DEEM.apk на телефон.
+
+Сервер работает на 192.162.0.103:8081
 
 По идее электронного журнала любая регистрация происходит администрацией (разработчиками приложения).
-
 Однако есть возможность протестировать приложение гостевыми аккаунтами:
 ```
 Логины: Test Test1
 Пароль: 123456
 ```
 
-Также есть комплект jar файлов. Необходимо запустить bash файл start.sh. 
-Ссылка: https://disk.yandex.ru/d/JGLIQJLDRyr1HA
+### Сборка (IDLE)
 
+1. Для запуска сервера необходимо иметь SQL БД. Все настройки таблиц находятся внутри папки docs в файле dilichi. Нужно будет импортировать этот файл в БД.
 
-### Использование в IDLE
-Для запуска сервера необходимо иметь SQL БД. Все настройки таблиц находятся внутри папки docs в файле dilichi. Достаточно будет импортировать этот файл в БД.
-
-Каждый сервис должен содержать файл application.properties. Настройки этого файла находятся внутри папки docs. Для начала работы необходимо сгенерировать секретный код и jwt ключ. 
-
+2. Каждый сервис должен содержать файл application.properties. Конфигурация этого файла находятся внутри папки docs. Для начала работы необходимо сгенерировать секретный код и jwt ключ и вставить в конфигурацию.
 Я предлагаю использовать начальный jwt ключ сгенерированный мною: 
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiY291cnNlIjoxLCJmYWN1bHR5IjoiRVBGIiwiaWF0IjoxNzAyNjM0NzUyLCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNjI2MzQ3NTJ9.5YdyXgKdeyigRDfc7kTjKUW8gKcfItg4YQon_rPtnwM
@@ -37,6 +40,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI
 ```
 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
 ```
+3. Собрать и запустить сервисы в intelij idea 
 
 На данный момент не рекомендуется изменять адреса и порты так как необходимые порты и адреса прописаны в RestTemplate-сервисах.
 
@@ -53,3 +57,6 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI
 <img src="img/8.jpg" alt="drawing" width="200"/>
 <img src="img/9.jpg" alt="drawing" width="200"/>
 <img src="img/10.jpg" alt="drawing" width="200"/>
+<img src="img/11.jpg" alt="drawing" width="200"/>
+<img src="img/12.jpg" alt="drawing" width="200"/>
+<img src="img/13.jpg" alt="drawing" width="200"/>

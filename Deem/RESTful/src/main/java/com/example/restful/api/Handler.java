@@ -1,13 +1,10 @@
 package com.example.restful.api;
 
-import com.example.restful.models.Account;
-import com.example.restful.models.Group;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;

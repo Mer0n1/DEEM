@@ -1,5 +1,6 @@
 package com.example.deem.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +28,12 @@ import com.example.restful.models.Image;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
-import com.example.restful.models.NewsImage;
+import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.MessageViewHolder> {
@@ -38,9 +41,12 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
     private List<Message> list;
     private Activity activity;
 
+    private int current_position;
+
     public ChatRecycleAdapter(List<Message> list, Activity activity) {
         this.list = list;
         this.activity = activity;
+        current_position = -1;
     }
 
     @NonNull
@@ -58,7 +64,16 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.textMessage.setText(null);
+        holder.message_time.setText("");
+        holder.include_view.setVisibility(View.GONE);
+        holder.item_date.setText("");
+        holder.views.clear();
+        holder.recyclerView.setVisibility(View.GONE);
+
+        current_position = position;
+
         holder.setData(list.get(position));
     }
 
@@ -79,26 +94,57 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
     class MessageViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textMessage;
+        private TextView message_time;
         private RecyclerView recyclerView;
         private List<ImageView> views;
         private ImagesListRecycleAdapter imagesListRecycleAdapter;
+
+        private View include_view;
+        private TextView item_date;
+
+        private boolean isMyMessage;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textMessage  = itemView.findViewById(R.id.textMessage);
             recyclerView = itemView.findViewById(R.id.list_images);
+            message_time = itemView.findViewById(R.id.message_time);
+            include_view = itemView.findViewById(R.id.item_date_include);
+            item_date = include_view.findViewById(R.id.text_chat_date);
 
             views = new ArrayList<>();
             recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
             imagesListRecycleAdapter = new ImagesListRecycleAdapter(views, activity);
             recyclerView.setAdapter(imagesListRecycleAdapter);
             recyclerView.scrollToPosition(1);
+
+            isMyMessage = false;
         }
 
         public void setData(Message message) {
             textMessage.setText(message.getText());
-            views.clear();
+            message_time.setText(DateTranslator.getInstance().TimeToString(message.getDate()));
+
+            if (message.getAuthor().equals(APIManager.getManager().myAccount.getId()))
+                isMyMessage = true;
+
+            //настройка item_date
+            boolean isLastMessage = false;
+
+            Date up_date = list.get(current_position).getDate();
+            if (current_position-1 >= 0)
+                up_date = list.get(current_position-1).getDate();
+            else isLastMessage = true;
+
+
+            if (up_date != null) {
+                if (!DateTranslator.getInstance().DayMonthToString(list.get(current_position).getDate()).equals(
+                        DateTranslator.getInstance().DayMonthToString(up_date)) || isLastMessage) {
+                    item_date.setText(DateTranslator.getInstance().DayMonthToString(message.getDate()));
+                    include_view.setVisibility(View.VISIBLE);
+                }
+            }
 
             //Обновление Holder изображений
             if (message.isNoImages() || message.getImages().getValue() == null)
@@ -151,7 +197,8 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
             ImageView imageView = new ImageView(activity);
             Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
-            imageView.setImageBitmap(roundedBitmap);
+            imageView.setImageBitmap(getScaledBitmap(roundedBitmap));
+
             views.add(imageView);
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size()));
@@ -173,6 +220,20 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             return roundedBitmap;
         }
 
+        private Bitmap getScaledBitmap(Bitmap bitmap) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager()
+                    .getDefaultDisplay()
+                    .getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels;
 
+            if (!isMyMessage)
+                width -= 350;
+
+            float aspectRatio = (float) width / (float) bitmap.getWidth();
+            int targetHeight = Math.round(bitmap.getHeight() * aspectRatio);
+
+            return Bitmap.createScaledBitmap(bitmap, width, targetHeight, true);
+        }
     }
 }

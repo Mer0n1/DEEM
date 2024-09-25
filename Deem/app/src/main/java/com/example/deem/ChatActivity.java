@@ -2,6 +2,7 @@ package com.example.deem;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -14,15 +15,19 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
+import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.Group;
+import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
+import com.example.restful.utils.ConverterDTO;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
 import com.example.deem.utils.ImageUtil;
@@ -31,6 +36,8 @@ import com.example.restful.models.Account;
 import com.example.restful.models.Chat;
 import com.example.restful.models.Image;
 import com.example.restful.models.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -52,9 +59,6 @@ public class ChatActivity extends AppCompatActivity {
     private Integer CurrentMessages;
 
     private boolean newChat;
-
-    private Handler handler;
-    private Runnable updateRunnable;
 
     private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
 
@@ -92,13 +96,39 @@ public class ChatActivity extends AppCompatActivity {
         SetListeners();
 
         //Подпись на наблюдение за новыми сообщениями
-        APIManager.getManager().listChats.observe(this, new Observer<List<Chat>>() {
+        APIManager.getManager().listChats.observeForever(new Observer<List<Chat>>() {
             @Override
             public void onChanged(List<Chat> newsList) {
                 chatRecycleAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
             }
         });
+
+        //Установка изображений
+        if (currentChat.getUsers().size() == 2) {
+            ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
+                @Override
+                public void onImageLoaded(String decodeStr) {
+                    Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                    activityChatBinding.iconChat.setImageBitmap(bitmap);
+                }
+            };
+
+            Account account_with_chat = getСorrespondent();
+            /*if (currentChat.getUsers().get(0).equals(APIManager.getManager().myAccount.getId()))
+                account_with_chat = APIManager.getManager().listAccounts.stream()
+                        .filter(x->x.getId().equals(currentChat.getUsers().get(1))).findAny().orElse(null);
+            else
+                account_with_chat = APIManager.getManager().listAccounts.stream()
+                        .filter(x->x.getId().equals(currentChat.getUsers().get(0))).findAny().orElse(null);*/
+
+            if (account_with_chat != null) {
+                if (account_with_chat.getImageIcon() != null) {
+                    imageLoadCallback.onImageLoaded(account_with_chat.getImageIcon().getImgEncode());
+                } else
+                    APIManager.getManager().getIconImageLazy(account_with_chat, imageLoadCallback);
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -154,6 +184,32 @@ public class ChatActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
+
+        activityChatBinding.iconChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Account account = getСorrespondent();
+
+                if (account != null) {
+                    Intent intent = new Intent(ChatActivity.this, ProfileActivity.class);
+                    intent.putExtra("Nickname", account.getUsername());
+                    startActivity(intent);
+                }
+            }
+        });
+
+    }
+
+    private Account getСorrespondent() {
+        Account account_with_chat = null;
+        if (currentChat.getUsers().get(0).equals(APIManager.getManager().myAccount.getId()))
+            account_with_chat = APIManager.getManager().listAccounts.stream()
+                    .filter(x->x.getId().equals(currentChat.getUsers().get(1))).findAny().orElse(null);
+        else
+            account_with_chat = APIManager.getManager().listAccounts.stream()
+                    .filter(x->x.getId().equals(currentChat.getUsers().get(0))).findAny().orElse(null);
+
+        return account_with_chat;
     }
 
     private void loadChat() {
@@ -232,6 +288,7 @@ public class ChatActivity extends AppCompatActivity {
         Message message = new Message();
         message.setText(content);
         message.setAuthor(APIManager.getManager().myAccount.getId());
+        message.setImages(new MutableLiveData<>());
         message.getImages().setValue(FixedImages);
         message.setDate(new Date(System.currentTimeMillis()));
 
@@ -248,20 +305,17 @@ public class ChatActivity extends AppCompatActivity {
         message.setChat(chatformessage);
 
         messages.add(message);
-
-        if (!newChat)
-            APIManager.getManager().sendMessage(message);
-        else
-            APIManager.getManager().sendNewChat(currentChat);
-
         message.setChat(currentChat);
+
+        //создаем dto чтобы отправить на сервер
+        CreateMessageDTO dto = ConverterDTO.MessageToCreateMessageDTO(message);
+        dto.setNewChat(newChat);
+        dto.getChat().setMessages(null);
+
+        APIManager.getManager().sendMessage(dto);
+
+        newChat = false;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (handler != null)
-            handler.removeCallbacks(updateRunnable);
-    }
 
 }

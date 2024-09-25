@@ -65,8 +65,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
+                        android:paddingLeft="10dp"
+                        android:fontFamily="@font/calibri"
                         android:text="Некоторое описание..."
-                        android:textSize="16dp" />
+                        android:textSize="18dp" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -79,10 +81,11 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/button_white_animate1"
                         android:gravity="left|center"
+                        android:fontFamily="@font/calibri"
                         android:paddingLeft="10dp"
                         android:stateListAnimator="@null"
                         android:text="0 участников"
-                        android:textSize="18dp" />
+                        android:textSize="20dp" />
 
 
                     <!--<TextView
@@ -111,7 +114,8 @@
                             android:gravity="center"
                             android:text="1 место"
                             android:textColor="@color/black"
-                            android:textSize="24dp"
+                            android:textSize="26dp"
+                            android:fontFamily="@font/calibri"
                             android:textStyle="bold" />
 
                         <TextView
@@ -122,7 +126,8 @@
                             android:gravity="center"
                             android:text="0 баллов"
                             android:textColor="@color/black"
-                            android:textSize="24dp"
+                            android:textSize="26dp"
+                            android:fontFamily="@font/calibri"
                             android:textStyle="bold" />
 
                     </LinearLayout>

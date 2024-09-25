@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,14 @@ public class ChatsContainerFragment extends Fragment {
         initListAndRecycle();
 
         //View.inflate(getContext(), R.layout.item_chat_story, layout);
+
+        APIManager.getManager().listChats.observeForever(new Observer<List<Chat>>() {
+            @Override
+            public void onChanged(List<Chat> newsList) {
+                containerChatsRecycleAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+            }
+        });
     }
 
     public void initToolbar() {

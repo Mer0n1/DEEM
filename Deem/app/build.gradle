@@ -76,6 +76,7 @@ dependencies {
 
     //other
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.google.code.gson:gson:2.8.9'  // Или последнюю версию Gson
 
     //Room
     implementation "androidx.room:room-runtime:2.5.2"

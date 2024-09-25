@@ -8,12 +8,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.deem.databinding.ActivityProfile2Binding;
 import com.example.deem.databinding.ActivityProfileBinding;
 import com.example.deem.fragments.OptionsFragment;
 import com.example.deem.utils.ImageUtil;
@@ -27,24 +29,27 @@ import java.io.InputStream;
 /** Обязательное требование: Extra Nickname:название_аккаунта */
 public class ProfileActivity extends AppCompatActivity {
 
-    private ActivityProfileBinding binding;
+    //private ActivityProfileBinding binding;
+    private ActivityProfile2Binding binding;
     private Account account;
 
     private OptionsFragment optionsFragment;
     private FragmentTransaction fragmentTransaction;
 
+    private boolean isMyAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        binding = ActivityProfile2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         init();
     }
 
     private void init() {
-        if (!APIManager.getManager().statusInfo.isAccountListGot())
+        if (!APIManager.statusInfo.isAccountListGot())
             return;
 
         optionsFragment = new OptionsFragment();
@@ -52,6 +57,11 @@ public class ProfileActivity extends AppCompatActivity {
         String nickname = getIntent().getStringExtra("Nickname");
         if (nickname.isEmpty())
             return;
+
+        if (nickname.equals(APIManager.getManager().myAccount.getUsername()))
+            isMyAccount = true;
+        else
+            findViewById(R.id.options_card).setVisibility(View.GONE);
 
         if (nickname.equals(APIManager.getManager().myAccount.getUsername()))
             account = APIManager.getManager().myAccount;
@@ -64,10 +74,12 @@ public class ProfileActivity extends AppCompatActivity {
         binding.profileFullName.setText(account.getSurname() + " " + account.getName() + " " + account.getFathername());
         binding.profileCourseInf.setText(account.getGroup().getCourse() + " " + account.getGroup().getFaculty());
         binding.profileGroupNumber.setText(account.getGroup().getName());
-        binding.profileMail.setText("----");
+        binding.profileMail.setText(""); //TODO
         binding.myScore.setText(String.valueOf(account.getScore()));
         binding.profilePersonalId.setText(String.valueOf(account.getId())); //personal identifier
         binding.profileNicknameInf.setText(account.getUsername());
+        binding.profileNicknameInf2.setText(account.getUsername());
+        ((TextView) findViewById(R.id.rank)).setText("No rank");
 
         SetListeners();
 
@@ -87,28 +99,23 @@ public class ProfileActivity extends AppCompatActivity {
 
         optionsFragment.UpdateDrawableIcon(binding.profileMyIcon.getDrawable());
 
-        //
+        //Hide options menu
         if (!nickname.equals(APIManager.getManager().myAccount.getUsername()))
-            setVisibilityBottom(View.GONE);
+            findViewById(R.id.options_card).setVisibility(View.GONE);
         else
-            setVisibilityBottom(View.VISIBLE);
+            findViewById(R.id.options_card).setVisibility(View.VISIBLE);
+
 
     }
 
-    private void setVisibilityBottom(int code) {
-        binding.exitFromAccount.setVisibility(code);
-        binding.options.setVisibility(code);
-        binding.supports.setVisibility(code);
-        binding.empty.setVisibility(code);
-    }
 
     private void SetListeners() {
-        binding.buttonBackProfile.setOnClickListener(new View.OnClickListener() {
+        /*binding.buttonBackProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
-        });
+        });*/
 
         binding.exitFromAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,13 +129,12 @@ public class ProfileActivity extends AppCompatActivity {
         binding.options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.profileLayout.setVisibility(View.GONE);
-
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.profile_fragment, optionsFragment);
                 fragmentTransaction.commit();
             }
         });
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -2,6 +2,7 @@ package com.example.messenger_service.config;
 
 
 import com.google.common.cache.CacheBuilder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
@@ -50,6 +51,11 @@ class WebSecurityConfiguration {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public ModelMapper ModelMapper() {
+        return new ModelMapper();
     }
 
     @Bean("habrCacheManager")
