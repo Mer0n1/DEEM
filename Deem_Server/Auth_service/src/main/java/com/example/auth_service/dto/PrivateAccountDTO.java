@@ -12,7 +12,7 @@ public class PrivateAccountDTO {
     private String name;
     private String surname;
     private String fathername;
-    //private int score;
+    private Integer score;
     private Long group_id;
     private Group group;
     private String role;

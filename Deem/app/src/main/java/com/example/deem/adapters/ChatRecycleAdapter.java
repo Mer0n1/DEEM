@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
     @Override
     public int getItemViewType(int position) {
-        if (list.get(position).getAuthor() == APIManager.getManager().myAccount.getId()) {
+        if (list.get(position).getAuthor() == APIManager.getManager().getMyAccount().getId()) {
             return 1;
         } else {
             return 2;
@@ -103,9 +104,11 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         private TextView item_date;
 
         private boolean isMyMessage;
+        private View itview;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
+            itview = itemView;
 
             textMessage  = itemView.findViewById(R.id.textMessage);
             recyclerView = itemView.findViewById(R.id.list_images);
@@ -126,7 +129,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             textMessage.setText(message.getText());
             message_time.setText(DateTranslator.getInstance().TimeToString(message.getDate()));
 
-            if (message.getAuthor().equals(APIManager.getManager().myAccount.getId()))
+            if (message.getAuthor().equals(APIManager.getManager().getMyAccount().getId()))
                 isMyMessage = true;
 
             //настройка item_date
@@ -136,7 +139,6 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             if (current_position-1 >= 0)
                 up_date = list.get(current_position-1).getDate();
             else isLastMessage = true;
-
 
             if (up_date != null) {
                 if (!DateTranslator.getInstance().DayMonthToString(list.get(current_position).getDate()).equals(
@@ -156,37 +158,10 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                     imagesListRecycleAdapter.notifyDataSetChanged();
                 }
             } else {
-
-                if (!message.isNoImages()) {
-                    Account account = APIManager.getManager().listAccounts.stream().filter(x -> x.getId()
-                            == message.getAuthor()).findAny().orElse(null);
-
-                    String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
-                            DateUtil.getInstance().getDateToForm(message.getDate()), account.getUsername());
-
-                    Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID);
-
-                    if (image != null) {
-                        MessageImage messageImage = new MessageImage();
-                        messageImage.setImage(image);
-                        messageImage.setId_message(message.getId());
-                        messageImage.setUuid(UUID);
-                        if (message.getImages().getValue() == null)
-                            message.getImages().setValue(new ArrayList<>());
-                        message.getImages().getValue().add(messageImage);
-
-                        setImageOnView(image.getImgEncode());
-
-                    } else {
-                        //Lazy система подгрузки изображений
-                        APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
-                            @Override
-                            public void onImageLoaded(String decodeStr) {
-                                setImageOnView(decodeStr);
-                            }
-                        });
-                    }
-                }
+                APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
+                    @Override
+                    public void onImageLoaded(String decodeStr) { setImageOnView(decodeStr);}
+                });
             }
 
         }

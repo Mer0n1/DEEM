@@ -48,7 +48,7 @@ public class ClubsFragment extends Fragment {
         Toolbar.getInstance().setTitle("Клубы", 18);
 
         if (APIManager.statusInfo.isClubListGot()) {
-            clubs = APIManager.getManager().listClubs.getValue();
+            clubs = APIManager.getManager().getListClubs().getValue();
             main_layout.findViewById(R.id.clubs_recycle).setVisibility(View.VISIBLE);
 
             recycleAdapterClubs = new ClubsRecycleAdapter(clubs, this);

@@ -28,6 +28,7 @@ import com.example.deem.fragments.InfoFragment;
 import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
+import com.example.restful.datebase.CacheSystem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.FileNotFoundException;
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.groupFragment:
                     Bundle bundle = new Bundle();
-                    bundle.putString("name", APIManager.getManager().myAccount.getGroup().getName());
+                    bundle.putString("name", APIManager.getManager().getMyAccount().getGroup().getName());
                     OpenMenu(FragmentType.group, bundle);
                     return true;
                 case R.id.newsFragment:
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (v == findViewById(R.id.profile_icon)) {
                     Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                    intent.putExtra("Nickname", APIManager.getManager().myAccount.getUsername());
+                    intent.putExtra("Nickname", APIManager.getManager().getMyAccount().getUsername());
                     startActivity(intent);
                 }
             }
@@ -160,6 +161,18 @@ public class MainActivity extends AppCompatActivity {
 
     public InfoFragment getInfoFragment() {
         return infoFragment;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CacheSystem.getCacheSystem().saveAll();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CacheSystem.getCacheSystem().saveAll();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

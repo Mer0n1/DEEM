@@ -37,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
 
     private boolean isMyAccount;
+    private Account myAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +53,22 @@ public class ProfileActivity extends AppCompatActivity {
         if (!APIManager.statusInfo.isAccountListGot())
             return;
 
+        myAccount = APIManager.getManager().getMyAccount();
         optionsFragment = new OptionsFragment();
 
         String nickname = getIntent().getStringExtra("Nickname");
         if (nickname.isEmpty())
             return;
 
-        if (nickname.equals(APIManager.getManager().myAccount.getUsername()))
+        if (nickname.equals(myAccount.getUsername()))
             isMyAccount = true;
         else
             findViewById(R.id.options_card).setVisibility(View.GONE);
 
-        if (nickname.equals(APIManager.getManager().myAccount.getUsername()))
-            account = APIManager.getManager().myAccount;
+        if (nickname.equals(myAccount.getUsername()))
+            account = APIManager.getManager().getMyAccount();
         else
-            account = APIManager.getManager().listAccounts.stream()
+            account = APIManager.getManager().getListAccounts().stream()
                 .filter(s->s.getUsername().equals(nickname)).findAny().orElse(null);
 
 
@@ -75,11 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
         binding.profileCourseInf.setText(account.getGroup().getCourse() + " " + account.getGroup().getFaculty());
         binding.profileGroupNumber.setText(account.getGroup().getName());
         binding.profileMail.setText(""); //TODO
-        binding.myScore.setText(String.valueOf(account.getScore()));
         binding.profilePersonalId.setText(String.valueOf(account.getId())); //personal identifier
         binding.profileNicknameInf.setText(account.getUsername());
         binding.profileNicknameInf2.setText(account.getUsername());
         ((TextView) findViewById(R.id.rank)).setText("No rank");
+        binding.myScore.setText((account.getScore() != null) ? String.valueOf(account.getScore()) : "Скрыто");
 
         SetListeners();
 
@@ -100,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
         optionsFragment.UpdateDrawableIcon(binding.profileMyIcon.getDrawable());
 
         //Hide options menu
-        if (!nickname.equals(APIManager.getManager().myAccount.getUsername()))
+        if (!nickname.equals(myAccount.getUsername()))
             findViewById(R.id.options_card).setVisibility(View.GONE);
         else
             findViewById(R.id.options_card).setVisibility(View.VISIBLE);

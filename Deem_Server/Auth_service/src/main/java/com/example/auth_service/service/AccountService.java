@@ -1,5 +1,6 @@
 package com.example.auth_service.service;
 
+import com.example.auth_service.dto.PrivateAccountDTO;
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.ChangeRoleForm;
 import com.example.auth_service.models.ClubForm;
@@ -121,5 +122,13 @@ public class AccountService {
             result_list.add(aver);
         }
         return result_list;
+    }
+
+    /** Если аккаунт принадлежит чужой группе то скрываем баллы.
+     *  Баллы видны только своим участникам группы */
+    public void hideScoreOtherGroup(Long idGroup, List<Account> accounts) {
+        for (Account account : accounts)
+            if (!account.getGroup_id().equals(idGroup))
+                account.setScore(null);
     }
 }

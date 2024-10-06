@@ -2,15 +2,12 @@ package com.example.deem.adapters;
 
 import static java.security.AccessController.getContext;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,16 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
-import com.example.restful.datebase.CacheSystem;
-import com.example.restful.models.Image;
 import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
-import com.example.restful.utils.DateUtil;
-import com.example.restful.utils.GeneratorUUID;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,32 +110,13 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 List<ImageView> imageViews = new ArrayList<>();
                 initRecycle(1, imageViews);
 
-                //сначала пробуем загрузить из кэша.
-                String UUID = GeneratorUUID.getInstance().generateUUIDForNews( //генерация uuid
-                        DateUtil.getInstance().getDateToForm(news.getDate()), news.getGroup().getName());
+                APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() { //TODO проверить обновление
+                    @Override
+                    public void onImageLoaded(String decodeStr) {
+                        imageLoad(imageViews, decodeStr);
+                    }
+                });
 
-                Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID);
-
-                if (image != null) {
-                    NewsImage newsImage = new NewsImage();
-                    newsImage.setImage(image);
-                    newsImage.setId_news(news.getId());
-                    newsImage.setUuid(UUID);
-                    if (news.getImages().getValue() == null)
-                        news.getImages().setValue(new ArrayList<>()); //TODO нам бы в конструкторе инициализировать список изображений каждой новости
-                    news.getImages().getValue().add(newsImage);
-
-                    imageLoad(imageViews, image.getImgEncode());
-
-                } else { //если в кэше нет такого изображения то обращаемся к серверу
-
-                    APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
-                        @Override
-                        public void onImageLoaded(String decodeStr) {
-                            imageLoad(imageViews, decodeStr);
-                        }
-                    });
-                }
             } else
                 recyclerView.setVisibility(View.GONE); //если изображений нет то отключаем recycle
         }

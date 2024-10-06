@@ -19,6 +19,7 @@ import com.example.deem.R;
 import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.Account;
 import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Image;
 import com.example.restful.models.News;
@@ -45,12 +46,16 @@ public class CreateNewsDialog extends DialogFragment {
     private static List<Drawable> listDrawables;
     private static TextView imgInfo;
 
+    private Account myAccount;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         main_layout = (ConstraintLayout)inflater.inflate(R.layout.dialog_new_news, container, false);
         listDrawables = new ArrayList<>();
         imgInfo = main_layout.findViewById(R.id.test_image_loaded);
+
+        myAccount = APIManager.getManager().getMyAccount();
 
         return main_layout;
     }
@@ -69,9 +74,9 @@ public class CreateNewsDialog extends DialogFragment {
                     CreateNewsDTO news = new CreateNewsDTO();
                     news.setContent(((TextView)view.findViewById(R.id.editTextContentMessage)).getText().toString());
                     news.setDate(new Date(System.currentTimeMillis()));
-                    news.setFaculty(APIManager.getManager().myAccount.getGroup().getFaculty());
-                    news.setIdAuthor(APIManager.getManager().myAccount.getId());
-                    news.setIdGroup(APIManager.getManager().myAccount.getGroup().getId());
+                    news.setFaculty(myAccount.getGroup().getFaculty());
+                    news.setIdAuthor(myAccount.getId());
+                    news.setIdGroup(myAccount.getGroup().getId());
                     news.setImages(new ArrayList<>());
 
                     for (Drawable drawable : listDrawables) {
@@ -83,7 +88,7 @@ public class CreateNewsDialog extends DialogFragment {
                         NewsImage newsImage = new NewsImage();
                         newsImage.setImage(image);
                         newsImage.setUuid(GeneratorUUID.getInstance().generateUUIDForNews(
-                                DateUtil.getInstance().getDateToForm(news.getDate()), APIManager.getManager().myAccount.getGroup().getName()));
+                                DateUtil.getInstance().getDateToForm(news.getDate()), myAccount.getGroup().getName()));
                         newsImage.setId_news(news.getId());
 
                         news.getImages().add(newsImage);
@@ -95,9 +100,9 @@ public class CreateNewsDialog extends DialogFragment {
                     News NaturalNews = ConverterDTO.CreateNewsDTOToNews(news);
                     NaturalNews.setCompleted(true);
 
-                    List<News> allNews = APIManager.getManager().listNews.getValue();
+                    List<News> allNews = APIManager.getManager().getListNews().getValue();
                     allNews.add(0, NaturalNews);
-                    APIManager.getManager().listNews.setValue(allNews);
+                    APIManager.getManager().getListNews().setValue(allNews);
                     newsListGroup.add(0, NaturalNews);
                     updateAddedNews.notifyDataSetChanged();
 

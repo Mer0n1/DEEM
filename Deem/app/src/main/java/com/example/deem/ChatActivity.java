@@ -27,6 +27,7 @@ import com.example.restful.models.Group;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
+import com.example.restful.models.StandardCallback;
 import com.example.restful.utils.ConverterDTO;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
@@ -41,9 +42,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /** Обязательное extra - Nickname:value. Название группы/аккаунта */
@@ -59,6 +62,11 @@ public class ChatActivity extends AppCompatActivity {
     private Integer CurrentMessages;
 
     private boolean newChat;
+    private static boolean lock = false;
+    /** Если отправляем запрос на обновление данных а информация не приходит или
+     * приходит null то isSendUpdate блокирует повторные запросы*/
+    private boolean isSendUpdate = false;
+    private Account myAccount;
 
     private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
 
@@ -70,10 +78,10 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(activityChatBinding.getRoot());
 
         init();
-
     }
 
     private void init() {
+        myAccount = APIManager.getManager().getMyAccount();
 
         FixedImages = new ArrayList<>();
         activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
@@ -96,7 +104,7 @@ public class ChatActivity extends AppCompatActivity {
         SetListeners();
 
         //Подпись на наблюдение за новыми сообщениями
-        APIManager.getManager().listChats.observeForever(new Observer<List<Chat>>() {
+        APIManager.getManager().getListChats().observeForever(new Observer<List<Chat>>() {
             @Override
             public void onChanged(List<Chat> newsList) {
                 chatRecycleAdapter.notifyDataSetChanged();
@@ -115,12 +123,6 @@ public class ChatActivity extends AppCompatActivity {
             };
 
             Account account_with_chat = getСorrespondent();
-            /*if (currentChat.getUsers().get(0).equals(APIManager.getManager().myAccount.getId()))
-                account_with_chat = APIManager.getManager().listAccounts.stream()
-                        .filter(x->x.getId().equals(currentChat.getUsers().get(1))).findAny().orElse(null);
-            else
-                account_with_chat = APIManager.getManager().listAccounts.stream()
-                        .filter(x->x.getId().equals(currentChat.getUsers().get(0))).findAny().orElse(null);*/
 
             if (account_with_chat != null) {
                 if (account_with_chat.getImageIcon() != null) {
@@ -202,11 +204,11 @@ public class ChatActivity extends AppCompatActivity {
 
     private Account getСorrespondent() {
         Account account_with_chat = null;
-        if (currentChat.getUsers().get(0).equals(APIManager.getManager().myAccount.getId()))
-            account_with_chat = APIManager.getManager().listAccounts.stream()
+        if (currentChat.getUsers().get(0).equals(myAccount.getId()))
+            account_with_chat = APIManager.getManager().getListAccounts().stream()
                     .filter(x->x.getId().equals(currentChat.getUsers().get(1))).findAny().orElse(null);
         else
-            account_with_chat = APIManager.getManager().listAccounts.stream()
+            account_with_chat = APIManager.getManager().getListAccounts().stream()
                     .filter(x->x.getId().equals(currentChat.getUsers().get(0))).findAny().orElse(null);
 
         return account_with_chat;
@@ -218,8 +220,8 @@ public class ChatActivity extends AppCompatActivity {
         if (name.isEmpty()) return;
 
         // имеем ли мы чат с этим пользователем
-        List<Chat> chats = APIManager.getManager().listChats.getValue();
-        List<Account> accounts = APIManager.getManager().listAccounts;
+        List<Chat> chats = APIManager.getManager().getListChats().getValue();
+        List<Account> accounts = APIManager.getManager().getListAccounts();
 
         //
         boolean isGroup = false;
@@ -227,12 +229,12 @@ public class ChatActivity extends AppCompatActivity {
             isGroup = true;
 
         if (isGroup) {
-            Group group = APIManager.getManager().listGroups.stream().filter(x->x.getName().equals(name)).findAny().orElse(null);
+            Group group = APIManager.getManager().getListGroups().stream().filter(x->x.getName().equals(name)).findAny().orElse(null);
 
             if (group == null)
                 return;
 
-            Long chat_id = APIManager.getManager().myAccount.getGroup().getChat_id();
+            Long chat_id = myAccount.getGroup().getChat_id();
             currentChat = chats.stream().filter(x->x.getId() == chat_id).findAny().orElse(null);
 
             if (currentChat == null)
@@ -266,11 +268,12 @@ public class ChatActivity extends AppCompatActivity {
                 messages = currentChat.getMessages();
 
                 List<Long> usersOfChat = new ArrayList<>();
-                usersOfChat.add(APIManager.getManager().myAccount.getId());
+                usersOfChat.add(myAccount.getId());
                 usersOfChat.add(wr.getId());
                 currentChat.setUsers(usersOfChat);
                 newChat = true;
             }
+
             CurrentMessages = messages.size();
         }
     }
@@ -281,22 +284,46 @@ public class ChatActivity extends AppCompatActivity {
         chatRecycleAdapter = new ChatRecycleAdapter(messages, this);
         recyclerView.setAdapter(chatRecycleAdapter);
         recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(-1)) {
+                    if (!lock && !isSendUpdate) {
+                        APIManager.getManager().updateMessagesFeed(new StandardCallback() {
+                            @Override
+                            public void call() {
+                                chatRecycleAdapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(11);
+                                lock = false;
+                                isSendUpdate = false;
+                            }
+                        }, Long.valueOf(currentChat.getId()));
+                        isSendUpdate = true;
+                    }
+                    lock = true;
+                }
+            }
+        });
     }
 
     private void sendMessage(String content) {
         //Send message
         Message message = new Message();
         message.setText(content);
-        message.setAuthor(APIManager.getManager().myAccount.getId());
+        message.setAuthor(myAccount.getId());
         message.setImages(new MutableLiveData<>());
         message.getImages().setValue(FixedImages);
         message.setDate(new Date(System.currentTimeMillis()));
+        message.setCompleted(true);
 
         //Создание uuid
         Date date = message.getDate();
         FixedImages.forEach(x->x.setUuid(GeneratorUUID.getInstance().generateUUIDForMessage(
                 DateUtil.getInstance().getDateToForm(date),
-                APIManager.getManager().myAccount.getUsername()
+                myAccount.getUsername()
         )));
 
         //Игнорирование рекурсии
@@ -310,11 +337,15 @@ public class ChatActivity extends AppCompatActivity {
         //создаем dto чтобы отправить на сервер
         CreateMessageDTO dto = ConverterDTO.MessageToCreateMessageDTO(message);
         dto.setNewChat(newChat);
-        dto.getChat().setMessages(null);
+        Chat chat = new Chat();
+        chat.setId(dto.getChat().getId());
+        chat.setUsers(dto.getChat().getUsers());
+        chat.setMessages(null);
 
         APIManager.getManager().sendMessage(dto);
 
         newChat = false;
+        FixedImages = new ArrayList<>();
     }
 
 

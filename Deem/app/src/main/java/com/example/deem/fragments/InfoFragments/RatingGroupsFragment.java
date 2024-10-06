@@ -48,7 +48,7 @@ public class RatingGroupsFragment extends Fragment {
             return;
 
         //Загрузим элементы layout_info_person
-        groups = APIManager.getManager().listGroupsOfFaculty;
+        groups = APIManager.getManager().getListGroupsOfFaculty();
 
         initRecycle();
     }

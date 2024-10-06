@@ -56,6 +56,8 @@ public interface Base {
     Call<Void> sendMessage(@Body CreateMessageDTO message);
     @POST("/chat/createChat")
     Call<Void> sendNewChat(@Body Chat chat);
+    @GET("/message/getMessagesFeed")
+    Call<List<Message>> getMessagesFeed(@Query("date") String date, @Query("chatId") Long chatId);
 
     //news
     @GET("/news/getNews")

@@ -39,7 +39,7 @@ public class Account {
     private String fathername;
 
     @Column(name = "score")
-    private int score;
+    private Integer score;
 
     @NotNull
     @Column(name = "group_id")

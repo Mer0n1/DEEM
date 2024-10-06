@@ -66,7 +66,7 @@ public class ListTopsFragment extends Fragment {
 
         //установим топы групп
         if (APIManager.statusInfo.isGroupsListGot()) {
-            List<Group> groups = APIManager.getManager().listGroups;
+            List<Group> groups = APIManager.getManager().getListGroups();
 
             List<String> names = new ArrayList<>();
             for (Group group : groups)

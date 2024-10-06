@@ -11,7 +11,7 @@ public class Account {
     private String name;
     private String surname;
     private String fathername;
-    private int score;
+    private Integer score;
     private Long group_id;
     private Long id_club;
     private Group group;
@@ -31,7 +31,7 @@ public class Account {
         return password;
     }
 
-    public int getScore() {
+    public Integer getScore() {
         return score;
     }
 
@@ -47,7 +47,7 @@ public class Account {
         this.password = password;
     }
 
-    public void setScore(int score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 

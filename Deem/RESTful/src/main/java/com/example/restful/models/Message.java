@@ -41,8 +41,17 @@ public class Message {
     @Ignore
     @JsonIgnore
     private MutableLiveData<List<MessageImage>> images;
-    @Ignore
+    /** Переменная сохранябщая проверку на изображения для того чтобы не запрашивать
+     * у сервера наличие изображений каждый раз*/
+    //@Ignore
+    @JsonIgnore
     private boolean NoImages;
+    /** Переменная обозначающая конечное состояние. Сообщение может быт
+     *  созданной или же полностью загруженной/обновленной. True значение
+     *  означает, что для этой новости мы не загружаем обновления из сервера и кэша */
+    @Ignore
+    @JsonIgnore
+    private boolean isCompleted;
 
     @ColumnInfo(name = "chatId", index = true)
     private Long chatId;
@@ -117,5 +126,21 @@ public class Message {
 
     public void setChatId(Long chatId) {
         this.chatId = chatId;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "NoImages=" + NoImages +
+                ",Text=" + text +
+                '}';
     }
 }

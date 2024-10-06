@@ -1,5 +1,7 @@
 package com.example.messenger_service.controllers;
 
+import com.example.messenger_service.config.PersonDetails;
+import com.example.messenger_service.dao.ChatDAO;
 import com.example.messenger_service.models.CreateMessageDTO;
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.services.ChatService;
@@ -9,15 +11,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.example.messenger_service.util.ResponseValidator.getErrors;
 
@@ -33,6 +34,8 @@ public class MessageController {
     private ChatService chatService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ChatDAO chatDAO;
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody @Valid CreateMessageDTO dto,
@@ -74,6 +77,17 @@ public class MessageController {
     @GetMapping("/getMessage")
     public Message getMessage(int id) {
         return messageService.getMessage(id);
+    }
+
+    @GetMapping("/getMessagesFeed")
+    public List<Message> getMessagesFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
+                                  @RequestParam("chatId") Long chatId,
+                                  @AuthenticationPrincipal PersonDetails personDetails) {
+        //Проверим принадлежит ли данный чат пользователю.
+        if (!chatDAO.IsThereSuchAChat(personDetails.getId(), chatId))
+            return null;
+
+        return messageService.getMessagesFeed(date, chatId);
     }
 
     /** Отправить новые сообщения. Обновление чата. Пользователь отправляет

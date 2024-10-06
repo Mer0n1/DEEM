@@ -89,7 +89,7 @@ public class FirstPageFragment extends Fragment {
 
     private void initEvent() {
         if (APIManager.getManager().statusInfo.isEventsListGot()) {
-            List<Event> events = APIManager.getManager().listEvents.getValue().stream()
+            List<Event> events = APIManager.getManager().getListEvents().getValue().stream()
                     .filter(x->x.getStart_date().after(new Date(System.currentTimeMillis())))
                     .collect(Collectors.toList());
 
@@ -108,8 +108,8 @@ public class FirstPageFragment extends Fragment {
     private void initListNews() {
         if (APIManager.statusInfo.isGroupsListGot() && APIManager.statusInfo.isNewsListGot()) {
             adminNews = new ArrayList<>();
-            List<News> news = APIManager.getManager().listNews.getValue();
-            List<Group> adminGroups = APIManager.getManager().adminGroups;
+            List<News> news = APIManager.getManager().getListNews().getValue();
+            List<Group> adminGroups = APIManager.getManager().getAdminGroups();
 
             for (News news1 : news)
                 for (Group group : adminGroups)

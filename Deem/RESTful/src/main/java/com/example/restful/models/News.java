@@ -39,12 +39,18 @@ public class News {
     @JsonIgnore
     private MutableLiveData<List<NewsImage>> images;
     @Ignore
+    @JsonIgnore
     private transient Group group;
     /** Переменная обозначающая конечное состояние новости. Новость может быт
      *  созданной или же полностью загруженной/обновленной. True значение
-     *  означает, что для этой новости мы не загружаем обновления из сервера или кэша */
+     *  означает, что для этой новости мы не загружаем обновления из сервера и кэша */
     @Ignore
+    @JsonIgnore
     private boolean isCompleted;
+    /** Переменная сохранябщая проверку на изображения для того чтобы не запрашивать
+     * у сервера наличие изображений каждый раз*/
+    @JsonIgnore
+    private boolean NoImages;
 
     public String getContent() {
         return content;
@@ -116,6 +122,14 @@ public class News {
         this.idAuthor = idAuthor;
     }
 
+    public boolean isNoImages() {
+        return NoImages;
+    }
+
+    public void setNoImages(boolean noImages) {
+        NoImages = noImages;
+    }
+
     @Override
     public String toString() {
         return "News{" +
@@ -123,8 +137,10 @@ public class News {
                 ", content='" + content + '\'' +
                 ", date=" + date +
                 ", idGroup=" + idGroup +
+                ", idAuthor=" + idAuthor +
                 ", faculty='" + faculty + '\'' +
                 ", images=" + images +
+                ", NoImages=" + NoImages +
                 '}';
     }
 }

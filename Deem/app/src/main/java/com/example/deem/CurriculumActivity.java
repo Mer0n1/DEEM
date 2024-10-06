@@ -40,7 +40,7 @@ public class CurriculumActivity extends AppCompatActivity {
 
     public void init() {
         if (APIManager.statusInfo.isTeacherListClassesGot())
-            dayliSchedules = APIManager.getManager().dayliSchedules;
+            dayliSchedules = APIManager.getManager().getDayliSchedules();
         else
             return;
 

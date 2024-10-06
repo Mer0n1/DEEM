@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.restful.api.APIManager;
+import com.example.restful.api.Repository;
+import com.example.restful.api.ServerRepository;
 import com.example.restful.datebase.CacheSystem;
 import com.example.restful.models.AuthRequest;
 
@@ -23,7 +25,7 @@ public class AuthActivity extends AppCompatActivity {
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_identefication_form);
         CacheSystem.initialize(this.getApplicationContext()); //TODO
-        APIManager.initialize();
+        Repository.getInstance().initialize();
 
         if (checkRemember()) {
             SharedPreferences preferences = getSharedPreferences("auth", MODE_PRIVATE);
@@ -40,12 +42,9 @@ public class AuthActivity extends AppCompatActivity {
                 AuthRequest authRequest = new AuthRequest(username, password);
                 APIManager.getManager().auth(authRequest);
 
-                if (APIManager.getManager().isAuth())
+                if (ServerRepository.getInstance().isAuth())
                 {
                     saveData(username, password); //save log in
-                    APIManager.getManager().UpdateData();
-                    APIManager.getManager().getMyAccount();
-
 
                     try {
                         Thread.sleep(1000);

@@ -82,9 +82,9 @@ public class GroupFragment extends Fragment {
         if (group.getDescription() == null || group.getDescription().isEmpty())
             GroupDescription.setVisibility(View.GONE);
 
-        if (group.getName().equals(APIManager.getManager().myAccount.getGroup().getName())) {
+        if (group.getName().equals(APIManager.getManager().getMyAccount().getGroup().getName())) {
             itsMyGroup = true;
-            group.setRank(APIManager.getManager().listGroups.indexOf(group) + 1);
+            group.setRank(APIManager.getManager().getListGroups().indexOf(group) + 1);
             score.setText("Баллов: " + String.valueOf(group.getScore()));
             place.setText(String.valueOf("Рейтинг: " + group.getRank()));
 
@@ -137,7 +137,7 @@ public class GroupFragment extends Fragment {
         recyclerView.setAdapter(newsListRecycleAdapter);
 
         //Observer
-        APIManager.getManager().listNews.observe(getViewLifecycleOwner(), new Observer<List<News>>() {
+        APIManager.getManager().getListNews().observe(getViewLifecycleOwner(), new Observer<List<News>>() {
             @Override
             public void onChanged(List<News> newsList) {
                 initNews();
@@ -152,7 +152,7 @@ public class GroupFragment extends Fragment {
     }
 
     public void initNews() {
-        List<News> allNews = APIManager.getManager().listNews.getValue();
+        List<News> allNews = APIManager.getManager().getListNews().getValue();
         if (newsList == null)
             newsList = new ArrayList<>();
         else
@@ -180,10 +180,10 @@ public class GroupFragment extends Fragment {
 
             if (name != null)
                 if (bundle.getString("type") == null) {
-                    group = APIManager.getManager().listGroups.stream().filter(
+                    group = APIManager.getManager().getListGroups().stream().filter(
                             x -> x.getName().equals(name)).findAny().orElse(null);
                 } else if (bundle.getString("type").equals("club")) {
-                    Club club = APIManager.getManager().listClubs.getValue().stream().filter(
+                    Club club = APIManager.getManager().getListClubs().getValue().stream().filter(
                             x -> x.getGroup().getName().equals(name)).findAny().orElse(null);
 
                     if (club != null)

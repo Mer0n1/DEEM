@@ -48,6 +48,9 @@ public class InfoFragment extends Fragment {
     private List<News> listNews;
 
     private static boolean lock = false;
+    /** Если отправляем запрос на обновление данных а информация не приходит или
+     * приходит null то isSendUpdate блокирует повторные запросы*/
+    private boolean isSendUpdate = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class InfoFragment extends Fragment {
             return;
 
         //init objects
-        listNews = APIManager.getManager().listNews.getValue();
+        listNews = APIManager.getManager().getListNews().getValue();
         listUsersFragment = new ListUsersFragment();
         listGroupsFragment = new ListGroupsFragment();
         listTopsFragment = new ListTopsFragment();
@@ -134,25 +137,26 @@ public class InfoFragment extends Fragment {
         newsListRecycleAdapter = new NewsListRecycleAdapter(listNews, this);
         recyclerView.setAdapter(newsListRecycleAdapter);
 
-        //
+        //Как только достигаем конца списка то вызываем обновление
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
 
-                    if (!lock) {
+                    if (!lock && !isSendUpdate) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
-                        String dateStr = sdf.format(listNews.get(listNews.size() - 1).getDate());
+                        //String dateStr = sdf.format(listNews.get(listNews.size() - 1).getDate());
 
-                        APIManager.getManager().updateNewsFeed(dateStr,
-                                new StandardCallback() {
+                        APIManager.getManager().updateNewsFeed(new StandardCallback() {
                                     @Override
                                     public void call() {
                                         newsListRecycleAdapter.notifyDataSetChanged();
                                         lock = false;
+                                        isSendUpdate = false;
                                     }
                                 });
+                        isSendUpdate = true;
                     }
                     lock = true;
                 }
@@ -160,7 +164,7 @@ public class InfoFragment extends Fragment {
         });
 
         //Observer
-        APIManager.getManager().listNews.observe(getViewLifecycleOwner(), new Observer<List<News>>() {
+        APIManager.getManager().getListNews().observe(getViewLifecycleOwner(), new Observer<List<News>>() {
             @Override
             public void onChanged(List<News> newsList) {
                 newsListRecycleAdapter.notifyDataSetChanged();

@@ -74,11 +74,11 @@ public class ContainerChatsRecycleAdapter extends RecyclerView.Adapter<Container
             String username = "";
 
             if (chat.getUsers().size() > 2)
-                username = APIManager.getManager().myAccount.getGroup().getName();
+                username = APIManager.getManager().getMyAccount().getGroup().getName();
             else {
-                List<Account> accounts = APIManager.getManager().listAccounts;
+                List<Account> accounts = APIManager.getManager().getListAccounts();
                 Long id = chat.getUsers().get(0);
-                if (id == APIManager.getManager().myAccount.getId())
+                if (id == APIManager.getManager().getMyAccount().getId())
                     id = chat.getUsers().get(1);
                 Long finalId = id;
 

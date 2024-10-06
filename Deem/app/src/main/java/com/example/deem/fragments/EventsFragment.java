@@ -54,7 +54,7 @@ public class EventsFragment extends Fragment {
         if (!APIManager.statusInfo.isEventsListGot())
             return;
 
-        AllEvents = APIManager.getManager().listEvents.getValue();
+        AllEvents = APIManager.getManager().getListEvents().getValue();
         Date currentDate = new Date(System.currentTimeMillis());
         pastEvents = AllEvents.stream().filter(x->x.getStart_date().before(currentDate)).collect(Collectors.toList());
         currentEvents = AllEvents.stream().filter(x->x.getStart_date().after(currentDate)).collect(Collectors.toList());

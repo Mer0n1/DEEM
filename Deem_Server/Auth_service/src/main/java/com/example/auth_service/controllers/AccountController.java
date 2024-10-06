@@ -49,8 +49,16 @@ public class AccountController {
     }
 
     @GetMapping("/getAccounts")
-    public List<PrivateAccountDTO> getAccounts() {
+    public List<PrivateAccountDTO> getAccounts(@AuthenticationPrincipal PersonDetails personDetails) {
         List<Account> accounts = accountService.getAccounts();
+
+        try {
+            Account myAccount = accountService.getAccount(personDetails.getId());
+            accountService.hideScoreOtherGroup(myAccount.getGroup_id(), accounts);
+        } catch (Exception e) {
+            return null;
+        }
+
         return accounts.stream().map(this::convertToPrivateAccountDTO).collect(Collectors.toList());
     }
 

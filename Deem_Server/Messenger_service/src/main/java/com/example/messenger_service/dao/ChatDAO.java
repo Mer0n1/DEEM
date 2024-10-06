@@ -120,5 +120,22 @@ public class ChatDAO {
         return true;
     }
 
+    public boolean IsThereSuchAChat(Long accountId, Long chatId) {
+        try {
+            preparedStatement = connection.prepareStatement
+                    ("SELECT * FROM account_chat WHERE chat_id=? AND account_id=?");
+            preparedStatement.setLong(1, chatId);
+            preparedStatement.setLong(2, accountId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return true;
+            else
+                return false;
+
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
 }

@@ -58,7 +58,7 @@ public class OptionsFragment extends Fragment {
                 container, false);
 
 
-        account = APIManager.getManager().myAccount;
+        account = APIManager.getManager().getMyAccount();
         nickname = main_layout.findViewById(R.id.profile_nicknameInf);
         iconImage = main_layout.findViewById(R.id.ImageIcon);
 

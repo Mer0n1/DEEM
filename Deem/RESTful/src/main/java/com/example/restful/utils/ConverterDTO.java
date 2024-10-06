@@ -44,7 +44,7 @@ public class ConverterDTO {
         news.setId(dto.getId());
         news.setImages(new MutableLiveData<>());
         news.getImages().setValue(dto.getImages());
-        news.setGroup(APIManager.getManager().listGroups.stream().filter
+        news.setGroup(APIManager.getManager().getListGroups().stream().filter
                 (x->x.getId().equals(news.getIdGroup())).findAny().orElse(null));
 
         return news;

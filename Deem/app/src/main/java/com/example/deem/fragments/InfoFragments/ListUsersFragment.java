@@ -66,7 +66,7 @@ public class ListUsersFragment extends Fragment {
         if (!APIManager.getManager().statusInfo.isAccountListGot())
             return;
 
-        users = APIManager.getManager().listAccounts;
+        users = APIManager.getManager().getListAccounts();
 
         //search
         binding.iconSearch.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +105,7 @@ public class ListUsersFragment extends Fragment {
 
     public void initRecycle() {
 
-        List<Account> listAccounts = APIManager.getManager().listAccounts;
+        List<Account> listAccounts = APIManager.getManager().getListAccounts();
 
         if (listAccounts != null) {
             main_layout.findViewById(R.id.progressBar).setVisibility(View.GONE);

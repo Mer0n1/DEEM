@@ -13,6 +13,7 @@ public class PrivateAccountDTO {
     private Long group_id;
     private Group group;
     private String role;
+    private Integer score;
 
     public Long getId() {
         return id;
@@ -84,5 +85,22 @@ public class PrivateAccountDTO {
 
     public void setId_club(Long id_club) {
         this.id_club = id_club;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return "PrivateAccountDTO{" +
+                "id=" + id +
+                ", group_id=" + group_id +
+                ", score=" + score +
+                '}';
     }
 }

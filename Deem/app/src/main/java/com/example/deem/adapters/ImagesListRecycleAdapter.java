@@ -43,7 +43,8 @@ public class ImagesListRecycleAdapter extends RecyclerView.Adapter<ImagesListRec
         return images.size();
     }
 
-    class ItemImage extends RecyclerView.ViewHolder {
+
+    public class ItemImage extends RecyclerView.ViewHolder {
 
         ImageView view;
 
@@ -54,7 +55,6 @@ public class ImagesListRecycleAdapter extends RecyclerView.Adapter<ImagesListRec
 
         public void setData(ImageView imageView) {
             view.setImageDrawable(imageView.getDrawable());
-
         }
     }
 }

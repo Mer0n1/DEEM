@@ -52,4 +52,6 @@ public class Chat {
     public void setUsers(List<Long> users) {
         this.users = users;
     }
+
+
 }

@@ -46,8 +46,14 @@ public class ChatService {
         int accountId = chatDAO.getIdAccount(nameAccount);
         List<Chat> chats = getChats(chatDAO.getChatsIdByAccountId(accountId));
 
-        for (Chat chat : chats) //получим id аккаунтов для каждого чата
+        for (Chat chat : chats) { //получим и установим id аккаунтов для каждого чата
             chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId()));
+
+            //Test оставляем максимум 10 сообщений для каждого чата ради уменьшения нагрузки на сеть
+            if (chat.getMessages().size() > 10)
+                for (; 11 < chat.getMessages().size(); )
+                    chat.getMessages().remove(0);
+        }
 
         return chats;
     }

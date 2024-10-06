@@ -2,6 +2,7 @@ package com.example.restful.datebase;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.LifecycleOwner;
@@ -11,6 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
 import com.example.restful.api.APIManager;
+import com.example.restful.api.Repository;
 import com.example.restful.datebase.dao.ChatDao;
 import com.example.restful.datebase.dao.MessageDao;
 import com.example.restful.datebase.dao.NewsDao;
@@ -38,9 +40,11 @@ import java.util.Vector;
 public class CacheSystem {
     private static CacheSystem cacheSystem;
     private static AppDatabase db;
-    private static CacheStatusInfo cacheStatusInfo;
-
     private static File FilesDir;
+
+    /** Система отслеживания статусы кэщ-системы. Здесь официально
+     * можно отследить загруженные данные из кэша. */
+    private static CacheStatusInfo cacheStatusInfo;
 
     //Dao
     private NewsDao newsDao;
@@ -48,6 +52,12 @@ public class CacheSystem {
     private ChatDao chatDao;
 
     //saved
+    /** Данные на которые мы подписались.
+     *  Любое обновление списков новостей, сообщений автоматически вызывает
+     *  методы, отслеживающие обновления данных. По этим спискам определяются новые обьекты.
+     *  Определив новые обьекты мы подписываемся на изменения их списка изображений для сохранения изображений.
+     *  Эти данные нужны только для обновления/сохранения изображений.
+     * */
     private List<News> newsListSaved;
     private List<Message> messageListSaved;
 
@@ -58,25 +68,6 @@ public class CacheSystem {
 
         newsListSaved    = new ArrayList<>();
         messageListSaved = new ArrayList<>();
-
-        //LiveData
-        //Подписываемся на обновления данных
-        APIManager.getManager().listNews.observeForever(new Observer<List<News>>() { //TODO removeObserver(Observer)
-            @Override
-            public void onChanged(List<News> newsList) {
-                saveNews();
-            }
-        });
-
-        APIManager.getManager().listChats.observeForever(new Observer<List<Chat>>() {
-            @Override
-            public void onChanged(List<Chat> chats) {
-                saveChats();
-                saveMessages();
-            }
-        });
-
-
     }
 
     public static void initialize(Context applicationContext) {
@@ -92,25 +83,39 @@ public class CacheSystem {
         }
     }
 
-    public static CacheSystem getCacheSystem() {
-        return cacheSystem;
+    public void observeData() {
+        //LiveData
+        //Подписываемся на обновления данных
+        APIManager.getManager().getListNews().observeForever(new Observer<List<News>>() { //TODO removeObserver(Observer)
+            @Override
+            public void onChanged(List<News> newsList) {
+                saveNews();
+            }
+        });
+
+        APIManager.getManager().getListChats().observeForever(new Observer<List<Chat>>() {
+            @Override
+            public void onChanged(List<Chat> chats) {
+                saveChats();
+                saveMessages();
+            }
+        });
     }
 
-    //@WorkerThread
     public void saveAll() {
         saveNews();
         saveChats();
         saveMessages();
     }
 
-    //@WorkerThread
+
     public void loadAll() {
         newThread(()-> {
             //News
             List<News> newsList = newsDao.getAllNews();
             Collections.reverse(newsList);
             newsList.stream().forEach(x->x.setImages(new MutableLiveData<>()));
-            APIManager.getManager().listNews.postValue(newsList);
+            APIManager.getManager().getListNews().postValue(newsList);
             APIManager.statusCacheInfo.ListNewsLoaded = true;
 
             //Chats
@@ -125,24 +130,24 @@ public class CacheSystem {
                     message.getImages().postValue(new ArrayList<>());
                 }
             }
-
-            APIManager.getManager().listChats.postValue(chatList);
+            APIManager.getManager().getListChats().postValue(chatList);
             cacheStatusInfo.ListChatsLoaded = true;
         });
     }
 
     public void saveMessages() {
         newThread(()-> {
-            if (APIManager.getManager().listChats.getValue() != null)
-                for (Chat chat : APIManager.getManager().listChats.getValue()) {
+            if (APIManager.getManager().getListChats().getValue() != null)
+                for (Chat chat : APIManager.getManager().getListChats().getValue()) {
                     messageDao.upsertAll(chat.getMessages());
             }
         });
 
         //Сохранение изображений
-        for (Chat chat : APIManager.getManager().listChats.getValue())
-            if (APIManager.getManager().listChats != null && APIManager.getManager().listChats.getValue() != null) {
-                System.out.println("00000000000000 " + "start saving messages");
+        for (Chat chat : APIManager.getManager().getListChats().getValue())
+            if (APIManager.getManager().getListChats() != null &&
+                    APIManager.getManager().getListChats().getValue() != null) {
+                Log.d("saveMessages processing: ", "starting");
 
                 List<Message> notSavedList = new ArrayList<>();
                 List<Message> currentList = chat.getMessages();
@@ -163,18 +168,20 @@ public class CacheSystem {
     }
 
     public void saveChats() {
-        newThread(()-> chatDao.upsertAll(APIManager.getManager().listChats.getValue()));
+        newThread(()-> chatDao.upsertAll(APIManager.getManager().getListChats().getValue()));
     }
 
+    /** Обновляем список новостей в БД и отдельно сохраняем изображения на устройство
+     * */
     public void saveNews() {
-        newThread(()-> newsDao.upsertAll(APIManager.getManager().listNews.getValue()));
+        newThread(()-> newsDao.upsertAll(APIManager.getManager().getListNews().getValue()));
 
         //Сохранение изображений
-        if (APIManager.getManager().listNews != null && APIManager.getManager().listNews.getValue() != null) {
-            System.out.println("00000000000000 " + "start saving");
+        if (APIManager.getManager().getListNews() != null && APIManager.getManager().getListNews().getValue() != null) {
+            Log.d("saveNews processing: ", "starting");
 
             List<News> notSavedList = new ArrayList<>(); //подписываемся только на новые (неподписанные) новости
-            List<News> currentList = APIManager.getManager().listNews.getValue();
+            List<News> currentList = APIManager.getManager().getListNews().getValue();
 
             for (News news : currentList)
                 if (!newsListSaved.contains(news))
@@ -190,12 +197,13 @@ public class CacheSystem {
             }
         }
 
-        newsListSaved = new ArrayList<>(APIManager.getManager().listNews.getValue());
+        newsListSaved = new ArrayList<>(APIManager.getManager().getListNews().getValue());
     }
 
     //images
+    /** Сохранение изображения с названиями их uuid */
     public void saveImagesChat(List<MessageImage> messageImages) {
-        System.out.println("started saveImagesChat");
+        Log.d("saveImagesChat processing: ", "starting");
         for (MessageImage image : messageImages)
             try {
                 String path = FilesDir.getPath() + "/" + image.getUuid() + ".png";
@@ -203,14 +211,14 @@ public class CacheSystem {
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
-                System.err.println("success " + image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
+                Log.d("saveImagesChat result: ", "success " + image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
             } catch (Exception e) {
                 System.err.println("error " + e.getMessage());
             }
     }
 
     public void saveImagesNews(List<NewsImage> newsImages) {
-        System.out.println("started saveImagesNews");
+        Log.d("saveImagesNews processing: ", "starting");
         for (NewsImage image : newsImages)
             try {
                 if (image.getImage().getImgEncode() == null)
@@ -222,7 +230,7 @@ public class CacheSystem {
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
-                System.err.println("success " + image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
+                Log.d("saveImagesNews result: ", "success " +image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
 
             } catch (Exception e) {
                 System.err.println("error " + e.getMessage());
@@ -261,4 +269,9 @@ public class CacheSystem {
     public static CacheStatusInfo getCacheStatusInfo() {
         return cacheStatusInfo;
     }
+
+    public static CacheSystem getCacheSystem() {
+        return cacheSystem;
+    }
+
 }

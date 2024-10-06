@@ -52,7 +52,7 @@ public class ListGroupsFragment extends Fragment {
             return;
 
         //Загрузим элементы layout_info_person
-        groups = APIManager.getManager().listGroups;
+        groups = APIManager.getManager().getListGroups();
 
         //search
         binding.iconSearch.setOnClickListener(new View.OnClickListener() {
