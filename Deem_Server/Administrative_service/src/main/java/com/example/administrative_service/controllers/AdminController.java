@@ -112,7 +112,7 @@ public class AdminController {
             return responseEntity;
 
         form.setDate(new Date(System.currentTimeMillis()));
-        submissionStoryService.save(form);
+        submissionStoryService.save(form); 
 
         return ResponseEntity.ok().build();
     }

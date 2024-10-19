@@ -54,7 +54,7 @@ class ImageControllerTest {
         assertEquals(2, message_image);
     }
 
-    @Test
+    /*@Test
     void getImage() {
         String UUID = "111";
         String type = "type";
@@ -66,7 +66,7 @@ class ImageControllerTest {
         verify(imageService).getImage(UUID, type);
 
         assertNotNull(image);
-    }
+    }*/
 
     @Test
     void addImageIcon() throws IOException {

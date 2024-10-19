@@ -9,11 +9,8 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.deem.R;
-import com.example.restful.models.Image;
-import com.example.restful.models.News;
 
 import java.util.List;
 
@@ -35,6 +32,7 @@ public class ImagesListRecycleAdapter extends RecyclerView.Adapter<ImagesListRec
 
     @Override
     public void onBindViewHolder(@NonNull ItemImage holder, int position) {
+
         holder.setData(images.get(position));
     }
 
@@ -57,4 +55,5 @@ public class ImagesListRecycleAdapter extends RecyclerView.Adapter<ImagesListRec
             view.setImageDrawable(imageView.getDrawable());
         }
     }
+
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_image_loaded"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_loaded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars"
+        android:padding="10dp"/>
+
+    <ImageView
+        android:id="@+id/button_delete_image"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        app:srcCompat="@drawable/black_circle"
+        android:layout_gravity="end"/>
+</FrameLayout>

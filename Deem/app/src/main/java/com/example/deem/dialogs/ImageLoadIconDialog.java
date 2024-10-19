@@ -1,7 +1,6 @@
-package com.example.deem.fragments;
+package com.example.deem.dialogs;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,41 +8,29 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 
+import com.example.deem.ProfileActivity;
 import com.example.deem.R;
-import com.example.deem.adapters.ChatRecycleAdapter;
-import com.example.deem.adapters.ImagesListRecycleAdapter;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
 import com.example.restful.models.IconImage;
 import com.example.restful.models.Image;
 import com.example.restful.utils.GeneratorUUID;
-import com.makeramen.roundedimageview.RoundedImageView;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ImageLoadIconDialog extends DialogFragment {
 
-public class OptionsFragment extends Fragment {
-
-    private FrameLayout main_layout;
+    private ConstraintLayout main_layout;
     private Drawable drawable_icon;
     private Account account;
-
-    private EditText nickname;
     private ImageButton iconImage;
 
 
@@ -54,15 +41,12 @@ public class OptionsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main_layout = (FrameLayout)inflater.inflate(R.layout.fragment_options,
+        main_layout = (ConstraintLayout)inflater.inflate(R.layout.dialog_load_icon,
                 container, false);
 
-
         account = APIManager.getManager().getMyAccount();
-        nickname = main_layout.findViewById(R.id.profile_nicknameInf);
         iconImage = main_layout.findViewById(R.id.ImageIcon);
 
-        nickname.setText(account.getUsername());
         if (account.getImageIcon() != null)
             iconImage.setImageBitmap(ImageUtil.getInstance().ConvertToBitmap(account.getImageIcon().getImgEncode()));
 
@@ -70,6 +54,12 @@ public class OptionsFragment extends Fragment {
         setListeners();
 
         return main_layout;
+    }
+
+    @Override
+    public void onViewCreated(View view,  Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     private void setListeners() {
@@ -94,8 +84,13 @@ public class OptionsFragment extends Fragment {
 
                 APIManager.getManager().addIcon(icon_image);
 
+                if (account.getImageIcon() == null)
+                    account.setImageIcon(new Image());
+
                 account.getImageIcon().setImgEncode(image.getImgEncode());
                 Toast.makeText(getContext(), "Сохранено", Toast.LENGTH_SHORT).show();
+                ((ProfileActivity)getActivity()).setImageIcon(drawable_icon);
+                dismiss();
             }
         });
 

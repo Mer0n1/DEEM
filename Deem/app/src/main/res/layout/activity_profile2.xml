@@ -31,17 +31,36 @@
                         android:layout_weight="100"
                         android:orientation="horizontal">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/profile_myIcon"
+                        <FrameLayout
+                            android:id="@+id/buy"
                             android:layout_width="0dp"
                             android:layout_height="130dp"
                             android:layout_marginRight="4dp"
-                            android:layout_weight="30"
-                            android:src="@drawable/icon_person_elon"
-                            app:civ_border_color="#FF000000"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
+                            android:layout_weight="30">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/profile_myIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="130dp"
+                                android:layout_marginRight="4dp"
+                                android:layout_weight="30"
+                                android:src="@drawable/icon_person_elon"
+                                app:civ_border_color="#FF000000"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/edit_icon_profile"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_gravity="bottom|end"
+                                android:layout_margin="10dp"
+                                android:layout_marginRight="4dp"
+                                android:src="@drawable/ic_edit"
+                                app:civ_border_color="#FF000000" />
+
+                        </FrameLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -21,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.adapters.ChatRecycleAdapter;
+import com.example.deem.adapters.ImagesListRecycleAdapter;
+import com.example.deem.adapters.ImagesLoaderRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
 import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.Group;
@@ -55,6 +58,9 @@ public class ChatActivity extends AppCompatActivity {
     private ChatRecycleAdapter chatRecycleAdapter;
     private RecyclerView recyclerView;
 
+    private ImagesLoaderRecycleAdapter imagesLoaderRecycleAdapter;
+    private RecyclerView imagesLoadedRecycle;
+
     private ActivityChatBinding activityChatBinding;
 
     private Chat currentChat;
@@ -69,6 +75,7 @@ public class ChatActivity extends AppCompatActivity {
     private Account myAccount;
 
     private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
+    private List<ImageView> FixedImageViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,7 @@ public class ChatActivity extends AppCompatActivity {
         myAccount = APIManager.getManager().getMyAccount();
 
         FixedImages = new ArrayList<>();
+        FixedImageViews = new ArrayList<>();
         activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
         activityChatBinding.buttonBackChat.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +164,13 @@ public class ChatActivity extends AppCompatActivity {
             messageImage.setImage(image);
 
             FixedImages.add(messageImage);
+
+            ImageView imageView = new ImageView(this);
+            imageView.setImageDrawable(drawable);
+            FixedImageViews.add(imageView);
+
+            imagesLoadedRecycle.setVisibility(View.VISIBLE);
+            imagesLoaderRecycleAdapter.notifyDataSetChanged();
         }
     }
 
@@ -307,6 +322,17 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //Images List Recycle
+        imagesLoadedRecycle = findViewById(R.id.images_loaded_recycle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        imagesLoaderRecycleAdapter = new ImagesLoaderRecycleAdapter(FixedImageViews, FixedImages, this);
+        imagesLoadedRecycle.setAdapter(imagesLoaderRecycleAdapter);
+
+        if (FixedImageViews.size() == 0)
+            imagesLoadedRecycle.setVisibility(View.GONE);
+        else
+            imagesLoadedRecycle.setVisibility(View.VISIBLE);
     }
 
     private void sendMessage(String content) {
@@ -342,10 +368,13 @@ public class ChatActivity extends AppCompatActivity {
         chat.setUsers(dto.getChat().getUsers());
         chat.setMessages(null);
 
-        APIManager.getManager().sendMessage(dto);
+        //APIManager.getManager().sendMessage(dto);
 
         newChat = false;
         FixedImages = new ArrayList<>();
+        FixedImageViews.clear();
+
+        imagesLoadedRecycle.setVisibility(View.GONE);
     }
 
 

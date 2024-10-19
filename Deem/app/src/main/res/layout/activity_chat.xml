@@ -123,6 +123,7 @@
         />
 
     <View
+        android:id="@+id/bottom_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#DfDfDf"
@@ -135,6 +136,21 @@
         android:background="#DfDfDf"
         app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
         tools:ignore="MissingConstraints" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/images_loaded_recycle"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:stackFromEnd="true"></androidx.recyclerview.widget.RecyclerView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

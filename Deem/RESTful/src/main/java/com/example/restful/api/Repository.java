@@ -82,8 +82,7 @@ public class Repository {
         listClubs  = new MutableLiveData<>();
         topsUsers = new TopsUsers();
 
-
-       
+        
     }
 
     public void initialize() {

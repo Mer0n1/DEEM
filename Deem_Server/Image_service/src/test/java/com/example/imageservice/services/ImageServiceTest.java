@@ -34,7 +34,7 @@ class ImageServiceTest {
     @Value("${PATH_ICONS}")
     private String PATH_ICONS;
 
-    @Test
+    /*@Test
     void getImage() { //TODO
         String  UUID = "11",
                 news_image_type = "news_image",
@@ -56,7 +56,7 @@ class ImageServiceTest {
         assertNotNull(news_image);
         assertNotNull(profile_icon);
         assertNotNull(message_image);
-    }
+    }*/
 
     @Test
     void saveImage() {

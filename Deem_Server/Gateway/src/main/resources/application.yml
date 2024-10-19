@@ -116,3 +116,12 @@ eureka:
       defaultZone : http://localhost:8080/eureka/
 
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true

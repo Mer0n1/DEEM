@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
@@ -176,7 +177,8 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
             views.add(imageView);
             recyclerView.setVisibility(View.VISIBLE);
-            recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size()));
+
+            recyclerView.setLayoutManager(new GridLayoutManager(activity, 1)); //views.size()
         }
 
         public Bitmap getRoundedBitmap(Bitmap bitmap, int radius) {

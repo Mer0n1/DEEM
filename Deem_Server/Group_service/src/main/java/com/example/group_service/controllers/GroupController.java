@@ -46,6 +46,7 @@ public class GroupController {
         List<Group> groups = groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
 
         buildListGroups(groups);
+        System.out.println(groups);
 
         return groups;
     }

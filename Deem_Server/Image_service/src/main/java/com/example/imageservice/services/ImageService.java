@@ -56,10 +56,10 @@ public class ImageService {
     @Transactional
     public void deleteIcon(int id) { iconImageRepository.deleteById(id);}
 
-    @Cacheable("iconUuid")
+    //@Cacheable("iconUuid")
     public IconImage getImageIcon(String uuid) { return iconImageRepository.findByUuid(uuid); }
 
-    public Image getImage(String UUID, String type) {
+    public Image getImage(String UUID, String type) throws Exception {
         String path = "";
         Image image = new Image();
         PathImageProjection projection = null;
@@ -72,7 +72,7 @@ public class ImageService {
             projection = messageImageRepository.findByUuid(UUID);
 
         if (projection != null)
-            path = projection.getPath(); //TODO проконтролировать исключение в случае ненаходки
+            path = projection.getPath();
 
         if (!path.isEmpty())
             image.setImgEncode(encodeImage(path));

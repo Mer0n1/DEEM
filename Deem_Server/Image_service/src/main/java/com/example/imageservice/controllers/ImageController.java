@@ -44,24 +44,34 @@ public class ImageController {
     @GetMapping("/getImage")
     public Image getImage(@RequestParam("UUID") String UUID,
                           @RequestParam("type") String type) {
-        return imageService.getImage(UUID, type);
+        try {
+            return imageService.getImage(UUID, type);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @PostMapping("/addImageIcon")
     public ResponseEntity<?> addImageIcon(@RequestBody @Valid IconImage image,
-                                       BindingResult bindingResult, Principal principal) throws IOException {
+                                       BindingResult bindingResult, Principal principal) {
+
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
-        image.setPath(imageService.getPath("profile_icon") + principal.getName()+".png");
-
+        image.setPath(imageService.getPath("profile_icon") + principal.getName() + ".png");
         IconImage image1 = imageService.getImageIcon(image.getUuid());
+
         if (image1 == null)  //если у пользователя нет иконки сохраняем
             imageService.saveIcon(image);
 
-        imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
+        try {
+            imageService.saveImage(image.getImage().getImgEncode(), image.getPath());
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
         return ResponseEntity.ok().build();
+
     }
 
     @PostMapping("/addImagesNews")

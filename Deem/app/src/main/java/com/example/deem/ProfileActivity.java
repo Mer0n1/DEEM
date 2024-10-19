@@ -16,8 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.deem.databinding.ActivityProfile2Binding;
-import com.example.deem.databinding.ActivityProfileBinding;
-import com.example.deem.fragments.OptionsFragment;
+import com.example.deem.dialogs.ImageLoadIconDialog;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
@@ -29,12 +28,12 @@ import java.io.InputStream;
 /** Обязательное требование: Extra Nickname:название_аккаунта */
 public class ProfileActivity extends AppCompatActivity {
 
-    //private ActivityProfileBinding binding;
     private ActivityProfile2Binding binding;
     private Account account;
 
-    private OptionsFragment optionsFragment;
-    private FragmentTransaction fragmentTransaction;
+    //private FragmentTransaction fragmentTransaction;
+    private ImageLoadIconDialog imageLoadIconDialog;
+
 
     private boolean isMyAccount;
     private Account myAccount;
@@ -53,8 +52,8 @@ public class ProfileActivity extends AppCompatActivity {
         if (!APIManager.statusInfo.isAccountListGot())
             return;
 
+        imageLoadIconDialog = new ImageLoadIconDialog();
         myAccount = APIManager.getManager().getMyAccount();
-        optionsFragment = new OptionsFragment();
 
         String nickname = getIntent().getStringExtra("Nickname");
         if (nickname.isEmpty())
@@ -99,8 +98,6 @@ public class ProfileActivity extends AppCompatActivity {
         } else
             APIManager.getManager().getIconImageLazy(account, imageLoadCallback);
 
-        optionsFragment.UpdateDrawableIcon(binding.profileMyIcon.getDrawable());
-
         //Hide options menu
         if (!nickname.equals(myAccount.getUsername()))
             findViewById(R.id.options_card).setVisibility(View.GONE);
@@ -119,6 +116,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });*/
 
+        binding.editIconProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageLoadIconDialog.UpdateDrawableIcon(binding.profileMyIcon.getDrawable());
+                imageLoadIconDialog.show(getSupportFragmentManager(), "load_menu");
+            }
+        });
+
         binding.exitFromAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,14 +133,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        binding.options.setOnClickListener(new View.OnClickListener() {
+        /*binding.options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.profile_fragment, optionsFragment);
                 fragmentTransaction.commit();
             }
-        });
+        });*/
 
     }
 
@@ -154,11 +159,13 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
-            optionsFragment.UpdateDrawableIcon(drawable);
-
+            imageLoadIconDialog.UpdateDrawableIcon(drawable);
         }
 
     }
 
 
+    public void setImageIcon(Drawable drawable) {
+        binding.profileMyIcon.setImageDrawable(drawable);
+    }
 }

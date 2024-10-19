@@ -1,0 +1,45 @@
+package com.example.administrative_service.models;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.ToString;
+
+import java.util.Date;
+
+@Data
+@ToString
+public class Event {
+    private Long id;
+
+    //private Exam exam;
+
+    //Временно
+    @NotEmpty
+    private String type;
+    @NotEmpty
+    private String name;
+    @NotEmpty
+    private String description;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date publication_date;
+
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date start_date;
+
+    @NotNull
+    private Long idGroup;
+    @NotEmpty
+    private String faculty;
+<<<<<<< HEAD
+    @NotNull(message = "course must not be null")
+=======
+    @NotNull
+>>>>>>> master
+    private Integer course;
+}
