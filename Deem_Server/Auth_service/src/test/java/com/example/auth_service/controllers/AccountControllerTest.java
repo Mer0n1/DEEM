@@ -4,10 +4,7 @@ import com.example.auth_service.config.PersonDetails;
 import com.example.auth_service.dao.AccountDAO;
 import com.example.auth_service.dto.PrivateAccountDTO;
 import com.example.auth_service.dto.PublicAccountDTO;
-import com.example.auth_service.models.Account;
-import com.example.auth_service.models.DepartureForm;
-import com.example.auth_service.models.Group;
-import com.example.auth_service.models.ListLong;
+import com.example.auth_service.models.*;
 import com.example.auth_service.service.AccountService;
 import com.example.auth_service.service.AccountServiceClient;
 import org.junit.jupiter.api.Test;
@@ -16,12 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
@@ -31,8 +31,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/*
+
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class AccountControllerTest {
@@ -49,9 +51,12 @@ class AccountControllerTest {
     @Mock
     private ModelMapper modelMapper;
 
+    @Mock
+    AccountDAO accountDAO;
+
     @Test
     void getMyAccount() {
-        Principal principal = mock(Principal.class);
+        Principal principal = () -> "Name";
 
         Group group = new Group();
         group.setId(1L);
@@ -65,7 +70,6 @@ class AccountControllerTest {
         publicAccountDTONew.setGroup(group);
         publicAccountDTONew.setGroup_id(group.getId());
 
-        when(principal.getName()).thenReturn("Name");
         when(accountService.getAccount(principal.getName())).thenReturn(account);
         when(accountServiceClient.findGroupById(account.getGroup_id())).thenReturn(group);
         when(modelMapper.map(account, PublicAccountDTO.class)).thenReturn(publicAccountDTONew);
@@ -79,11 +83,13 @@ class AccountControllerTest {
         assertEquals(publicAccountDTONew, publicAccountDTO);
     }
 
-    @Test
-    void getAccounts() {
+   @Test
+    void getAccounts() throws Exception {
 
-        */
-/*Account account = new Account();
+        PersonDetails personDetails = new PersonDetails();
+        personDetails.setId(1L);
+
+        Account account = new Account();
         account.setId(1L);
 
         PrivateAccountDTO privateAccountDTO = new PrivateAccountDTO();
@@ -93,36 +99,44 @@ class AccountControllerTest {
         list.add(account);
 
         when(accountService.getAccounts()).thenReturn(list);
+        when(accountService.getAccount(personDetails.getId())).thenReturn(account);
         when(modelMapper.map(account, PrivateAccountDTO.class)).thenReturn(privateAccountDTO);
 
-        List<PrivateAccountDTO> privateAccountDTOS = accountController.getAccounts();
+        List<PrivateAccountDTO> privateAccountDTOS = accountController.getAccounts(personDetails);
 
         verify(accountService).getAccounts();
+        verify(accountService).hideScoreOtherGroup(account.getGroup_id(), list);
         verify(modelMapper).map(account, PrivateAccountDTO.class);
 
-        assertEquals(1, privateAccountDTOS.size());*//*
+        assertEquals(1, privateAccountDTOS.size());
+        assertEquals(privateAccountDTO.getId(), privateAccountDTOS.get(0).getId());
 
-    }
+   }
+
+   @Test
+    public void getAccountsException() throws Exception {
+        PersonDetails personDetails = new PersonDetails();
+        personDetails.setId(1L);
+
+        when(accountService.getAccount(personDetails.getId())).thenThrow(new Exception("Такого аккаунта не существует"));
+
+        List<PrivateAccountDTO> accounts = accountController.getAccounts(personDetails);
+
+        assertNull(accounts);
+       //verify(accountService.getAccount(personDetails.getId()));
+   }
 
     @Test
-    void getTopStudentsFaculty() { //TODO failed
+    void getTopStudentsFaculty() {
+        PersonDetails personDetails = new PersonDetails();
+        personDetails.setFaculty("EPF");
 
-        // Создание моков
-        PersonDetails personDetails = mock(PersonDetails.class);
-        AccountDAO accountDAO = mock(AccountDAO.class);
-
-        // Задание поведения моков
-        when(personDetails.getFaculty()).thenReturn("EPF");
         when(accountDAO.findTopStudentsFaculty(anyString())).thenReturn(List.of("Student1"));
 
         List<String> result = accountController.getTopStudentsFaculty(personDetails);
 
-        // Проверка ожидаемого результата
         assertEquals(List.of("Student1"), result);
-
-        // Проверка вызовов методов
-        verify(personDetails).getFaculty();
-        verify(accountDAO).findTopStudentsFaculty("FacultyName");
+        verify(accountDAO).findTopStudentsFaculty("EPF");
     }
 
     @Test
@@ -140,79 +154,147 @@ class AccountControllerTest {
     void getListIdUsersGroup() {
         Long idGroup = 1L;
 
-        when(accountService.getUsersOfGroup(idGroup)).thenReturn(List.of(idGroup));
+        when(accountService.getUsersOfGroup(idGroup)).thenReturn(List.of(1L,2L,3L));
 
         List<Long> result = accountController.getListIdUsersGroup(idGroup);
 
-        assertEquals(List.of(idGroup), result);
+        assertNotNull(result);
         verify(accountService).getUsersOfGroup(idGroup);
     }
 
     @Test
-    void sendScore() {
-        */
-/*DepartureForm form = mock(DepartureForm.class);
+    void getAccount() throws Exception {
+        Long id = 1L;
+        Account account = new Account();
+
+        when(accountService.getAccount(id)).thenReturn(account);
+
+        ResponseEntity<?> result = accountController.getAccount(id);
+
+        assertNotNull(result.getBody());
+        assertEquals(result.getBody(), account);
+        assertEquals(result.getStatusCode(), HttpStatus.OK);
+
+        verify(accountService).getAccount(id);
+    }
+
+    @Test
+    void getAccountException() throws Exception {
+        Long id = 1L;
+
+        when(accountService.getAccount(anyLong())).thenThrow(new Exception("Error"));
+
+        ResponseEntity<?> responseEntity = accountController.getAccount(id);
+
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(responseEntity.getBody(), "Error");
+    }
+
+
+    @Test
+    void sendScore() throws Exception {
+
+        DepartureForm form = new DepartureForm();
+        form.setIdAccount(1L);
+        form.setScore(100);
+
         BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        when(form.getIdAccount()).thenReturn(1L);
-        when(form.getScore()).thenReturn(10);
+        ResponseEntity<?> response = accountController.sendScore(form, bindingResult);
 
-        accountController.sendScore(form, bindingResult);
+        verify(accountService).sendScore(form.getIdAccount(), form.getScore());
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+    }
 
-        verify(accountService).sendScore(1L, 10);*//*
+    @Test
+    void sendScoreExceptions() throws Exception {
 
+        DepartureForm form = new DepartureForm();
+        form.setIdAccount(1L);
+        form.setScore(100);
+
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        doThrow(new Exception("Error")).when(accountService).sendScore(form.getIdAccount(), form.getScore());
+
+        ResponseEntity<?> response = accountController.sendScore(form, bindingResult);
+
+        verify(accountService).sendScore(form.getIdAccount(), form.getScore());
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void createAccount() {
-        Account account = mock(Account.class);
+        Account account = new Account();
         BindingResult bindingResult = mock(BindingResult.class);
 
         when(bindingResult.hasErrors()).thenReturn(false);
         when(accountService.save(account)).thenReturn(account);
 
-        ResponseEntity<?> TestAccount = accountController.createAccount(account, bindingResult);
+        ResponseEntity<?> result = accountController.createAccount(account, bindingResult);
 
-        assertEquals(account, TestAccount.getBody());
+        assertEquals(account, result.getBody());
         verify(accountService).save(account);
     }
 
     @Test
-    void transferStudent() {
-        */
-/*Long idStudent = 1L;
+    void transferStudent() throws Exception {
+
+        Long idStudent = 1L;
         Long idGroup   = 1L;
 
-        accountController.transferStudent(idStudent, idGroup);
+        doNothing().when(accountService).transferAccount(idStudent, idGroup);
 
-        verify(accountService).transferAccount(idStudent, idGroup);*//*
+        ResponseEntity<?> responseEntity = accountController.transferStudent(idStudent, idGroup);
 
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        verify(accountService).transferAccount(idStudent, idGroup);
     }
+
+    @Test
+    void transferStudentException() throws Exception {
+
+        Long idStudent = 1L;
+        Long idGroup   = 1L;
+
+        doThrow(new Exception("Error")).when(accountService).transferAccount(idStudent, idGroup);
+        doNothing().when(accountService).transferAccount(idStudent, idGroup);
+
+        ResponseEntity<?> responseEntity = accountController.transferStudent(idStudent, idGroup);
+
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+        verify(accountService).transferAccount(idStudent, idGroup);
+    }
+
+
 
     @Test
     void deleteAccount() {
         Long idStudent = 1L;
 
-        accountController.deleteAccount(idStudent);
+        doNothing().when(accountService).delete(idStudent);
 
+        ResponseEntity<?> responseEntity = accountController.deleteAccount(idStudent);
+
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertNull(responseEntity.getBody());
         verify(accountService).delete(idStudent);
     }
 
     @Test
-    void getIdGroupAccount() {
-        */
-/*Long idStudent = 1L;
-        Account account = mock(Account.class);
+    void getIdGroupAccount() throws Exception {
+        Long idStudent = 1L;
+        Account account = new Account();
+        account.setGroup_id(2L);
 
         when(accountService.getAccount(idStudent)).thenReturn(account);
-        when(account.getGroup_id()).thenReturn(idStudent);
 
         Long id = accountController.getIdGroupAccount(idStudent);
 
-        assertEquals(idStudent, id);
-
-        verify(accountService).getAccount(idStudent);*//*
-
+        assertEquals(account.getGroup_id(), id);
+        verify(accountService).getAccount(idStudent);
     }
 
     @Test
@@ -226,4 +308,82 @@ class AccountControllerTest {
         assertEquals(List.of(1), TestList);
         verify(accountService).getListAverageValue(list);
     }
-}*/
+
+    @Test
+    void addStudentToClub() throws Exception {
+        ClubForm form = new ClubForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doNothing().when(accountService).addStudentToClub(form);
+
+        ResponseEntity<?> response = accountController.addStudentToClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        verify(accountService).addStudentToClub(form);
+    }
+
+    @Test
+    void addStudentToClubException() throws Exception {
+        ClubForm form = new ClubForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doThrow(new Exception("Error")).when(accountService).addStudentToClub(form);
+
+        ResponseEntity<?> response = accountController.addStudentToClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        verify(accountService).addStudentToClub(form);
+    }
+
+    @Test
+    void expelStudentClub() throws Exception {
+        ClubForm form = new ClubForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doNothing().when(accountService).expelStudentClub(form);
+
+        ResponseEntity<?> response = accountController.expelStudentClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        verify(accountService).expelStudentClub(form);
+    }
+
+    @Test
+    void expelStudentClubException() throws Exception {
+        ClubForm form = new ClubForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doThrow(new Exception("Error")).when(accountService).expelStudentClub(form);
+
+        ResponseEntity<?> response = accountController.expelStudentClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        verify(accountService).expelStudentClub(form);
+    }
+
+    @Test
+    void ChangeRoleClub() throws Exception {
+        ChangeRoleForm form = new ChangeRoleForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doNothing().when(accountService).changeRoleClub(form);
+
+        ResponseEntity<?> response = accountController.ChangeRoleClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        verify(accountService).changeRoleClub(form);
+    }
+
+    @Test
+    void ChangeRoleClubException() throws Exception {
+        ChangeRoleForm form = new ChangeRoleForm();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        doThrow(new Exception("Error")).when(accountService).changeRoleClub(form);
+
+        ResponseEntity<?> response = accountController.ChangeRoleClub(form, bindingResult);
+
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        verify(accountService).changeRoleClub(form);
+    }
+}

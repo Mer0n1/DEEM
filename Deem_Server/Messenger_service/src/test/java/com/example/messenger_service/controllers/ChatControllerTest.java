@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
@@ -19,7 +21,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-/*
+
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -36,9 +38,8 @@ class ChatControllerTest {
 
     @Test
     void getChats() {
-        Principal principal = mock(Principal.class);
+        Principal principal = () -> "Name";
 
-        when(principal.getName()).thenReturn("Name");
         when(chatService.getListChats(principal.getName())).thenReturn(new ArrayList<>());
 
         List<Chat> chats = controller.getChats(principal);
@@ -49,22 +50,29 @@ class ChatControllerTest {
     }
 
     @Test
-    void createChat() {
+    void linkAccountToGroupChat() {
         Chat chat = new Chat();
-        BindingResult bindingResult = mock(BindingResult.class);
+        boolean result = true;
 
-        controller.createChat(chat, bindingResult);
+        when(chatDAO.saveInAccount_chat(chat)).thenReturn(result);
 
-        verify(chatService).CreateNewChat(chat);
+        ResponseEntity<?> response = controller.linkAccountToGroupChat(chat);
+
+        verify(chatDAO).saveInAccount_chat(chat);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
-    void linkAccountToGroupChat() {
+    void linkAccountToGroupChatBadAnswer() {
         Chat chat = new Chat();
+        boolean result = false;
 
-        controller.linkAccountToGroupChat(chat);
+        when(chatDAO.saveInAccount_chat(chat)).thenReturn(result);
+
+        ResponseEntity<?> response = controller.linkAccountToGroupChat(chat);
 
         verify(chatDAO).saveInAccount_chat(chat);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -77,7 +85,6 @@ class ChatControllerTest {
         Long l = controller.createChatGroup();
 
         verify(chatService).save(any());
-
         assertEquals(chat.getId(), l);
     }
-}*/
+}

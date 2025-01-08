@@ -89,7 +89,7 @@ public class ImageService {
         };
     }
 
-    private String encodeImage(String path) {
+    public String encodeImage(String path) {
         try {
             File file = new File(path);
             byte[] fileBytes = Files.readAllBytes(file.toPath());

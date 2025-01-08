@@ -44,10 +44,7 @@ public class GroupController {
 
         //Получим список групп для текущего факультета заявителя
         List<Group> groups = groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
-
         buildListGroups(groups);
-        System.out.println(groups);
-
         return groups;
     }
 
@@ -55,7 +52,6 @@ public class GroupController {
     public List<Group> getAllGroups() {
         List<Group> groups = groupService.getGroups();
         buildListGroups(groups);
-
         return groups;
     }
 
@@ -108,17 +104,18 @@ public class GroupController {
         return groupService.getGroup(id).getChat_id();
     }
 
-    public Map<String, String> getErrors(BindingResult bindingResult) {
-        Map<String, String> errorMap = new HashMap<>();
-        for (FieldError error : bindingResult.getFieldErrors())
-            errorMap.put(error.getField(), error.getDefaultMessage());
-        return errorMap;
-    }
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/deleteGroup")
     public ResponseEntity<?> deleteGroup(@RequestParam("id_group") Integer id_group) {
         groupService.deleteGroup(id_group);
         return ResponseEntity.ok().build();
+    }
+
+    public Map<String, String> getErrors(BindingResult bindingResult) {
+        Map<String, String> errorMap = new HashMap<>();
+        for (FieldError error : bindingResult.getFieldErrors())
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        return errorMap;
     }
 }

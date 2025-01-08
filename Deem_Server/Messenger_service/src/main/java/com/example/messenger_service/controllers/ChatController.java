@@ -60,5 +60,4 @@ public class ChatController {
         return chatService.save(new Chat()).getId();
     }
 
-
 }

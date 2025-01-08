@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
@@ -44,9 +46,12 @@ class CurriculumControllerTest {
         Class cl = new Class();
         BindingResult bindingResult = mock(BindingResult.class);
 
-        curriculumController.addClass(cl, bindingResult);
+        when(classService.save(any())).thenReturn(cl);
+
+        ResponseEntity<?> response = curriculumController.addClass(cl, bindingResult);
 
         verify(classService).save(cl);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
@@ -54,8 +59,11 @@ class CurriculumControllerTest {
         Class cl = new Class();
         BindingResult bindingResult = mock(BindingResult.class);
 
-        curriculumController.deleteClass(cl, bindingResult);
+        doNothing().when(classService).delete(cl);
+
+        ResponseEntity<?> response = curriculumController.deleteClass(cl, bindingResult);
 
         verify(classService).delete(cl);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 }

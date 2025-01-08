@@ -1,13 +1,17 @@
 package com.example.group_service.controllers;
 
+import com.example.group_service.config.PersonDetails;
 import com.example.group_service.models.Group;
+import com.example.group_service.models.ListLong;
 import com.example.group_service.models.LocationStudent;
 import com.example.group_service.services.GroupService;
 import com.example.group_service.services.RestTemplateClient;
+import com.example.group_service.util.GroupValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GroupControllerTest {
 
+    @Spy
     @InjectMocks
     protected GroupController groupController;
 
@@ -36,72 +41,78 @@ class GroupControllerTest {
     @Mock
     private RestTemplateClient restTemplateClient;
 
+    @Mock
+    private GroupValidator groupValidator;
+
     @Test
     void getGroup() {
         Long id = 1L;
         Group group = new Group();
-        group.setId(1L);
+        group.setId(id);
 
+        doNothing().when(groupController).buildListGroups(anyList());
         when(groupService.getGroup(id)).thenReturn(group);
-        when(restTemplateClient.getListIdUsersOfGroup(group.getId())).thenReturn(new ArrayList<>());
-        when(restTemplateClient.getListTopGroups(anyList())).thenReturn(new ArrayList<>());
 
-        Group TestGroup = groupController.getGroup(id);
+        Group testGroup = groupController.getGroup(id);
 
         verify(groupService).getGroup(id);
-        verify(restTemplateClient).getListIdUsersOfGroup(anyLong());
-        verify(restTemplateClient).getListTopGroups(anyList());
-
-        assertEquals(group, TestGroup);
+        verify(groupController).buildListGroups(anyList());
+        assertEquals(group, testGroup);
     }
 
     @Test
-    void getGroupsOfFaculty() { //TODO
-        Authentication authentication = mock(Authentication.class);
+    void getGroupsOfFaculty() {
+        PersonDetails personDetails = new PersonDetails();
+        personDetails.setFaculty("EPF");
+        personDetails.setCourse(1);
 
+        doNothing().when(groupController).buildListGroups(anyList());
+        when(groupService.getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse()))
+                .thenReturn(anyList());
+
+        List<Group> groups = groupController.getGroupsOfFaculty(personDetails);
+
+        verify(groupService).getGroupsOfFacultyAndCourse(personDetails.getFaculty(), personDetails.getCourse());
+        assertNotNull(groups);
     }
 
     @Test
-    void getAllGroups() { //TODO
-        Group group = new Group();
-        group.setId(1L);
-        Group group2 = new Group();
-        group.setId(2L);
-        List<Group> list = List.of(group, group2);
+    void getAllGroups() {
 
-        when(groupService.getGroups()).thenReturn(list);
-        when(restTemplateClient.getListIdUsersOfGroup(1L)).thenReturn(List.of(1L,2L));
-        when(restTemplateClient.getListTopGroups(anyList())).thenReturn(List.of(1L,2L));
+        doNothing().when(groupController).buildListGroups(anyList());
+        when(groupService.getGroups()).thenReturn(new ArrayList<>());
 
-        List<Group> groupList = groupController.getAllGroups();
+        List<Group> groups = groupController.getAllGroups();
 
         verify(groupService).getGroups();
-        verify(restTemplateClient).getListIdUsersOfGroup(1L);
-        verify(restTemplateClient).getListTopGroups(anyList());
-
-        assertNotNull(groupList);
+        assertNotNull(groups);
     }
 
     @Test
     void getLocationStudent() {
+        Long idGroup = 1L;
+
         Group group = new Group();
-        group.setId(1L);
+        group.setId(idGroup);
         group.setCourse(1);
         group.setFaculty("EPF");
 
-        when(groupService.getGroup(group.getId())).thenReturn(group);
+        when(groupService.getGroup(idGroup)).thenReturn(group);
 
-        LocationStudent locationStudent = groupController.getLocationStudent(group.getId());
+        LocationStudent locationStudent = groupController.getLocationStudent(idGroup);
 
         verify(groupService).getGroup(any());
-
         assertNotNull(locationStudent);
+        assertEquals(locationStudent.getFaculty(), group.getFaculty());
+        assertEquals(locationStudent.getCourse(), group.getCourse());
     }
 
     @Test
     void createGroup() {
         Group group = new Group();
         BindingResult bindingResult = mock(BindingResult.class);
+
+        doNothing().when(groupValidator).validate(group, bindingResult);
 
         ResponseEntity<?> responseEntity = groupController.createGroup(group, bindingResult);
 
@@ -114,14 +125,51 @@ class GroupControllerTest {
     void getChatId() {
         Long id = 1L;
         Group group = new Group();
-        group.setChat_id(1L);
+        group.setId(id);
+        group.setChat_id(2L);
 
         when(groupService.getGroup(id)).thenReturn(group);
 
         Long TestId = groupController.getChatId(id);
 
-        verify(groupService).getGroup(any());
-
-        assertEquals(1L, TestId);
+        assertEquals(group.getChat_id(), TestId);
+        verify(groupService).getGroup(group.getId());
     }
+
+    @Test
+    void deleteGroup() {
+        Integer id_group = 1;
+
+        doNothing().when(groupService).deleteGroup(id_group);
+
+        ResponseEntity<?> responseEntity = groupController.deleteGroup(id_group);
+
+        verify(groupService).deleteGroup(id_group);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    /*@Test
+    void buildListGroups() {
+        Group group = new Group();
+        group.setId(1L);
+        Group group2 = new Group();
+        group.setId(2L);
+        List<Group> list = List.of(group, group2);
+
+        when(restTemplateClient.getListIdUsersOfGroup(group.getId())).thenReturn(List.of(3L,2L));
+        when(restTemplateClient.getListIdUsersOfGroup(group2.getId())).thenReturn(List.of(1L,4L));
+        when(restTemplateClient.getListTopGroups(anyList())).thenReturn(List.of(11L, 12L));
+
+        groupController.buildListGroups(list);
+
+        verify(restTemplateClient).getListIdUsersOfGroup(group.getId());
+        verify(restTemplateClient).getListIdUsersOfGroup(group2.getId());
+        verify(restTemplateClient).getListTopGroups(anyList());
+        assertEquals(11, group.getScore());
+        assertEquals(12, group2.getScore());
+        assertEquals(List.of(3L, 2L), group.getUsers());
+        assertEquals(List.of(1L, 4L), group2.getUsers());
+    }*/
+
 }

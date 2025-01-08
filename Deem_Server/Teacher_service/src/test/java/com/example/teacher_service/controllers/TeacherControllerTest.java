@@ -10,11 +10,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -28,22 +29,28 @@ class TeacherControllerTest {
 
     @Test
     void addTeacher() {
-        Teacher cl = new Teacher();
+        Teacher teacher = new Teacher();
         BindingResult bindingResult = mock(BindingResult.class);
 
-        teacherController.addTeacher(cl, bindingResult);
+        doNothing().when(teacherService).save(teacher);
 
-        verify(teacherService).save(cl);
+        ResponseEntity<?> response = teacherController.addTeacher(teacher, bindingResult);
+
+        verify(teacherService).save(teacher);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
     void deleteTeacher() {
-        Teacher cl = new Teacher();
+        Teacher teacher = new Teacher();
         BindingResult bindingResult = mock(BindingResult.class);
 
-        teacherController.deleteTeacher(cl, bindingResult);
+        doNothing().when(teacherService).delete(teacher);
 
-        verify(teacherService).delete(cl);
+        ResponseEntity<?> response = teacherController.deleteTeacher(teacher, bindingResult);
+
+        verify(teacherService).delete(teacher);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test

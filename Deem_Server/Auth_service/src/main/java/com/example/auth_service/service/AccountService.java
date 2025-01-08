@@ -90,7 +90,7 @@ public class AccountService {
         Account account = repository.findById(form.getId_student())
                 .orElseThrow(() -> new Exception("Такого аккаунта не существует"));
 
-        if (account.getId_club() == null)
+        if (account.getId_club() == null || account.getId_club() != form.getId_club())
             throw new Exception("Студент не состоит в клубе");
 
         //если у студента нет клуба, то назначаем ему его

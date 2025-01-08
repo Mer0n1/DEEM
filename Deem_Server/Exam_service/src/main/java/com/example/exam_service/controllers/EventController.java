@@ -35,7 +35,6 @@ public class EventController {
 
     @GetMapping("/getEvents")
     public List<Event> getEvents(@AuthenticationPrincipal PersonDetails personDetails) {
-
         return eventService.getEvents(personDetails.getFaculty());
     }
 
@@ -50,7 +49,7 @@ public class EventController {
 
         eventService.save(eventPush.getEvent());
         try {
-            restTemplateService.pushEventPush(eventPush);
+            restTemplateService.pushEventPush(eventPush); //TODO ?? return restTemplateService.pushEventPush(eventPush);
             return ResponseEntity.ok().build();
         } catch (JsonProcessingException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -21,7 +21,7 @@ import org.springframework.validation.BindingResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-/*
+
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -45,20 +45,20 @@ class AuthControllerTest {
     @Test
     void getToken() {
         AuthRequest authRequest = new AuthRequest();
-        authRequest.setUsername("Meron");
-        authRequest.setPassword("123");
+        authRequest.setUsername("Tao");
+        authRequest.setPassword("123456");
         LocationStudent locationStudent = new LocationStudent();
+
+        Account account = new Account();
+        account.setGroup_id(1L);
 
         BindingResult bindingResult = mock(BindingResult.class);
         Authentication authenticate = mock(Authentication.class);
-        Account account = mock(Account.class);
 
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authRequest.getUsername(), authRequest.getPassword()))).thenReturn(authenticate);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authenticate);
         when(authenticate.isAuthenticated()).thenReturn(true);
         when(accountService.getAccount(authRequest.getUsername())).thenReturn(account);
-        when(account.getGroup_id()).thenReturn(1L);
         when(accountServiceClient.getLocationStudent(1L)).thenReturn(locationStudent);
         when(service.generateToken(account, locationStudent)).thenReturn("0000");
 
@@ -71,4 +71,17 @@ class AuthControllerTest {
         verify(accountServiceClient).getLocationStudent(1L);
         verify(service).generateToken(account, locationStudent);
     }
-}*/
+
+
+    @Test
+    void getToken_withBindingErrors() {
+        AuthRequest authRequest = new AuthRequest();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+        String response = authController.getToken(authRequest, bindingResult);
+
+        assertNotNull(response);
+        verifyNoInteractions(authenticationManager);
+    }
+}

@@ -80,4 +80,5 @@ public class RestTemplateService {
     }
 
     /** Проверяем доступность сервиса экзамена */
+    //.... test available Exam_Taller_Service...
 }

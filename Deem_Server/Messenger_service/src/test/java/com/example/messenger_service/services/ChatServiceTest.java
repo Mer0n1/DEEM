@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-/*
+
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -49,18 +48,19 @@ class ChatServiceTest {
 
     @Test
     void getChat() {
+        Long id = 1L;
         Chat chat = new Chat();
-        chat.setId(1L);
+        chat.setId(id);
 
         when(chatRepository.findChatById(chat.getId())).thenReturn(chat);
         when(chatDAO.getIdAccountsOfChat(chat.getId())).thenReturn(new ArrayList<>());
 
-        Chat TestChat = chatService.getChat(chat.getId());
+        Chat TestChat = chatService.getChat(id);
 
         verify(chatRepository).findChatById(chat.getId());
         verify(chatDAO).getIdAccountsOfChat(chat.getId());
 
-        assertNotNull(TestChat);
+        assertEquals(TestChat, chat);
     }
 
     @Test
@@ -73,37 +73,51 @@ class ChatServiceTest {
 
         verify(chatRepository).save(chat);
 
-        assertNotNull(TestChat);
+        assertEquals(TestChat, chat);
     }
 
     @Test
-    void getListChats() { //TODO
+    void getListChats() {
         String nameAccount = "someName";
+        int idAccount = 1;
+        Long idChat = 2L;
+        List<Chat> chats = List.of(new Chat());
+        chats.get(0).setId(idChat);
+        chats.get(0).setMessages(new ArrayList<>());
+        List<Long> users = List.of(1L, 2L);
 
-        when(chatDAO.getIdAccount(nameAccount)).thenReturn(1);
-        when(chatDAO.getChatsIdByAccountId(1)).thenReturn(List.of(1L));
-        when(chatDAO.getIdAccountsOfChat(2L)).thenReturn(new ArrayList<>());
+        when(chatDAO.getIdAccount(nameAccount)).thenReturn(idAccount);
+        when(chatDAO.getChatsIdByAccountId(idAccount)).thenReturn(new ArrayList<>());
+        when(chatRepository.findAllByIdIn(anyList())).thenReturn(chats);
+        when(chatDAO.getIdAccountsOfChat(idChat)).thenReturn(users);
 
         List<Chat> list = chatService.getListChats(nameAccount);
 
         verify(chatDAO).getIdAccount(nameAccount);
-        verify(chatDAO).getChatsIdByAccountId(1);
-        verify(chatDAO).getIdAccountsOfChat(2L);
+        verify(chatDAO).getChatsIdByAccountId(idAccount);
+        verify(chatRepository).findAllByIdIn(anyList());
+        verify(chatDAO).getIdAccountsOfChat(anyLong());
 
         assertNotNull(list);
+        assertEquals(chats, list);
+        assertEquals(list.get(0).getUsers(), users);
     }
 
     @Test
-    void createNewChat() { //TODO
+    void createNewChat() {
         Chat chat = new Chat();
         Message message = new Message();
-        chat.setMessages(List.of(message));
+        chat.setMessages(new ArrayList<>(List.of(message)));
+
+        when(chatRepository.save(chat)).thenReturn(chat);
+        when(chatDAO.saveInAccount_chat(chat)).thenReturn(false); //no matter what the value is
+        when(messageService.save(any())).thenReturn(new Message());
 
         chatService.CreateNewChat(chat);
 
         verify(chatRepository).save(chat);
         verify(messageService).save(message);
-        verify(chatDAO.saveInAccount_chat(chat));
+        verify(chatDAO).saveInAccount_chat(chat);
     }
 
-}*/
+}
