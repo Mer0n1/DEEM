@@ -211,7 +211,8 @@ public class CacheSystem {
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
-                Log.d("saveImagesChat result: ", "success " + image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
+                Log.d("saveImagesChat result: ", "success " + image.getUuid() + "  " +
+                        Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
             } catch (Exception e) {
                 System.err.println("error " + e.getMessage());
             }
@@ -230,7 +231,8 @@ public class CacheSystem {
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
-                Log.d("saveImagesNews result: ", "success " +image.getUuid() + "  " +  Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
+                Log.d("saveImagesNews result: ", "success " +image.getUuid() + "  " +
+                        Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
 
             } catch (Exception e) {
                 System.err.println("error " + e.getMessage());

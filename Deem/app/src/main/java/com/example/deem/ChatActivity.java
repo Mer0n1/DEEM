@@ -141,11 +141,28 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    /** Загрузка видео и изображения. */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+
+        if (resultCode == RESULT_OK && data != null) {
+            Uri selectedMediaUri = data.getData();
+            String mimeType = getContentResolver().getType(selectedMediaUri);
+
+            if (mimeType != null) {
+                if (mimeType.startsWith("image/")) {
+                    // Обработка изображения
+                    System.err.println("IMAGE ");
+                } else if (mimeType.startsWith("video/")) {
+                    // Обработка видео
+                    System.err.println("VIDEO ");
+                }
+            }
+        }
+
+        /*if (resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
 
             InputStream inputStream = null;
@@ -171,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
 
             imagesLoadedRecycle.setVisibility(View.VISIBLE);
             imagesLoaderRecycleAdapter.notifyDataSetChanged();
-        }
+        }*/
     }
 
 
@@ -197,8 +214,14 @@ public class ChatActivity extends AppCompatActivity {
         activityChatBinding.imageExample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);
+                /*Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);*/
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*"); // Разрешить выбор любых файлов
+                String[] mimeTypes = {"image/*", "video/*"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes); // Уточнить MIME-типы
+                startActivityForResult(Intent.createChooser(intent, "Select Media"), 0);
             }
         });
 

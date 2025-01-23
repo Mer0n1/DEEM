@@ -5,9 +5,11 @@ import static java.security.AccessController.getContext;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,6 +66,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         private TextView name_group;
         private TextView icon;
         private RecyclerView recyclerView;
+        private final int indent = 110; //test
 
         public ItemNews(@NonNull View itemView) {
             super(itemView);
@@ -121,10 +124,12 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 recyclerView.setVisibility(View.GONE); //если изображений нет то отключаем recycle
         }
 
+        /** Преобразовываем строку в изображение ImageView */
         private void imageLoad(List<ImageView> imageViews, String decodeStr) {
             if (fragment.getContext() != null && fragment.getContext().getResources() != null) { //баг
                 ImageView imageView = new ImageView(fragment.getContext());
                 Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); //Обрезает лишнее и заполняет
                 imageView.setImageBitmap(getScaledBitmap(bitmap));
                 imageViews.add(imageView);
 
@@ -140,17 +145,17 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             recyclerView.scrollToPosition(1);
         }
 
+        /** Задаем размер bitmap соответственно текущему устройству */
         private Bitmap getScaledBitmap(Bitmap bitmap) {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             fragment.getActivity().getWindowManager()
                     .getDefaultDisplay()
                     .getMetrics(displayMetrics);
-            int width = displayMetrics.widthPixels;
 
-            float aspectRatio = (float) width / (float) bitmap.getWidth();
-            int targetHeight = Math.round(bitmap.getHeight() * aspectRatio);
-
-            return Bitmap.createScaledBitmap(bitmap, width, targetHeight, true);
+            int targetWidth = displayMetrics.widthPixels - indent;
+            int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
+System.err.println("--------- " + bitmap.getHeight() + " " + bitmap.getWidth() + " === " + targetHeight + " " + targetWidth);
+            return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
         }
 
     }

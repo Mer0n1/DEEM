@@ -107,6 +107,20 @@ spring:
            - Path=/main/**
          filters:
            - AuthenticationFilter
+
+       - id: Video_service
+         uri: lb://video
+         predicates:
+           - Path=/video/**
+         filters:
+           - AuthenticationFilter
+
+       - id: Video_service
+         uri: lb://video
+         predicates:
+           - Path=/videos/**
+         filters:
+           - AuthenticationFilter
  application:
    name: Gateway
 
