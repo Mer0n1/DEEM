@@ -1,6 +1,8 @@
 package com.example.restful.api;
 
 
+import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.restful.datebase.CacheStatusInfo;
@@ -20,6 +22,8 @@ import com.example.restful.models.News;
 import com.example.restful.models.StandardCallback;
 import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
+import com.example.restful.models.VideoCallback;
+import com.example.restful.models.VideoMetadata;
 import com.example.restful.models.curriculum.DayliSchedule;
 import java.io.IOException;
 import java.util.List;
@@ -126,6 +130,10 @@ public class APIManager {
         });
     }
 
+    public void sendVideo(VideoMetadata videoMetadata) {
+        Repository.getInstance().sendVideo(videoMetadata);
+    }
+
 
     //------------------------------------------------------------------------
     public void updateNewsFeed(StandardCallback callback) {
@@ -154,6 +162,14 @@ public class APIManager {
 
     public void getTopStudentsUniversity(TopLoadCallback callback) {
         Repository.getInstance().getTopStudentsUniversity(callback);
+    }
+
+    public void getVideoManifest(VideoCallback callback, String VideoUUID) {
+        Repository.getInstance().getVideo(callback, VideoUUID);
+    }
+
+    public void getVideoUrl(VideoCallback callback, String VideoUUID) {
+        callback.loadVideo(Base.BASE_URL + "videos/" + VideoUUID + "/output.m3u8"); //TODO test
     }
 
 

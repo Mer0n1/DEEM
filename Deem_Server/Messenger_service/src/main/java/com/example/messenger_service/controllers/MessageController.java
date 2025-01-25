@@ -76,7 +76,18 @@ public class MessageController {
 
     @GetMapping("/getMessage")
     public Message getMessage(int id) {
-        return messageService.getMessage(id);
+        try {
+            Message message = messageService.getMessage(id);
+
+            //собираем uuid
+            if (message.getIsThereVideo())
+                message.setVideoUUID(messengerServiceClient.getVideoUUID(id).getBody());
+
+            return message;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     @GetMapping("/getMessagesFeed")

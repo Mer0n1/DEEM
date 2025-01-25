@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -31,6 +32,7 @@ import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.News;
 import com.example.restful.models.StandardCallback;
+import com.example.restful.models.VideoMetadata;
 import com.example.restful.utils.ConverterDTO;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
@@ -43,7 +45,9 @@ import com.example.restful.models.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,6 +80,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
     private List<ImageView> FixedImageViews;
+
+    private VideoMetadata videoMetadata;
+    private boolean isVideoLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,59 +160,86 @@ public class ChatActivity extends AppCompatActivity {
 
             if (mimeType != null) {
                 if (mimeType.startsWith("image/")) {
-                    // Обработка изображения
                     System.err.println("IMAGE ");
+                    handleImage(data);
                 } else if (mimeType.startsWith("video/")) {
-                    // Обработка видео
                     System.err.println("VIDEO ");
+                    handleVideo(data);
                 }
             }
         }
 
-        /*if (resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-
-            InputStream inputStream = null;
-            try {
-                inputStream = getContentResolver().openInputStream(selectedImageUri);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
-
-            String str = ImageUtil.getInstance().ConvertToString(drawable);
-            Image image = new Image();
-            image.setImgEncode(str);
-
-            MessageImage messageImage = new MessageImage();
-            messageImage.setImage(image);
-
-            FixedImages.add(messageImage);
-
-            ImageView imageView = new ImageView(this);
-            imageView.setImageDrawable(drawable);
-            FixedImageViews.add(imageView);
-
-            imagesLoadedRecycle.setVisibility(View.VISIBLE);
-            imagesLoaderRecycleAdapter.notifyDataSetChanged();
-        }*/
     }
 
+    private void handleVideo(Intent data) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(data.getData());
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] temp = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(temp)) != -1)
+                buffer.write(temp, 0, bytesRead);
+
+            inputStream.close();
+            byte[] videoData = buffer.toByteArray();
+            String videoUUID = GeneratorUUID.getInstance().generateUUIDforVideo(videoData);
+
+            videoMetadata = new VideoMetadata(VideoMetadata.TypeVideoData.message_video, videoUUID, videoData);
+            isVideoLoaded = true;
+            videoMetadata.setId_dependency(87L);//Test todo (на момент теста номер 1 протокол отправки видео)
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleImage(Intent data) {
+        Uri selectedImageUri = data.getData();
+
+        InputStream inputStream = null;
+        try {
+            inputStream = getContentResolver().openInputStream(selectedImageUri);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Ошибка загрузки изображения.", Toast.LENGTH_SHORT).show();
+        }
+        Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
+
+        String str = ImageUtil.getInstance().ConvertToString(drawable);
+        Image image = new Image();
+        image.setImgEncode(str);
+
+        MessageImage messageImage = new MessageImage();
+        messageImage.setImage(image);
+
+        FixedImages.add(messageImage);
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageDrawable(drawable);
+        FixedImageViews.add(imageView);
+
+        imagesLoadedRecycle.setVisibility(View.VISIBLE);
+        imagesLoaderRecycleAdapter.notifyDataSetChanged();
+    }
 
     private void SetListeners() {
 
         activityChatBinding.enterText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editText = activityChatBinding.EditText;
-                String content = editText.getText().toString();
+                /*EditText editText = activityChatBinding.EditText;
+                String content = editText.getText().toString();*/
 
-                sendMessage(content);
+                //sendMessage(content);
+                if (isVideoLoaded) {
+                    APIManager.getManager().sendVideo(videoMetadata);
+                }
 
                 //Update Interface
-                editText.setText("");
+                /*editText.setText("");
                 recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
-                chatRecycleAdapter.notifyDataSetChanged();
+                chatRecycleAdapter.notifyDataSetChanged();*/
             }
         });
 

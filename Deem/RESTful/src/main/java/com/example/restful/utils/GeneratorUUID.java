@@ -53,7 +53,6 @@ public class GeneratorUUID {
 
             return hexString.toString();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -75,9 +74,7 @@ public class GeneratorUUID {
                 }
 
                 return hexString.toString();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            } catch (NoSuchAlgorithmException e) {}
             return null;
         }
     }

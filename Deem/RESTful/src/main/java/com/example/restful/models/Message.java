@@ -35,6 +35,8 @@ public class Message {
     private Date date;
     @ColumnInfo(name = "author")
     private Long author;
+    @Ignore
+    private String VideoUUID; //TODO test
 
     @Ignore
     private Chat chat;
@@ -134,6 +136,14 @@ public class Message {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public String getVideoUUID() {
+        return VideoUUID;
+    }
+
+    public void setVideoUUID(String videoUUID) {
+        VideoUUID = videoUUID;
     }
 
     @Override

@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "message")
 @Data
-//@ToString
+@ToString
 public class Message {
 
     @Id
@@ -42,6 +42,13 @@ public class Message {
     @Column(name = "id_account")
     private Long author;
 
+    @NotNull
+    @Column(name = "video")
+    private Boolean isThereVideo;
+
     @Transient
     private List<MessageImage> images;
+
+    @Transient
+    private String VideoUUID;
 }

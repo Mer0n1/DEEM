@@ -15,6 +15,8 @@ public class VideoService {
 
     @Value("${PATH_VIDEOS}")
     private String PATH_VIDEOS;
+    @Value("${MANIFEST_PATH}")
+    private String MANIFEST_PATH;
 
     /** Загружает видео согласно name и uuid и возвращает путь к файлу */
     public String uploadVideo(MultipartFile file, VideoMetadata video) throws IOException {
@@ -88,6 +90,6 @@ public class VideoService {
         if (!dir.exists())
             throw new Exception("Некорректный запрос.");
         else
-            return "http://192.162.0.103:8081/videos/" + uuid + "/output.m3u8"; //TODO test
+            return MANIFEST_PATH + "/" + uuid + "/output.m3u8";
     }
 }

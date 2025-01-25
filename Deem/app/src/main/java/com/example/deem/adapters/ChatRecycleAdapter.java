@@ -17,6 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.MediaItem;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.hls.HlsMediaSource;
+import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -24,12 +29,14 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.api.Repository;
 import com.example.restful.datebase.CacheSystem;
 import com.example.restful.models.Account;
 import com.example.restful.models.Image;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
+import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
@@ -106,6 +113,10 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
         private boolean isMyMessage;
         private View itview;
+        private final int radiusImage = 20;
+
+        //video
+        private PlayerView playerView;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,7 +126,8 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             recyclerView = itemView.findViewById(R.id.list_images);
             message_time = itemView.findViewById(R.id.message_time);
             include_view = itemView.findViewById(R.id.item_date_include);
-            item_date = include_view.findViewById(R.id.text_chat_date);
+            item_date    = include_view.findViewById(R.id.text_chat_date);
+            playerView   = itemView.findViewById(R.id.player_view);
 
             views = new ArrayList<>();
             recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
@@ -164,23 +176,54 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                     public void onImageLoaded(String decodeStr) { setImageOnView(decodeStr);}
                 });
             }
+if (message.getId() == 87) message.setVideoUUID("3465ebd944ce22af50922c84b56ebb6645d20ee6cc4c60ee16c01eac3d18bf4a"); //TODO test
+            //Проверка на видео и загрузка
+            if (message.getVideoUUID() != null && !message.getVideoUUID().isEmpty()) {
+System.err.println("++++++++++++++ getting video" );
+                APIManager.getManager().getVideoManifest(new VideoCallback() {
+                    @Override
+                    public void loadVideo(String url) {
+                        playerView.setVisibility(View.VISIBLE);
+                        System.err.println("------------- " + url);
 
+                        ExoPlayer player = new ExoPlayer.Builder(activity).build();
+                        playerView.setPlayer(player);
+
+                        // Создание HLS-источника
+                        HlsMediaSource.Factory hlsMediaSourceFactory = new HlsMediaSource.Factory(
+                                new DefaultHttpDataSource.Factory()
+                        );
+
+                        // Установка HLS медиа
+                        MediaItem mediaItem = MediaItem.fromUri(url);
+                        HlsMediaSource hlsMediaSource = hlsMediaSourceFactory.createMediaSource(mediaItem);
+
+                        // Подготовка и воспроизведение
+                        player.setMediaSource(hlsMediaSource);
+                        player.prepare();
+                        player.play();
+                    }
+                }, message.getVideoUUID());
+            }
         }
+
 
         private void setImageOnView(String decodeStr) {
             if (decodeStr == null) return;
             Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
 
             ImageView imageView = new ImageView(activity);
-            Bitmap roundedBitmap = getRoundedBitmap(bitmap, 20);
+            Bitmap roundedBitmap = getRoundedBitmap(bitmap, radiusImage);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageBitmap(getScaledBitmap(roundedBitmap));
 
             views.add(imageView);
             recyclerView.setVisibility(View.VISIBLE);
 
-            recyclerView.setLayoutManager(new GridLayoutManager(activity, 1)); //views.size()
+            recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size())); //views.size()
         }
 
+        /** Округлить изображение */
         public Bitmap getRoundedBitmap(Bitmap bitmap, int radius) {
             if (bitmap == null) return null;
             Bitmap roundedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -202,15 +245,14 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             activity.getWindowManager()
                     .getDefaultDisplay()
                     .getMetrics(displayMetrics);
-            int width = displayMetrics.widthPixels;
+
+            int targetWidth = displayMetrics.widthPixels;
+            int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
 
             if (!isMyMessage)
-                width -= 350;
-
-            float aspectRatio = (float) width / (float) bitmap.getWidth();
-            int targetHeight = Math.round(bitmap.getHeight() * aspectRatio);
-
-            return Bitmap.createScaledBitmap(bitmap, width, targetHeight, true);
+                targetWidth -= 400;
+            System.err.println(targetWidth + " " + targetHeight);
+            return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
         }
     }
 }

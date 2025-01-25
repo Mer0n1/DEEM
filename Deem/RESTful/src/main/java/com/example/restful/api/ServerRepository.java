@@ -17,7 +17,11 @@ import com.example.restful.models.curriculum.Class;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class ServerRepository {
     private static ServerRepository Instance;
@@ -82,4 +86,8 @@ public class ServerRepository {
     public Call<List<Class>> getClasses() { return Handler.getInstance().getApi().getClasses(); }
 
     public Call<List<Club>> getClubs() { return Handler.getInstance().getApi().getClubs(); }
+
+    public Call<Void> sendVideo(MultipartBody.Part file, RequestBody metadata) { return Handler.getInstance().getApi().sendVideo(file, metadata);}
+
+    public Call<String> getManifestVideo(String uuid) { return Handler.getInstance().getApi().getVideoManifest(uuid);}
 }

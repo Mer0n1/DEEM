@@ -31,6 +31,8 @@ public class MessengerServiceClient {
     private String pushServiceUrl;
     @Value("http://localhost:8086/image")
     private String imageServiceUrl;
+    @Value("http://localhost:8093/video")
+    private String videoServiceUrl;
 
     private String personal_key;
 
@@ -71,5 +73,10 @@ public class MessengerServiceClient {
         entity = new HttpEntity<>(jsonMessage, headers);
 
         return restTemplate.exchange(imageServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
+    }
+
+    public ResponseEntity<String> getVideoUUID(int idMessage) {
+        return restTemplate.exchange(videoServiceUrl + "/getUUID" + "?type=message_video&id="
+                + idMessage, HttpMethod.GET, entity, String.class);
     }
 }

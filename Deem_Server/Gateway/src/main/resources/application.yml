@@ -109,14 +109,14 @@ spring:
            - AuthenticationFilter
 
        - id: Video_service
-         uri: lb://video
+         uri: lb://videose
          predicates:
            - Path=/video/**
          filters:
            - AuthenticationFilter
 
        - id: Video_service
-         uri: lb://video
+         uri: lb://videose
          predicates:
            - Path=/videos/**
          filters:

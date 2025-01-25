@@ -44,6 +44,7 @@ public class VideoController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("file") MultipartFile file,
                                          @RequestParam("metadata") String metadataJson) {
+        System.out.println("get upload");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             VideoMetadata video = objectMapper.readValue(metadataJson, VideoMetadata.class);
@@ -64,19 +65,20 @@ System.out.println("upload: " + video.toString());
     public ResponseEntity<String> getVideoManifest(@PathVariable String uuid) {
         System.out.println("getVideoManifest " + uuid);
         try {
-            return ResponseEntity.ok(videoService.getManifestUrl(uuid));
+            return ResponseEntity.ok(videoService.getManifestUrl(uuid).replace("/", "%2F"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     /** Метод созданный для получения UUID.
      * Аккаунт может запросить UUID, но только через сервисы новостей и сообщений,
      * которые в свою очередь проверят валидность запроса на своей стороне и запросят
      * UUID через restTemplate. */
     @PreAuthorize("hasRole('HIGH')")
-    @GetMapping("/getAccount")
-    public ResponseEntity<String> getUUIDbyContentId(@RequestParam("type") String type, //TODO протестить
+    @GetMapping("/getUUID")
+    public ResponseEntity<String> getUUIDbyContentId(@RequestParam("type") String type,
                                                      @RequestParam("id") Long id) {
         try {
             String uuid = "";

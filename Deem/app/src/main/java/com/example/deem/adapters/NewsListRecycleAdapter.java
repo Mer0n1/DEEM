@@ -154,7 +154,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
             int targetWidth = displayMetrics.widthPixels - indent;
             int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
-System.err.println("--------- " + bitmap.getHeight() + " " + bitmap.getWidth() + " === " + targetHeight + " " + targetWidth);
+
             return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
         }
 

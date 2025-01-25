@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: video
+    name: videose
 
 eureka:
   client:

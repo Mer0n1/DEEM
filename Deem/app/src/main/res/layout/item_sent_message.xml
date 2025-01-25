@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_sent_message"
             android:orientation="vertical"
-            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteY="10dp">
@@ -35,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxWidth="260dp"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="25dp"
                 android:paddingVertical="10dp"
                 android:text="Привет. Как ты?"
                 android:textColor="@color/white"
@@ -53,6 +52,20 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:ignore="MissingConstraints" />
 
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:use_artwork="true"
+                app:use_controller="true"
+                app:show_buffering="when_playing"
+
+                app:show_shuffle_button="false"
+                app:show_timeout="1000"
+                android:background="#000"
+                app:resize_mode="fit"
+                />
         </LinearLayout>
 
 

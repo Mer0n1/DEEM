@@ -23,10 +23,13 @@ import com.example.restful.models.PublicAccountDTO;
 import com.example.restful.models.StandardCallback;
 import com.example.restful.models.TopLoadCallback;
 import com.example.restful.models.TopsUsers;
+import com.example.restful.models.VideoCallback;
+import com.example.restful.models.VideoMetadata;
 import com.example.restful.models.curriculum.Class;
 import com.example.restful.models.curriculum.DayliSchedule;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.modelmapper.ModelMapper;
 
@@ -38,6 +41,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -103,6 +110,11 @@ public class Repository {
         исключения e.printStackTrace(); крашат приложения хотя можно сделать так чтобы мы обрабатывали ситуацию а не крашили, сейчас это тестирование
         баг который я так и не смог найти - изменение размера собственных item сообщений при пролистывании - вроде как какой то view перекрывает это
 
+        TODO баг с сообщениями. У нас много недодело, например if (!isMyMessage) и растягивание, также как и дизайн картинок
+        1. Делаем доп кнопку и загружаем видео а по кнопку отправляем видео чтобы проверить технологию отправки видео и сохранения на сервере для конкретного сообщения.
+        2. Затем делаем технологию получения изображения. На этот раз изменяем обьект message и занимаемся протоколом message_service-video_service.
+        Идея такая - создаем новый параметр сообщения о наличии видео, если он true то сервис message запрашивает uuid видео, а этот uuid это transient х-ка
+        3. После того как протоколы отправки-получения готовы, занимаемся конечным протоколом через отправку сообщения-при положительном результате отправляем видео.
         */
     }
 
@@ -608,6 +620,44 @@ public class Repository {
             }
         });
     }
+
+
+    //--------------------VIDEO--------------------------
+    protected void sendVideo(VideoMetadata videoMetadata) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("video/mp4"), videoMetadata.getVideo());
+        MultipartBody.Part videoBody = MultipartBody.Part.createFormData("file", "video.mp4", requestFile);
+
+        String metadataJson = "{\"id_dependency\":\"" + videoMetadata.getId_dependency() + "\",\"type\":\"" +
+                videoMetadata.getType().toString() + "\",\"uuid\":\"" + videoMetadata.getUuid() + "\"}";
+        RequestBody metadata = RequestBody.create(MediaType.parse("application/json"), metadataJson);
+
+        ServerRepository.getInstance().sendVideo(videoBody, metadata).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
+    }
+
+    protected void getVideo(VideoCallback callback, String VideoUUID) {
+        ServerRepository.getInstance().getManifestVideo(VideoUUID).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.err.println("response ----------- " + response.body());
+                if (response.body() != null && !response.body().isEmpty())
+                    callback.loadVideo(Base.BASE_URL + response.body().replace("%2F", "/"));
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.err.println("onFailure ----------- " + t.getMessage());
+            }
+        });
+    }
+
 
 
     private Account convertToAccount(PrivateAccountDTO dto) {

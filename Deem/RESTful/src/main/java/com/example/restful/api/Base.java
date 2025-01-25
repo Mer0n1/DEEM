@@ -21,11 +21,18 @@ import com.example.restful.models.curriculum.Class;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Base {
@@ -86,4 +93,14 @@ public interface Base {
     //club
     @GET("/club/getClubs")
     Call<List<Club>> getClubs();
+
+    //Video
+    @Multipart
+    @POST("/video/upload")
+    Call<Void> sendVideo(
+            @Part MultipartBody.Part file,
+            @Part("metadata") RequestBody metadata
+    );
+    @GET("/video/getManifest/{uuid}") //запрос на получение манифеста видео
+    Call<String> getVideoManifest(@Path("uuid") String uuid);
 }
