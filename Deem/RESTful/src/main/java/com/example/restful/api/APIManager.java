@@ -25,6 +25,8 @@ import com.example.restful.models.TopsUsers;
 import com.example.restful.models.VideoCallback;
 import com.example.restful.models.VideoMetadata;
 import com.example.restful.models.curriculum.DayliSchedule;
+import com.example.restful.utils.ConverterDTO;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -90,13 +92,26 @@ public class APIManager {
     }
 
 
-    public void sendMessage(CreateMessageDTO message) {
-        ServerRepository.getInstance().sendMessage(message).enqueue(new Callback<Void>() {
+    public void sendMessage(Message message, boolean isNewChat) {
+        CreateMessageDTO dto = ConverterDTO.MessageToCreateMessageDTO(message);
+        dto.setNewChat(isNewChat);
+
+        ServerRepository.getInstance().sendMessage(dto).enqueue(new Callback<Long>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {}
+            public void onResponse(Call<Long> call, Response<Long> response) { //TODO проверить на Failure вариант
+                //в случае удачи если у нас есть видео то отправляем видео в видеосервис
+                if (response.isSuccessful() && message.getThereVideo()) {
+                    Long id = response.body();
+
+                    if (id != null && id != 0) {
+                        message.getVideoMetadata().setId_dependency(id);
+                        sendVideo(message.getVideoMetadata());
+                    }
+                }
+            }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {}
+            public void onFailure(Call<Long> call, Throwable t) {}
         });
     }
 

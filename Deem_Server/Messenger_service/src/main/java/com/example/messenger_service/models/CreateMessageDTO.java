@@ -20,4 +20,5 @@ public class CreateMessageDTO {
     private Chat chat;
     private List<MessageImage> images;
     private boolean newChat;
+    private boolean thereVideo;
 }

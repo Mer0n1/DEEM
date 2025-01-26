@@ -60,7 +60,7 @@ public interface Base {
     @GET("/chat/getChats")
     Call<List<Chat>> getChats();
     @POST("/message/sendMessage")
-    Call<Void> sendMessage(@Body CreateMessageDTO message);
+    Call<Long> sendMessage(@Body CreateMessageDTO message);
     @POST("/chat/createChat")
     Call<Void> sendNewChat(@Body Chat chat);
     @GET("/message/getMessagesFeed")

@@ -11,6 +11,7 @@ import android.graphics.Shader;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.hls.HlsMediaSource;
@@ -28,6 +30,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
+import com.example.deem.utils.VideoUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.api.Repository;
 import com.example.restful.datebase.CacheSystem;
@@ -40,10 +43,16 @@ import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
+import com.example.restful.utils.HLS_ProtocolSystem;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.MessageViewHolder> {
 
@@ -117,6 +126,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
         //video
         private PlayerView playerView;
+        private ExoPlayer exoPlayer;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -176,35 +186,75 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                     public void onImageLoaded(String decodeStr) { setImageOnView(decodeStr);}
                 });
             }
-if (message.getId() == 87) message.setVideoUUID("3465ebd944ce22af50922c84b56ebb6645d20ee6cc4c60ee16c01eac3d18bf4a"); //TODO test
-            //Проверка на видео и загрузка
-            if (message.getVideoUUID() != null && !message.getVideoUUID().isEmpty()) {
-System.err.println("++++++++++++++ getting video" );
-                APIManager.getManager().getVideoManifest(new VideoCallback() {
-                    @Override
-                    public void loadVideo(String url) {
+
+            //Video
+            DoVideo(message);
+        }
+
+        @SuppressLint("UnsafeOptInUsageError")
+        private void DoVideo(Message message) {
+            //if (message.getId() == 87) message.setVideoUUID("3465ebd944ce22af50922c84b56ebb6645d20ee6cc4c60ee16c01eac3d18bf4a"); //TODO test
+
+            //Проверка на видео и загрузка из сервера
+            if (exoPlayer == null) {
+
+                if (!message.isCompleted()) {
+                    //В случае если нужно загрузить видео от сервера.
+                    if (message.getVideoUUID() != null && !message.getVideoUUID().isEmpty())
+
+                        APIManager.getManager().getVideoManifest(new VideoCallback() {
+                            @Override
+                            public void loadVideo(String url) {
+                                playerView.setVisibility(View.VISIBLE);
+
+                                exoPlayer = new ExoPlayer.Builder(activity).build();
+                                playerView.setPlayer(exoPlayer);
+
+                                exoPlayer.setMediaSource(HLS_ProtocolSystem.getInstance().createHLSMediaSource(url));
+                                exoPlayer.prepare();
+                                exoPlayer.play();
+                            }
+                        }, message.getVideoUUID());
+                } else
+                    //В случае если мы отправители видео и у нас уже оно есть.
+                    if (message.getThereVideo() && message.getVideoMetadata() != null) {
                         playerView.setVisibility(View.VISIBLE);
-                        System.err.println("------------- " + url);
 
-                        ExoPlayer player = new ExoPlayer.Builder(activity).build();
-                        playerView.setPlayer(player);
+                        try {
+                            File tempFile = File.createTempFile("video", ".mp4", activity.getCacheDir());
+                            tempFile.deleteOnExit();
 
-                        // Создание HLS-источника
-                        HlsMediaSource.Factory hlsMediaSourceFactory = new HlsMediaSource.Factory(
-                                new DefaultHttpDataSource.Factory()
-                        );
+                            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                                fos.write(message.getVideoMetadata().getVideo());
+                            }
 
-                        // Установка HLS медиа
-                        MediaItem mediaItem = MediaItem.fromUri(url);
-                        HlsMediaSource hlsMediaSource = hlsMediaSourceFactory.createMediaSource(mediaItem);
+                            exoPlayer = new ExoPlayer.Builder(activity).build();
+                            playerView.setPlayer(exoPlayer);
 
-                        // Подготовка и воспроизведение
-                        player.setMediaSource(hlsMediaSource);
-                        player.prepare();
-                        player.play();
+                            MediaItem mediaItem = VideoUtil.getInstance().getMediaItem(tempFile);
+                            exoPlayer.setMediaItem(mediaItem);
+                            exoPlayer.prepare();
+                            exoPlayer.play();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, message.getVideoUUID());
+            } else {
+                int state = exoPlayer.getPlaybackState();
+                switch (state) {
+                    case Player.STATE_READY:
+                        if (exoPlayer.isPlaying()) {
+                            System.out.println("PLAYING VIDEO");
+                        } else {
+                            System.out.println("PAUSE VIDEO");
+                        }
+                        break;
+                    case Player.STATE_ENDED:
+                        System.out.println("FINISHED VIDEO");
+                        break;
+                }
             }
+
         }
 
 

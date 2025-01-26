@@ -78,9 +78,11 @@ public class ChatActivity extends AppCompatActivity {
     private boolean isSendUpdate = false;
     private Account myAccount;
 
+    //Image
     private List<MessageImage> FixedImages; //зафиксированные изображения перед отправкой сообщения
     private List<ImageView> FixedImageViews;
 
+    //Video
     private VideoMetadata videoMetadata;
     private boolean isVideoLoaded;
 
@@ -188,7 +190,7 @@ public class ChatActivity extends AppCompatActivity {
 
             videoMetadata = new VideoMetadata(VideoMetadata.TypeVideoData.message_video, videoUUID, videoData);
             isVideoLoaded = true;
-            videoMetadata.setId_dependency(87L);//Test todo (на момент теста номер 1 протокол отправки видео)
+            //videoMetadata.setId_dependency(87L);//Test todo (на момент теста номер 1 протокол отправки видео)
 
         } catch (Exception e) {
             Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();
@@ -228,18 +230,18 @@ public class ChatActivity extends AppCompatActivity {
         activityChatBinding.enterText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*EditText editText = activityChatBinding.EditText;
-                String content = editText.getText().toString();*/
+                EditText editText = activityChatBinding.EditText;
+                String content = editText.getText().toString();
 
-                //sendMessage(content);
-                if (isVideoLoaded) {
+                sendMessage(content);
+                /*if (isVideoLoaded) {
                     APIManager.getManager().sendVideo(videoMetadata);
-                }
+                }*/
 
                 //Update Interface
-                /*editText.setText("");
+                editText.setText("");
                 recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
-                chatRecycleAdapter.notifyDataSetChanged();*/
+                chatRecycleAdapter.notifyDataSetChanged();
             }
         });
 
@@ -413,23 +415,23 @@ public class ChatActivity extends AppCompatActivity {
         Chat chatformessage = new Chat();
         chatformessage.setId(currentChat.getId());
         message.setChat(chatformessage);
-
         messages.add(message);
-        message.setChat(currentChat);
 
-        //создаем dto чтобы отправить на сервер
-        CreateMessageDTO dto = ConverterDTO.MessageToCreateMessageDTO(message);
-        dto.setNewChat(newChat);
-        Chat chat = new Chat();
-        chat.setId(dto.getChat().getId());
-        chat.setUsers(dto.getChat().getUsers());
-        chat.setMessages(null);
+        //Настройка видео
+        if (isVideoLoaded) {
+            message.setThereVideo(true);
+            message.setVideoMetadata(videoMetadata);
+        }
 
-        //APIManager.getManager().sendMessage(dto);
+        //Отправляем на сервер
+        //APIManager.getManager().sendMessage(message, newChat);
 
+        //Clear
         newChat = false;
         FixedImages = new ArrayList<>();
         FixedImageViews.clear();
+        message.setChat(currentChat);
+        message.setCompleted(true); //TODO?
 
         imagesLoadedRecycle.setVisibility(View.GONE);
     }

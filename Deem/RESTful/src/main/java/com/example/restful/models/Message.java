@@ -49,11 +49,19 @@ public class Message {
     @JsonIgnore
     private boolean NoImages;
     /** Переменная обозначающая конечное состояние. Сообщение может быт
-     *  созданной или же полностью загруженной/обновленной. True значение
-     *  означает, что для этой новости мы не загружаем обновления из сервера и кэша */
+     *  созданной или же полностью загруженной/обновленной.
+     *  True значение означает, что для этой новости мы не загружаем обновления из сервера и кэша */
     @Ignore
     @JsonIgnore
     private boolean isCompleted;
+
+    /** Параметр использующийся для БД сервера, но ненужный для кэширования*/
+    @Ignore
+    private boolean isThereVideo;
+    /** Параметр нужный для протоколирования sendMessage-затем upload video*/
+    @Ignore
+    @JsonIgnore
+    private VideoMetadata videoMetadata;
 
     @ColumnInfo(name = "chatId", index = true)
     private Long chatId;
@@ -144,6 +152,22 @@ public class Message {
 
     public void setVideoUUID(String videoUUID) {
         VideoUUID = videoUUID;
+    }
+
+    public boolean getThereVideo() {
+        return isThereVideo;
+    }
+
+    public void setThereVideo(boolean thereVideo) {
+        isThereVideo = thereVideo;
+    }
+
+    public VideoMetadata getVideoMetadata() {
+        return videoMetadata;
+    }
+
+    public void setVideoMetadata(VideoMetadata videoMetadata) {
+        this.videoMetadata = videoMetadata;
     }
 
     @Override

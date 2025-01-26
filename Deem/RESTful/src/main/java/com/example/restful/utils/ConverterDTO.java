@@ -20,6 +20,7 @@ public class ConverterDTO {
         dto.setText(message.getText());
         dto.setImages(message.getImages().getValue());
         dto.getChat().setMessages(message.getChat().getMessages());
+        dto.setThereVideo(message.getThereVideo());
         return dto;
     }
 

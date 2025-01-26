@@ -11,6 +11,7 @@ public class CreateMessageDTO {
     private List<MessageImage> images;
     private Chat chat;
     private boolean newChat;
+    private boolean thereVideo; //isThereVideo
 
     public CreateMessageDTO() {}
 
@@ -68,5 +69,13 @@ public class CreateMessageDTO {
 
     public void setNewChat(boolean newChat) {
         this.newChat = newChat;
+    }
+
+    public boolean isThereVideo() {
+        return thereVideo;
+    }
+
+    public void setThereVideo(boolean thereVideo) {
+        this.thereVideo = thereVideo;
     }
 }

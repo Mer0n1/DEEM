@@ -71,7 +71,7 @@ public class MessageController {
         //send
         messengerServiceClient.pushMessageTo(message); //отправляем запрос на уведомления
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(message.getId());
     }
 
     @GetMapping("/getMessage")
@@ -80,7 +80,7 @@ public class MessageController {
             Message message = messageService.getMessage(id);
 
             //собираем uuid
-            if (message.getIsThereVideo())
+            if (message.getThereVideo())
                 message.setVideoUUID(messengerServiceClient.getVideoUUID(id).getBody());
 
             return message;
