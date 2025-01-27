@@ -30,7 +30,7 @@ public class ConverterDTO {
         message.setDate(dto.getDate());
         message.setAuthor(dto.getAuthor());
         message.setText(dto.getText());
-        message.setId(dto.getId());
+        //message.setId(dto.getId());
         message.setChatId((long) dto.getChat().getId());
         message.setImages(new MutableLiveData<>());
         return message;

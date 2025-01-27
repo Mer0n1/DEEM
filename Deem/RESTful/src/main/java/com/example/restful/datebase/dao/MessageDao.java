@@ -36,4 +36,7 @@ public interface MessageDao {
 
     @Delete
     void delete(Message message);
+
+    @Query("DELETE FROM message WHERE id = :messageId")
+    void deleteById(int messageId);
 }

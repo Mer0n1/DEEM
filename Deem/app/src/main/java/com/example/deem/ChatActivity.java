@@ -350,6 +350,7 @@ public class ChatActivity extends AppCompatActivity {
 
             CurrentMessages = messages.size();
         }
+
     }
 
     private void initRecycle() {
@@ -421,10 +422,14 @@ public class ChatActivity extends AppCompatActivity {
         if (isVideoLoaded) {
             message.setThereVideo(true);
             message.setVideoMetadata(videoMetadata);
+            message.setVideoUUID(videoMetadata.getUuid());
         }
 
+
         //Отправляем на сервер
-        //APIManager.getManager().sendMessage(message, newChat);
+        APIManager.getManager().sendMessage(message, newChat);
+        //Обновление в кэше
+        APIManager.getManager().getListChats().setValue(APIManager.getManager().getListChats().getValue());
 
         //Clear
         newChat = false;

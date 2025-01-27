@@ -28,8 +28,8 @@ public class MessageController {
 
     @Autowired
     private MessageService messageService;
-    @Autowired
-    private MessengerServiceClient messengerServiceClient;
+    /*@Autowired
+    private MessengerServiceClient messengerServiceClient;*/
     @Autowired
     private ChatService chatService;
     @Autowired
@@ -55,8 +55,10 @@ public class MessageController {
         }
 
         Message actualObject = messageService.save(message);
+        messageService.doImage(message, actualObject);
+        messageService.pushMessage(message, chatService.getChat(message.getChat().getId()).getUsers());
 
-        if (message.getImages() != null)
+        /*if (message.getImages() != null)
             if (message.getImages().size() != 0) {
                 message.getImages().forEach(x -> x.setId_message(actualObject.getId()));
 
@@ -66,16 +68,16 @@ public class MessageController {
                     messageService.delete(actualObject);
                     return ResponseEntity.badRequest().body(e.getMessage());
                 }
-            }
+            }*/
 
         //send
-        messengerServiceClient.pushMessageTo(message); //отправляем запрос на уведомления
+        //messengerServiceClient.pushMessageTo(message); //отправляем запрос на уведомления
 
         return ResponseEntity.ok().body(message.getId());
     }
 
-    @GetMapping("/getMessage")
-    public Message getMessage(int id) {
+    /*@GetMapping("/getMessage")
+    public Message getMessage(Long id) {
         try {
             Message message = messageService.getMessage(id);
 
@@ -88,7 +90,7 @@ public class MessageController {
             System.out.println(e.getMessage());
             return null;
         }
-    }
+    }*/
 
     @GetMapping("/getMessagesFeed")
     public List<Message> getMessagesFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
@@ -98,7 +100,16 @@ public class MessageController {
         if (!chatDAO.IsThereSuchAChat(personDetails.getId(), chatId))
             return null;
 
-        return messageService.getMessagesFeed(date, chatId);
+        /*List<Message> messageList = messageService.getMessagesFeed(date, chatId);
+
+        //Собираем uuid видео если оно есть
+        for (Message message : messageList) {
+            if (message.getThereVideo())
+                message.setVideoUUID(messengerServiceClient.getVideoUUID(message.getId()).getBody());
+            System.out.println(message.getVideoUUID() + " " + message.getThereVideo());
+        }*/
+
+        return messageService.getCollectedMessagesFeed(date, chatId);
     }
 
     /** Отправить новые сообщения. Обновление чата. Пользователь отправляет

@@ -35,8 +35,8 @@ public class Message {
     private Date date;
     @ColumnInfo(name = "author")
     private Long author;
-    @Ignore
-    private String VideoUUID; //TODO test
+    @ColumnInfo(name = "video_uuid")
+    private String videoUUID;
 
     @Ignore
     private Chat chat;
@@ -147,11 +147,11 @@ public class Message {
     }
 
     public String getVideoUUID() {
-        return VideoUUID;
+        return videoUUID;
     }
 
     public void setVideoUUID(String videoUUID) {
-        VideoUUID = videoUUID;
+        this.videoUUID = videoUUID;
     }
 
     public boolean getThereVideo() {

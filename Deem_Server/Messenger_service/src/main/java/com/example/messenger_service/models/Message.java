@@ -48,5 +48,5 @@ public class Message {
     private List<MessageImage> images;
 
     @Transient
-    private String VideoUUID;
+    private String videoUUID;
 }

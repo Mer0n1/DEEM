@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 public class CreateMessageDTO {
-    private Long id;
     private String text;
     private Date date;
     private Long author;
@@ -37,14 +36,6 @@ public class CreateMessageDTO {
 
     public void setAuthor(Long author) {
         this.author = author;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Chat getChat() {

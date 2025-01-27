@@ -51,7 +51,6 @@ public class VideoController {
             validator.validate(video);
             //проверить существует ли подобный id? TODO
 
-System.out.println("upload: " + video.toString());
             String filePath = videoService.uploadVideo(file, video);
             videoBaseDataService.save(video, filePath);
             return ResponseEntity.ok("Видео успешно загружено и подготовлено для DASH");

@@ -6,6 +6,7 @@ import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.models.Message;
 import com.example.messenger_service.repositories.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,10 @@ public class ChatService {
     private ChatDAO chatDAO;
     @Autowired
     private MessageService messageService;
+
+
+    @Value("${FeedCount}")
+    private int FeedCount;
 
     @Cacheable("chats")
     public List<Chat> getChats(List<Long> chatIds) {
@@ -49,10 +54,13 @@ public class ChatService {
         for (Chat chat : chats) { //получим и установим id аккаунтов для каждого чата
             chat.setUsers(chatDAO.getIdAccountsOfChat(chat.getId()));
 
-            //Test оставляем максимум 10 сообщений для каждого чата ради уменьшения нагрузки на сеть
-            if (chat.getMessages().size() > 10)
-                for (; 11 < chat.getMessages().size(); )
+            //Test оставляем максимум FeedCount сообщений для каждого чата ради уменьшения нагрузки на сеть
+            if (chat.getMessages().size() > FeedCount)
+                for (; FeedCount+1 < chat.getMessages().size(); )
                     chat.getMessages().remove(0);
+
+            //собираем uuid
+            messageService.getCollectedMessages(chat.getMessages());
         }
 
         return chats;

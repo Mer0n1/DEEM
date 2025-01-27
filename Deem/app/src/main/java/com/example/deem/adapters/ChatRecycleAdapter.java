@@ -8,10 +8,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,29 +19,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
-import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.hls.HlsMediaSource;
 import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.deem.R;
 import com.example.deem.utils.ImageUtil;
-import com.example.deem.utils.VideoUtil;
 import com.example.restful.api.APIManager;
-import com.example.restful.api.Repository;
-import com.example.restful.datebase.CacheSystem;
-import com.example.restful.models.Account;
-import com.example.restful.models.Image;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
 import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
-import com.example.restful.utils.DateUtil;
-import com.example.restful.utils.GeneratorUUID;
 import com.example.restful.utils.HLS_ProtocolSystem;
 
 import java.io.File;
@@ -50,9 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.MessageViewHolder> {
 
@@ -193,7 +180,6 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
         @SuppressLint("UnsafeOptInUsageError")
         private void DoVideo(Message message) {
-            //if (message.getId() == 87) message.setVideoUUID("3465ebd944ce22af50922c84b56ebb6645d20ee6cc4c60ee16c01eac3d18bf4a"); //TODO test
 
             //Проверка на видео и загрузка из сервера
             if (exoPlayer == null) {
@@ -231,7 +217,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                             exoPlayer = new ExoPlayer.Builder(activity).build();
                             playerView.setPlayer(exoPlayer);
 
-                            MediaItem mediaItem = VideoUtil.getInstance().getMediaItem(tempFile);
+                            MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(tempFile));
                             exoPlayer.setMediaItem(mediaItem);
                             exoPlayer.prepare();
                             exoPlayer.play();

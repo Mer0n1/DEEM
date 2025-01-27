@@ -25,7 +25,6 @@ public class MessengerServiceClient {
 
     private final RestTemplate restTemplate;
     private final Environment environment;
-    private final ChatService chatService;
 
     @Value("http://localhost:8087/push/sendMessageToClient")
     private String pushServiceUrl;
@@ -39,7 +38,7 @@ public class MessengerServiceClient {
     private MultiValueMap<String, String> headers;
     private HttpEntity<String> entity;
 
-    MessengerServiceClient(RestTemplate restTemplate, Environment environment, ChatService chatService) {
+    MessengerServiceClient(RestTemplate restTemplate, Environment environment/*, ChatService chatService*/) {
         headers = new LinkedMultiValueMap<>();
         personal_key = environment.getProperty("ADMIN_KEY");
         headers.add("Authorization", "Bearer " + personal_key);
@@ -48,13 +47,12 @@ public class MessengerServiceClient {
 
         this.restTemplate = restTemplate;
         this.environment = environment;
-        this.chatService = chatService;
     }
  
-    public void pushMessageTo(Message message) throws JsonProcessingException {
+    public void pushMessageTo(Message message, List<Long> users) throws JsonProcessingException {
         MessagePush messagePush = new MessagePush();
         messagePush.setMessage(message);
-        messagePush.setReceivers(chatService.getChat(message.getChat().getId()).getUsers());
+        messagePush.setReceivers(users);
 
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(messagePush);
@@ -75,7 +73,7 @@ public class MessengerServiceClient {
         return restTemplate.exchange(imageServiceUrl + "/addImagesMessage", HttpMethod.POST, entity, Void.class);
     }
 
-    public ResponseEntity<String> getVideoUUID(int idMessage) {
+    public ResponseEntity<String> getVideoUUID(Long idMessage) {
         return restTemplate.exchange(videoServiceUrl + "/getUUID" + "?type=message_video&id="
                 + idMessage, HttpMethod.GET, entity, String.class);
     }

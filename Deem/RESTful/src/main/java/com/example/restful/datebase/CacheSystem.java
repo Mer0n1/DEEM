@@ -1,5 +1,7 @@
 package com.example.restful.datebase;
 
+import static com.example.restful.datebase.AppDatabase.MIGRATION_1_2;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -75,7 +77,9 @@ public class CacheSystem {
             //applicationContext.deleteDatabase("deemdatabase.db"); //TEST TODO
 
             db = Room.databaseBuilder(applicationContext,
-                    AppDatabase.class, "deemdatabase.db").build();
+                    AppDatabase.class, "deemdatabase.db")
+                    .addMigrations(MIGRATION_1_2)
+                    .build();
             FilesDir = applicationContext.getFilesDir();
 
             cacheSystem = new CacheSystem();
