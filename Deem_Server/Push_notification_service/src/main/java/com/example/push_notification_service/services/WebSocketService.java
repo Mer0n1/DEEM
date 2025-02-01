@@ -60,7 +60,7 @@ public class WebSocketService {
         if (!client.isEmpty()) {
             String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                     .writeValueAsString(messagePush.getMessage());
-
+System.out.println(jsonMessage + "\n" + messagePush.getMessage().getVideoUUID());
             MainContainer.send(client.get().getSession(), jsonMessage, MainContainer.Type.Message);
         }
 

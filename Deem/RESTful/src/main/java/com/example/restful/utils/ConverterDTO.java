@@ -7,6 +7,7 @@ import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
+import com.example.restful.models.ReceiveMessageDto;
 
 public class ConverterDTO {
 
@@ -21,6 +22,7 @@ public class ConverterDTO {
         dto.setImages(message.getImages().getValue());
         dto.getChat().setMessages(message.getChat().getMessages());
         dto.setThereVideo(message.getThereVideo());
+        dto.setVideoUUID(message.getVideoUUID());
         return dto;
     }
 
@@ -33,6 +35,20 @@ public class ConverterDTO {
         //message.setId(dto.getId());
         message.setChatId((long) dto.getChat().getId());
         message.setImages(new MutableLiveData<>());
+        message.setVideoUUID(dto.getVideoUUID());
+        return message;
+    }
+
+    public static Message CreateMessageDTOToMessage(ReceiveMessageDto dto) {
+        Message message = new Message();
+        message.setChat(dto.getChat());
+        message.setDate(dto.getDate());
+        message.setAuthor(dto.getAuthor());
+        message.setText(dto.getText());
+        message.setId(Long.valueOf(dto.getId()));
+        message.setChatId((long) dto.getChat().getId());
+        message.setImages(new MutableLiveData<>());
+        message.setVideoUUID(dto.getVideoUUID());
         return message;
     }
 

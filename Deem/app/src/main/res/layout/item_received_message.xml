@@ -37,40 +37,35 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/background_received_message"
-                android:orientation="vertical"
-                android:padding="3dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="260dp"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="7dp"
+                    android:paddingHorizontal="25dp"
+                    android:paddingVertical="10dp"
                     android:text="Привет. Как ты?"
                     android:textColor="@color/black"
                     android:textSize="16dp" />
 
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/list_images"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="vertical"
-                    android:overScrollMode="never"
-                    android:padding="10dp"
                     android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    tools:ignore="MissingConstraints" />
+                    />
 
                 <androidx.media3.ui.PlayerView
                     android:id="@+id/player_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minWidth="2000dp"
                     android:visibility="gone"
                     android:padding="5dp"
                     app:use_artwork="true"
@@ -100,41 +95,3 @@
 
 </LinearLayout>
 
-    <!--<androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/frameLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                app:layout_constraintStart_toEndOf="@+id/icon_chat"
-                app:layout_constraintTop_toTopOf="parent"
-                android:background="@drawable/background_received_message"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxWidth="260dp"
-                    android:paddingHorizontal="25dp"
-                    android:paddingVertical="10dp"
-                    android:text="Привет. Как ты?-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;"
-                    android:textColor="@color/black"
-                    android:textSize="16dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/list_images"
-                    android:layout_width="700dp"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="vertical"
-                    android:overScrollMode="never"
-                    android:padding="10dp"
-                    android:visibility="visible"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textMessage"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>-->

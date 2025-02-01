@@ -33,6 +33,7 @@ import com.example.restful.models.MessageImage;
 import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
 import com.example.restful.utils.HLS_ProtocolSystem;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,8 +75,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         holder.message_time.setText("");
         holder.include_view.setVisibility(View.GONE);
         holder.item_date.setText("");
-        holder.views.clear();
-        holder.recyclerView.setVisibility(View.GONE);
+        holder.container.setVisibility(View.GONE);
 
         current_position = position;
 
@@ -100,10 +100,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
         private TextView textMessage;
         private TextView message_time;
-        private RecyclerView recyclerView;
-        private List<ImageView> views;
-        private ImagesListRecycleAdapter imagesListRecycleAdapter;
-
+        private FlexboxLayout container;
         private View include_view;
         private TextView item_date;
 
@@ -120,19 +117,11 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             itview = itemView;
 
             textMessage  = itemView.findViewById(R.id.textMessage);
-            recyclerView = itemView.findViewById(R.id.list_images);
+            container    = itemView.findViewById(R.id.list_images);
             message_time = itemView.findViewById(R.id.message_time);
             include_view = itemView.findViewById(R.id.item_date_include);
             item_date    = include_view.findViewById(R.id.text_chat_date);
             playerView   = itemView.findViewById(R.id.player_view);
-
-            views = new ArrayList<>();
-            recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
-            imagesListRecycleAdapter = new ImagesListRecycleAdapter(views, activity);
-            recyclerView.setAdapter(imagesListRecycleAdapter);
-            recyclerView.scrollToPosition(1);
-
-            isMyMessage = false;
         }
 
         public void setData(Message message) {
@@ -160,12 +149,11 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
             //Обновление Holder изображений
             if (message.isNoImages() || message.getImages().getValue() == null)
-                recyclerView.setVisibility(View.GONE);
+                container.setVisibility(View.GONE);//recyclerView.setVisibility(View.GONE);
 
             if (message.getImages().getValue().size() != 0) { //загружаем изображения те что есть
                 for (MessageImage image : message.getImages().getValue()) {
                     setImageOnView(image.getImage().getImgEncode());
-                    imagesListRecycleAdapter.notifyDataSetChanged();
                 }
             } else {
                 APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
@@ -240,9 +228,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                         break;
                 }
             }
-
         }
-
 
         private void setImageOnView(String decodeStr) {
             if (decodeStr == null) return;
@@ -253,10 +239,9 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageBitmap(getScaledBitmap(roundedBitmap));
 
-            views.add(imageView);
-            recyclerView.setVisibility(View.VISIBLE);
-
-            recyclerView.setLayoutManager(new GridLayoutManager(activity, views.size())); //views.size()
+            container.removeAllViews();
+            container.setVisibility(View.VISIBLE);
+            container.addView(imageView);
         }
 
         /** Округлить изображение */
@@ -283,11 +268,13 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                     .getMetrics(displayMetrics);
 
             int targetWidth = displayMetrics.widthPixels;
-            int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
 
             if (!isMyMessage)
-                targetWidth -= 400;
-            System.err.println(targetWidth + " " + targetHeight);
+                targetWidth -= 250;
+
+            int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
+
+            System.err.println("0000000000 " + textMessage.getText() + " " + targetWidth + " " + targetHeight);
             return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
         }
     }

@@ -10,6 +10,7 @@ import com.example.restful.models.Event;
 import com.example.restful.models.Group;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
+import com.example.restful.models.ReceiveMessageDto;
 import com.example.restful.utils.ConverterDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -54,8 +55,10 @@ public class PushClient {
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
-                        CreateMessageDTO dto = objectMapper.readValue(jsonObject.get("Type").toString(), CreateMessageDTO.class);
+                        //CreateMessageDTO dto = objectMapper.readValue(jsonObject.get("Type").toString(), CreateMessageDTO.class);
+                        //Message message = ConverterDTO.CreateMessageDTOToMessage(dto);
 
+                        ReceiveMessageDto dto = objectMapper.readValue(jsonObject.get("Type").toString(), ReceiveMessageDto.class);
                         Message message = ConverterDTO.CreateMessageDTOToMessage(dto);
                         message.getImages().postValue(dto.getImages());
 

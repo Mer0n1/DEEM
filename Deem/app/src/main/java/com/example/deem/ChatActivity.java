@@ -427,9 +427,9 @@ public class ChatActivity extends AppCompatActivity {
 
 
         //Отправляем на сервер
-        APIManager.getManager().sendMessage(message, newChat);
+        //APIManager.getManager().sendMessage(message, newChat);
         //Обновление в кэше
-        APIManager.getManager().getListChats().setValue(APIManager.getManager().getListChats().getValue());
+        //APIManager.getManager().getListChats().setValue(APIManager.getManager().getListChats().getValue());
 
         //Clear
         newChat = false;

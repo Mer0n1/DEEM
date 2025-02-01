@@ -21,4 +21,5 @@ public class CreateMessageDTO {
     private List<MessageImage> images;
     private boolean newChat;
     private boolean thereVideo;
+    private String videoUUID;
 }

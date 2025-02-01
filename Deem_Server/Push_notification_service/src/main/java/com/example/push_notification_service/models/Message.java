@@ -18,4 +18,5 @@ public class Message {
     private Date date;
     private Chat chat;
     private List<MessageImage> images;
+    private String videoUUID;
 }

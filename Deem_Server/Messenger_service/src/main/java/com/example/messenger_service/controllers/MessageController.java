@@ -51,7 +51,7 @@ public class MessageController {
             List<Message> messageList = new ArrayList<>(); //TODO на случай проверить account_chat на наличие переписки
             messageList.add(message);
             dto.getChat().setMessages(messageList);
-            chatService.CreateNewChat(dto.getChat());
+            chatService.CreateNewChat(dto.getChat()); 
         }
 
         Message actualObject = messageService.save(message);

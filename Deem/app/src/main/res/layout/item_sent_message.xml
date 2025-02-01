@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <include
         android:id="@+id/item_date_include"
@@ -20,7 +19,7 @@
         android:padding="10dp">
 
         <LinearLayout
-            android:id="@+id/frameLayout2"
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_sent_message"
@@ -40,22 +39,19 @@
                 android:textColor="@color/white"
                 android:textSize="16dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
+
+            <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/list_images"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:overScrollMode="never"
-                android:padding="10dp"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:ignore="MissingConstraints" />
+                android:visibility="gone" />
 
             <androidx.media3.ui.PlayerView
                 android:id="@+id/player_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minWidth="2000dp"
+                android:minHeight="200dp"
                 android:visibility="gone"
                 android:padding="5dp"
                 app:use_artwork="true"
@@ -68,7 +64,6 @@
                 />
         </LinearLayout>
 
-
         <TextView
             android:id="@+id/message_time"
             android:layout_width="wrap_content"
@@ -76,8 +71,8 @@
             android:text="11:22"
             android:textColor="#8e8e8e"
             android:textSize="12dp"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout2"
-            app:layout_constraintEnd_toEndOf="@+id/frameLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
             tools:layout_editor_absoluteX="350dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

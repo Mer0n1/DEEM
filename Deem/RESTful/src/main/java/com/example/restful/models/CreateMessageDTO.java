@@ -11,6 +11,7 @@ public class CreateMessageDTO {
     private Chat chat;
     private boolean newChat;
     private boolean thereVideo; //isThereVideo
+    private String videoUUID;
 
     public CreateMessageDTO() {}
 
@@ -68,5 +69,13 @@ public class CreateMessageDTO {
 
     public void setThereVideo(boolean thereVideo) {
         this.thereVideo = thereVideo;
+    }
+
+    public String getVideoUUID() {
+        return videoUUID;
+    }
+
+    public void setVideoUUID(String videoUUID) {
+        this.videoUUID = videoUUID;
     }
 }
