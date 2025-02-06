@@ -65,7 +65,7 @@ public class ServerRepository {
 
     public Call<List<Message>> getMessagesFeed(String date, Long chatId) { return Handler.getInstance().getApi().getMessagesFeed(date,chatId);}
 
-    public Call<Void> createNews(CreateNewsDTO news) { return Handler.getInstance().getApi().createNews(news);}
+    public Call<Long> createNews(CreateNewsDTO news) { return Handler.getInstance().getApi().createNews(news);}
 
     public Call<List<News>> getNews() { return Handler.getInstance().getApi().getNews(); }
 

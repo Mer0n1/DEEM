@@ -76,6 +76,8 @@ public class ConverterDTO {
         dto.setDate(news.getDate());
         dto.setIdGroup(news.getIdGroup());
         dto.setImages(news.getImages().getValue());
+        dto.setVideoUUID(news.getVideoUUID());
+        dto.setThereVideo(news.isThereVideo());
 
         return dto;
     }

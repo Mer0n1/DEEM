@@ -27,7 +27,7 @@
             android:name="com.example.deem.AuthActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Deem.NoActionBar">
+            android:theme="@style/Theme.Deem.NoActionBar"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

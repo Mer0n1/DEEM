@@ -23,4 +23,6 @@ public class CreateNewsDTO {
     @NotEmpty
     private String faculty;
     private List<NewsImage> images;
+    private Boolean thereVideo;
+    private String videoUUID;
 }

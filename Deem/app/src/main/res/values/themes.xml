@@ -28,4 +28,12 @@
         <item name="colorAccent">#fd8469</item>
     </style>
 
+    <style name="RoundedImage20">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+    <style name="RoundedImage100">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">100dp</item>
+    </style>
 </resources>

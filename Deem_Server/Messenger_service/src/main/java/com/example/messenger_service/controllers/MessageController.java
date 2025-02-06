@@ -58,21 +58,6 @@ public class MessageController {
         messageService.doImage(message, actualObject);
         messageService.pushMessage(message, chatService.getChat(message.getChat().getId()).getUsers());
 
-        /*if (message.getImages() != null)
-            if (message.getImages().size() != 0) {
-                message.getImages().forEach(x -> x.setId_message(actualObject.getId()));
-
-                try {
-                    messengerServiceClient.addImagesNews(message.getImages());
-                } catch (Exception e) {
-                    messageService.delete(actualObject);
-                    return ResponseEntity.badRequest().body(e.getMessage());
-                }
-            }*/
-
-        //send
-        //messengerServiceClient.pushMessageTo(message); //отправляем запрос на уведомления
-
         return ResponseEntity.ok().body(message.getId());
     }
 
@@ -99,15 +84,6 @@ public class MessageController {
         //Проверим принадлежит ли данный чат пользователю.
         if (!chatDAO.IsThereSuchAChat(personDetails.getId(), chatId))
             return null;
-
-        /*List<Message> messageList = messageService.getMessagesFeed(date, chatId);
-
-        //Собираем uuid видео если оно есть
-        for (Message message : messageList) {
-            if (message.getThereVideo())
-                message.setVideoUUID(messengerServiceClient.getVideoUUID(message.getId()).getBody());
-            System.out.println(message.getVideoUUID() + " " + message.getThereVideo());
-        }*/
 
         return messageService.getCollectedMessagesFeed(date, chatId);
     }

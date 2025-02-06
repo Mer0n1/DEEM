@@ -173,8 +173,9 @@ public class Message {
     @Override
     public String toString() {
         return "Message{" +
-                "NoImages=" + NoImages +
-                ",Text=" + text +
+                "id=" + id +
+                ",Content=" + text +
+                ",chatId=" + chatId + " " + chat.getId() +
                 '}';
     }
 }

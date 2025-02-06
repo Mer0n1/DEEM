@@ -125,13 +125,25 @@ public class APIManager {
         });
     }
 
-    public void addNews(CreateNewsDTO news) {
-        ServerRepository.getInstance().createNews(news).enqueue(new Callback<Void>() {
+    public void addNews(News news) {
+        CreateNewsDTO dto = ConverterDTO.NewsToCreateNewsDTO(news);
+
+        ServerRepository.getInstance().createNews(dto).enqueue(new Callback<Long>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {}
+            public void onResponse(Call<Long> call, Response<Long> response) {
+
+                if (response.isSuccessful() && news.isThereVideo()) {
+                    Long id = response.body();
+
+                    if (id != null && id != 0) {
+                        news.getVideoMetadata().setId_dependency(id);
+                        sendVideo(news.getVideoMetadata());
+                    }
+                }
+            }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {}
+            public void onFailure(Call<Long> call, Throwable t) {}
         });
     }
 

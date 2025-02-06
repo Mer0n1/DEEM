@@ -52,7 +52,9 @@ public class MessageService {
         //Собираем uuid видео если оно есть
         for (Message message : messageList)
             if (message.getThereVideo())
-                message.setVideoUUID(messengerServiceClient.getVideoUUID(message.getId()).getBody());
+                try {
+                    message.setVideoUUID(messengerServiceClient.getVideoUUID(message.getId()).getBody());
+                } catch (Exception e) {} //в случае если сервис недоступен
         return messageList;
     }
 

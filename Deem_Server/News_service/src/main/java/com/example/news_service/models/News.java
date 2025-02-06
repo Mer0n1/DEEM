@@ -42,6 +42,13 @@ public class News {
     @Column(name = "course")
     private Integer course;
 
+    @NotNull
+    @Column(name = "video")
+    private Boolean thereVideo;
+
     @Transient
     private List<NewsImage> images;
+
+    @Transient
+    private String videoUUID;
 }

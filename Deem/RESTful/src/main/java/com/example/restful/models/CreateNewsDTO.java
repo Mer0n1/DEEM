@@ -13,6 +13,8 @@ public class CreateNewsDTO {
     private Long idGroup;
     private Long idAuthor;
     private String faculty;
+    private boolean thereVideo;
+    private String videoUUID;
 
     private List<NewsImage> images;
 
@@ -68,5 +70,21 @@ public class CreateNewsDTO {
 
     public void setIdAuthor(Long idAuthor) {
         this.idAuthor = idAuthor;
+    }
+
+    public String getVideoUUID() {
+        return videoUUID;
+    }
+
+    public void setVideoUUID(String videoUUID) {
+        this.videoUUID = videoUUID;
+    }
+
+    public boolean isThereVideo() {
+        return thereVideo;
+    }
+
+    public void setThereVideo(boolean thereVideo) {
+        this.thereVideo = thereVideo;
     }
 }

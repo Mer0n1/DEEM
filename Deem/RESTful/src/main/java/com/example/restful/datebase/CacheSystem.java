@@ -1,6 +1,7 @@
 package com.example.restful.datebase;
 
 import static com.example.restful.datebase.AppDatabase.MIGRATION_1_2;
+import static com.example.restful.datebase.AppDatabase.MIGRATION_2_3;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
+import java.util.concurrent.CompletableFuture;
 
 //TODO стоит подумать про очистку кэша и изображений к примеру. Например можно сортировать изменнные/используемые изображения и очистить те который использовались только дня 2-3 назад
 //TODO и делаем сохранение изображений сообщений
@@ -79,6 +81,7 @@ public class CacheSystem {
             db = Room.databaseBuilder(applicationContext,
                     AppDatabase.class, "deemdatabase.db")
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .build();
             FilesDir = applicationContext.getFilesDir();
 
@@ -100,8 +103,19 @@ public class CacheSystem {
         APIManager.getManager().getListChats().observeForever(new Observer<List<Chat>>() {
             @Override
             public void onChanged(List<Chat> chats) {
-                saveChats();
-                saveMessages();
+                CompletableFuture //важно чтобы chats выполнилось первым
+                        .runAsync(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveChats();
+                            }
+                        })
+                        .thenRun(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveMessages();
+                            }
+                        });
             }
         });
     }
@@ -143,8 +157,9 @@ public class CacheSystem {
         newThread(()-> {
             if (APIManager.getManager().getListChats().getValue() != null)
                 for (Chat chat : APIManager.getManager().getListChats().getValue()) {
+                    System.err.println("--- " + chat.getMessages().toString());
                     messageDao.upsertAll(chat.getMessages());
-            }
+                }
         });
 
         //Сохранение изображений

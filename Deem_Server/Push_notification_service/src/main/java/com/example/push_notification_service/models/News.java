@@ -15,4 +15,5 @@ public class News {
     private Long idAuthor;
     private Date date;
     private Integer course;
+    private String videoUUID;
 }

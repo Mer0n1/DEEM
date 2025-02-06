@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -30,8 +31,11 @@ import com.example.deem.fragments.InfoFragments.RatingGroupsFragment;
 import com.example.deem.utils.Toolbar;
 import com.example.restful.api.APIManager;
 import com.example.restful.datebase.CacheSystem;
+import com.example.restful.models.VideoMetadata;
+import com.example.restful.utils.GeneratorUUID;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -73,26 +77,27 @@ public class MainActivity extends AppCompatActivity {
             currentFragmentId = item.getItemId();
 
 
-            switch (item.getItemId()) {
-                case R.id.firstFragment:
-                    OpenMenu(FragmentType.first);
-                    return true;
-                case R.id.messengerFragment:
-                    OpenMenu(FragmentType.messenger);
-                    return true;
-                case R.id.groupFragment:
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", APIManager.getManager().getMyAccount().getGroup().getName());
-                    OpenMenu(FragmentType.group, bundle);
-                    return true;
-                case R.id.newsFragment:
-                     OpenMenu(FragmentType.info_);
-                     return true;
-                case R.id.eventFragment:
-                     OpenMenu(FragmentType.events);
-                    return true;
+            int itemId = item.getItemId();
 
+            if (itemId == R.id.firstFragment) {
+                OpenMenu(FragmentType.first);
+                return true;
+            } else if (itemId == R.id.messengerFragment) {
+                OpenMenu(FragmentType.messenger);
+                return true;
+            } else if (itemId == R.id.groupFragment) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", APIManager.getManager().getMyAccount().getGroup().getName());
+                OpenMenu(FragmentType.group, bundle);
+                return true;
+            } else if (itemId == R.id.newsFragment) {
+                OpenMenu(FragmentType.info_);
+                return true;
+            } else if (itemId == R.id.eventFragment) {
+                OpenMenu(FragmentType.events);
+                return true;
             }
+
             return false;
         });
 
@@ -182,16 +187,49 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
+            Uri selectedMediaUri = data.getData();
+            String mimeType = getContentResolver().getType(selectedMediaUri);
 
-            InputStream inputStream = null;
-            try {
-                inputStream = getContentResolver().openInputStream(selectedImageUri);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            if (mimeType != null) {
+                if (mimeType.startsWith("image/")) {
+                    System.err.println("IMAGE ");
+                    handleImage(data);
+                } else if (mimeType.startsWith("video/")) {
+                    System.err.println("VIDEO ");
+                    handleVideo(data);
+                }
             }
-            Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
-            CreateNewsDialog.addDrawable(drawable);
+        }
+    }
+
+    private void handleImage(Intent data) {
+        InputStream inputStream = null;
+        Uri selectedImageUri = data.getData();
+        try {
+            inputStream = getContentResolver().openInputStream(selectedImageUri);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Ошибка загрузки изображения.", Toast.LENGTH_SHORT).show();
+        }
+        Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
+        CreateNewsDialog.addDrawable(drawable);
+    }
+
+    private void handleVideo(Intent data) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(data.getData());
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] temp = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(temp)) != -1)
+                buffer.write(temp, 0, bytesRead);
+
+            inputStream.close();
+            CreateNewsDialog.initVideo(buffer.toByteArray());
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();
         }
     }
 }

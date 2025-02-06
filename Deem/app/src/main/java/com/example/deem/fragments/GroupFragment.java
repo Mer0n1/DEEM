@@ -159,9 +159,9 @@ public class GroupFragment extends Fragment {
             newsList.clear();
 
         if (allNews != null)
-        for (News news : allNews)
-            if (news.getIdGroup() == group.getId())
-                newsList.add(news);
+            for (News news : allNews)
+                if (news.getIdGroup() == group.getId())
+                    newsList.add(news);
     }
 
     public boolean checkWorkingCondition() {

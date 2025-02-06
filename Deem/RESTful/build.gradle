@@ -3,11 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
+    namespace "com.example.restful"
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 34
     }
 
     compileOptions {

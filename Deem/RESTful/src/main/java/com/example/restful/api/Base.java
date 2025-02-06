@@ -70,7 +70,7 @@ public interface Base {
     @GET("/news/getNews")
     Call<List<News>> getNews();
     @POST("/news/createNews")
-    Call<Void> createNews(@Body CreateNewsDTO news);
+    Call<Long> createNews(@Body CreateNewsDTO news);
     @GET("/news/getNewsFeed")
     Call<List<News>> getNewsFeed(@Query("date") String date);
 

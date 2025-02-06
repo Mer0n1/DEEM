@@ -190,7 +190,6 @@ public class ChatActivity extends AppCompatActivity {
 
             videoMetadata = new VideoMetadata(VideoMetadata.TypeVideoData.message_video, videoUUID, videoData);
             isVideoLoaded = true;
-            //videoMetadata.setId_dependency(87L);//Test todo (на момент теста номер 1 протокол отправки видео)
 
         } catch (Exception e) {
             Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();
@@ -221,8 +220,8 @@ public class ChatActivity extends AppCompatActivity {
         imageView.setImageDrawable(drawable);
         FixedImageViews.add(imageView);
 
-        imagesLoadedRecycle.setVisibility(View.VISIBLE);
         imagesLoaderRecycleAdapter.notifyDataSetChanged();
+        updateRecyclerViewVisibility();
     }
 
     private void SetListeners() {
@@ -234,9 +233,6 @@ public class ChatActivity extends AppCompatActivity {
                 String content = editText.getText().toString();
 
                 sendMessage(content);
-                /*if (isVideoLoaded) {
-                    APIManager.getManager().sendVideo(videoMetadata);
-                }*/
 
                 //Update Interface
                 editText.setText("");
@@ -254,9 +250,9 @@ public class ChatActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);*/
 
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*"); // Разрешить выбор любых файлов
+                intent.setType("*/*");
                 String[] mimeTypes = {"image/*", "video/*"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes); // Уточнить MIME-типы
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
                 startActivityForResult(Intent.createChooser(intent, "Select Media"), 0);
             }
         });
@@ -384,15 +380,29 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         //Images List Recycle
-        imagesLoadedRecycle = findViewById(R.id.images_loaded_recycle);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        imagesLoadedRecycle = findViewById(R.id.images_loaded_recycle);
         imagesLoaderRecycleAdapter = new ImagesLoaderRecycleAdapter(FixedImageViews, FixedImages, this);
         imagesLoadedRecycle.setAdapter(imagesLoaderRecycleAdapter);
+        updateRecyclerViewVisibility();
 
-        if (FixedImageViews.size() == 0)
+        //обновление видимости при изменениях
+        imagesLoaderRecycleAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                updateRecyclerViewVisibility();
+            }
+        });
+    }
+
+    private void updateRecyclerViewVisibility() {
+        if (FixedImageViews.isEmpty()) {
             imagesLoadedRecycle.setVisibility(View.GONE);
-        else
+        } else {
             imagesLoadedRecycle.setVisibility(View.VISIBLE);
+        }
     }
 
     private void sendMessage(String content) {
@@ -427,18 +437,17 @@ public class ChatActivity extends AppCompatActivity {
 
 
         //Отправляем на сервер
-        //APIManager.getManager().sendMessage(message, newChat);
+        APIManager.getManager().sendMessage(message, newChat); 
         //Обновление в кэше
-        //APIManager.getManager().getListChats().setValue(APIManager.getManager().getListChats().getValue());
+        APIManager.getManager().getListChats().setValue(APIManager.getManager().getListChats().getValue());
 
         //Clear
         newChat = false;
         FixedImages = new ArrayList<>();
         FixedImageViews.clear();
         message.setChat(currentChat);
-        message.setCompleted(true); //TODO?
-
-        imagesLoadedRecycle.setVisibility(View.GONE);
+        message.setCompleted(true);
+        updateRecyclerViewVisibility();
     }
 
 

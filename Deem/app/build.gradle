@@ -3,12 +3,13 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    namespace "com.example.deem"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.kosta.deem"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 2
         versionName "1.1"
         vectorDrawables.useSupportLibrary = true
@@ -24,6 +25,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

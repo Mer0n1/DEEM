@@ -25,6 +25,8 @@ public class RestTemplateService {
     private String imageServiceUrl;
     @Value("http://localhost:8087/push/sendNews")
     private String pushServiceUrl;
+    @Value("http://localhost:8093/video")
+    private String videoServiceUrl;
 
     private String personal_key;
 
@@ -50,12 +52,17 @@ public class RestTemplateService {
         return restTemplate.exchange(imageServiceUrl + "/addImagesNews", HttpMethod.POST, entity, Void.class);
     }
 
-    public void pushNewsTo(News news) throws Exception {
+    public void pushNewsTo(News news) throws JsonProcessingException {
         String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
                 .writeValueAsString(news);
 
         entity = new HttpEntity<>(jsonMessage, headers);
 
         restTemplate.exchange(pushServiceUrl, HttpMethod.POST, entity, Void.class);
+    }
+
+    public ResponseEntity<String> getVideoUUID(Long idMessage) {
+        return restTemplate.exchange(videoServiceUrl + "/getUUID" + "?type=news_video&id="
+                + idMessage, HttpMethod.GET, entity, String.class);
     }
 }

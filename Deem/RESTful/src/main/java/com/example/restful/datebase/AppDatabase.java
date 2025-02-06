@@ -13,7 +13,7 @@ import com.example.restful.models.Chat;
 import com.example.restful.models.Message;
 import com.example.restful.models.News;
 
-@Database(entities = {News.class, Chat.class, Message.class}, version = 2)
+@Database(entities = {News.class, Chat.class, Message.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract NewsDao newsDao();
     public abstract ChatDao chatDao();
@@ -23,6 +23,13 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE message ADD COLUMN video_uuid TEXT");
+        }
+    };
+
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE news ADD COLUMN video_uuid TEXT");
         }
     };
 

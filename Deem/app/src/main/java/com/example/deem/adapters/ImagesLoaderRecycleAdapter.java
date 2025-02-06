@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -32,7 +33,7 @@ public class ImagesLoaderRecycleAdapter extends RecyclerView.Adapter<ImagesLoade
     @NonNull
     @Override
     public ItemImage onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_loaded, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mini_image_boot, parent, false);
 
         return new ImagesLoaderRecycleAdapter.ItemImage(/*new ImageView(context)*/view);
     }
@@ -51,12 +52,12 @@ public class ImagesLoaderRecycleAdapter extends RecyclerView.Adapter<ImagesLoade
     public class ItemImage extends RecyclerView.ViewHolder {
 
         ImageView view;
-        ImageView button_close;
+        ImageButton button_close;
 
         public ItemImage(@NonNull View itemView) {
             super(itemView);
-            view = itemView.findViewById(R.id.image_loaded);
-            button_close = itemView.findViewById(R.id.button_delete_image);
+            view = itemView.findViewById(R.id.image);
+            button_close = itemView.findViewById(R.id.close_button);
         }
 
         public void setData(ImageView imageView, int position) {

@@ -2,7 +2,9 @@ package com.example.deem.adapters;
 
 import static java.security.AccessController.getContext;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,18 +17,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
+import com.example.restful.utils.HLS_ProtocolSystem;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +79,10 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         private RecyclerView recyclerView;
         private final int indent = 110; //test
 
+        //video
+        private PlayerView playerView;
+        private ExoPlayer exoPlayer;
+
         public ItemNews(@NonNull View itemView) {
             super(itemView);
 
@@ -76,6 +91,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             name_group   = itemView.findViewById(R.id.news_namegroup_info);
             recyclerView = itemView.findViewById(R.id.list_images);
             icon         = itemView.findViewById(R.id.icon_group_main);
+            playerView   = itemView.findViewById(R.id.player_view);
 
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -122,6 +138,59 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
             } else
                 recyclerView.setVisibility(View.GONE); //если изображений нет то отключаем recycle
+
+
+            //Video
+            DoVideo(news);
+        }
+
+        @SuppressLint("UnsafeOptInUsageError")
+        private void DoVideo(News news) {
+
+            if (exoPlayer == null) {
+
+                if (!news.isCompleted()) {
+                    //В случае если нужно загрузить видео от сервера.
+                    if (news.getVideoUUID() != null && !news.getVideoUUID().isEmpty())
+
+                        APIManager.getManager().getVideoManifest(new VideoCallback() {
+                            @Override
+                            public void loadVideo(String url) {
+                                playerView.setVisibility(View.VISIBLE);
+
+                                exoPlayer = new ExoPlayer.Builder(fragment.getActivity()).build();
+                                playerView.setPlayer(exoPlayer);
+
+                                exoPlayer.setMediaSource(HLS_ProtocolSystem.getInstance().createHLSMediaSource(url));
+                                exoPlayer.prepare();
+                                exoPlayer.play();
+                            }
+                        }, news.getVideoUUID());
+                } else
+                    //В случае если мы отправители видео и у нас уже оно есть.
+                    if (news.isThereVideo() && news.getVideoMetadata() != null) {
+                        playerView.setVisibility(View.VISIBLE);
+
+                        try {
+                            File tempFile = File.createTempFile("video", ".mp4", fragment.getActivity().getCacheDir());
+                            tempFile.deleteOnExit();
+
+                            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                                fos.write(news.getVideoMetadata().getVideo());
+                            }
+
+                            exoPlayer = new ExoPlayer.Builder(fragment.getActivity()).build();
+                            playerView.setPlayer(exoPlayer);
+
+                            MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(tempFile));
+                            exoPlayer.setMediaItem(mediaItem);
+                            exoPlayer.prepare();
+                            exoPlayer.play();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+            }
         }
 
         /** Преобразовываем строку в изображение ImageView */

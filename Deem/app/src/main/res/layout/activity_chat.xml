@@ -140,7 +140,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/images_loaded_recycle"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:orientation="horizontal"
         android:overScrollMode="never"
@@ -150,7 +150,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/bottom_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:stackFromEnd="true"></androidx.recyclerview.widget.RecyclerView>
+        app:stackFromEnd="false" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

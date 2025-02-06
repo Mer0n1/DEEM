@@ -64,7 +64,7 @@ public class VideoController {
     public ResponseEntity<String> getVideoManifest(@PathVariable String uuid) {
         System.out.println("getVideoManifest " + uuid);
         try {
-            return ResponseEntity.ok(videoService.getManifestUrl(uuid).replace("/", "%2F"));
+            return ResponseEntity.ok(videoService.getManifestUrl(uuid).replace("/", "%2F")); 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

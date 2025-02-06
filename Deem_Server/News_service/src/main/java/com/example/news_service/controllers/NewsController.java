@@ -5,6 +5,7 @@ import com.example.news_service.models.CreateNewsDTO;
 import com.example.news_service.models.News;
 import com.example.news_service.services.NewsService;
 import com.example.news_service.services.RestTemplateService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,6 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
     @Autowired
-    private RestTemplateService restTemplateService;
-    @Autowired
     private ModelMapper modelMapper;
 
 
@@ -43,7 +42,8 @@ public class NewsController {
     @GetMapping("/getNewsFeed")
     public List<News> getNewsFeed(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ") Date date,
                                   @AuthenticationPrincipal PersonDetails personDetails) {
-        return newsService.getNewsFeed(personDetails.getFaculty(), date, personDetails.getCourse());
+        //return newsService.getNewsFeed(personDetails.getFaculty(), date, personDetails.getCourse());
+        return newsService.getCollectedNews(personDetails.getFaculty(), date, personDetails.getCourse());
     }
 
 
@@ -57,10 +57,10 @@ public class NewsController {
         News news = modelMapper.map(dto, News.class);
         news.setCourse(personDetails.getCourse());
         news.setFaculty(personDetails.getFaculty());
-        News nnews = newsService.createNews(news); //actual with fixed id
+        News actualNews = newsService.createNews(news); //actual with fixed id
 
         //Сохранение изображений
-        if (news.getImages() != null)
+        /*if (news.getImages() != null)
             if (news.getImages().size() != 0) {
                 news.getImages().forEach(x -> x.setId_news(nnews.getId()));
 
@@ -74,9 +74,19 @@ public class NewsController {
 
         try {
             restTemplateService.pushNewsTo(news);
+        } catch (Exception e) {}*/
+        try {
+            newsService.doImage(news, actualNews);
+        } catch (Exception e) {
+            newsService.deleteNews(actualNews);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        try {
+            newsService.pushNewsTo(news);
         } catch (Exception e) {}
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(actualNews.getId());
     }
 
     public Map<String, String> getErrors(BindingResult bindingResult) {

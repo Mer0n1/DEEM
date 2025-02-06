@@ -12,6 +12,7 @@
         android:layout_height="300dp"
         android:layout_weight="0"
         android:ems="10"
+        android:hint="Введите текст"
         android:gravity="left"
         android:padding="10dp"
         android:background="@drawable/layout_bg1_white"
@@ -47,17 +48,12 @@
             android:background="@drawable/icon_plus"
             android:foreground="@drawable/ripple_effect"/>
 
-        <EditText
-            android:id="@+id/EditText"
+        <View
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/white"
-            android:ems="10"
-            android:hint="Введите текст"
-            android:inputType="textPersonName"
-            android:padding="5dp"
-            android:maxLines="10" />
+            android:ems="10" />
 
         <Button
             android:id="@+id/send_news"
@@ -68,5 +64,6 @@
             android:text="Отправить"
             android:textColor="#cccccc" />
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,8 @@ public class News {
     private Long idAuthor;
     @ColumnInfo(name = "faculty")
     private String faculty;
+    @ColumnInfo(name = "video_uuid")
+    private String videoUUID;
 
     @Ignore
     @JsonIgnore
@@ -51,6 +53,13 @@ public class News {
      * у сервера наличие изображений каждый раз*/
     @JsonIgnore
     private boolean NoImages;
+    /** Параметр нужный для протоколирования sendMessage-затем upload video*/
+    @Ignore
+    @JsonIgnore
+    private VideoMetadata videoMetadata;
+    /** Параметр использующийся для БД сервера, но ненужный для кэширования*/
+    @Ignore
+    private boolean isThereVideo;
 
     public String getContent() {
         return content;
@@ -128,6 +137,30 @@ public class News {
 
     public void setNoImages(boolean noImages) {
         NoImages = noImages;
+    }
+
+    public String getVideoUUID() {
+        return videoUUID;
+    }
+
+    public void setVideoUUID(String videoUUID) {
+        this.videoUUID = videoUUID;
+    }
+
+    public VideoMetadata getVideoMetadata() {
+        return videoMetadata;
+    }
+
+    public void setVideoMetadata(VideoMetadata videoMetadata) {
+        this.videoMetadata = videoMetadata;
+    }
+
+    public boolean isThereVideo() {
+        return isThereVideo;
+    }
+
+    public void setThereVideo(boolean thereVideo) {
+        isThereVideo = thereVideo;
     }
 
     @Override

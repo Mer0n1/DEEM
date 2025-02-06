@@ -17,8 +17,7 @@ public class VideoMetadata {
         this.videoData = videoData;
     }
 
-    public VideoMetadata() {
-    }
+    public VideoMetadata() {}
 
     public Long getId_dependency() {
         return id_dependency;
