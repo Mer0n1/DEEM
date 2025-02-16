@@ -42,12 +42,12 @@ public class ImageController {
 
     /** Вернуть изображение 1 сообщения */
     @GetMapping("/getImage")
-    public Image getImage(@RequestParam("UUID") String UUID,
+    public List<Image> getImage(@RequestParam("UUID") String UUID,
                           @RequestParam("type") String type) {
         try {
-            return imageService.getImage(UUID, type);
+            return imageService.getImages(UUID, type);
         } catch (Exception e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -71,7 +71,6 @@ public class ImageController {
         }
 
         return ResponseEntity.ok().build();
-
     }
 
     @PostMapping("/addImagesNews")

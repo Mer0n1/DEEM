@@ -223,13 +223,23 @@ public class CacheSystem {
     /** Сохранение изображения с названиями их uuid */
     public void saveImagesChat(List<MessageImage> messageImages) {
         Log.d("saveImagesChat processing: ", "starting");
-        for (MessageImage image : messageImages)
+
+        for (int j = 0; j < messageImages.size(); j++)
             try {
-                String path = FilesDir.getPath() + "/" + image.getUuid() + ".png";
+                MessageImage image = messageImages.get(j);
+
+                if (image.getImage().getImgEncode() == null)
+                    if (image.getImage().getImgEncode().length() == 0)
+                        continue;
+
+                String num = (j == 0) ? "" : "_" + j;
+
+                String path = FilesDir.getPath() + "/" + image.getUuid() + num + ".png";
                 File file = new File(path);
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
+
                 Log.d("saveImagesChat result: ", "success " + image.getUuid() + "  " +
                         Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
             } catch (Exception e) {
@@ -239,17 +249,22 @@ public class CacheSystem {
 
     public void saveImagesNews(List<NewsImage> newsImages) {
         Log.d("saveImagesNews processing: ", "starting");
-        for (NewsImage image : newsImages)
+        for (int j = 0; j < newsImages.size(); j++)
             try {
+                NewsImage image = newsImages.get(j);
+
                 if (image.getImage().getImgEncode() == null)
                     if (image.getImage().getImgEncode().length() == 0)
                         continue;
 
-                String path = FilesDir.getPath() + "/" + image.getUuid() + ".png";
+                String num = (j == 0) ? "" : "_" + j;
+
+                String path = FilesDir.getPath() + "/" + image.getUuid() + num + ".png";
                 File file = new File(path);
                 FileOutputStream outputStream = new FileOutputStream(file);
                 outputStream.write(Base64.getDecoder().decode(image.getImage().getImgEncode()));
                 outputStream.close();
+
                 Log.d("saveImagesNews result: ", "success " +image.getUuid() + "  " +
                         Base64.getDecoder().decode(image.getImage().getImgEncode()).length + " " + path);
 
@@ -259,19 +274,25 @@ public class CacheSystem {
     }
 
     //загрузка сохраненного в кэше изображения из файловой системы
-    public Image getImageByUuid(String uuid) {
+    public List<Image> getImageByUuid(String uuid) {
         File imageFile = new File(FilesDir, uuid + ".png");
+        List<Image> images = new ArrayList<>();
 
         try {
-            if (imageFile.exists()) {
-                byte[] fileBytes = Files.readAllBytes(imageFile.toPath());
-                String encodedString = Base64.getEncoder().encodeToString(fileBytes);
-                return new Image(encodedString);
+            for (int j = 0; j < 10; j++) { //max images in news
+
+                if (imageFile.exists()) {
+                    byte[] fileBytes = Files.readAllBytes(imageFile.toPath());
+                    String encodedString = Base64.getEncoder().encodeToString(fileBytes);
+                    images.add(new Image(encodedString));
+                } else
+                    break;
+                imageFile = new File(FilesDir, uuid + "_" + (j+1) + ".png");
             }
         } catch (Exception e) {
-            return null;
+            return images;
         }
-        return null;
+        return images;
     }
 
     //некоторый метод который запустит любую лямбду в потоке

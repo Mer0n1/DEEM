@@ -89,31 +89,7 @@ public class Repository {
         listClubs  = new MutableLiveData<>();
         topsUsers = new TopsUsers();
 
-        /*
-        Кэш система нужна для уменьшения нагрузки на сервер.
-        Загрузка новостей: загружаем лишь актуальные новости. Актуальные это те дата которых позднее последней нашей новости, а также те которые были редактированы/удалены ОК
-        Загрузка сообщений: также загружаем только на момент входа в чат с последнего сообщения ОК
-        Загрузка ивентов: старые ивенты храним в кэше или где то еще а новые без исключения загружаем из сервера
-        Загрузка групп и аккаунтов:
-        Загрузка изображений: callback можно не заменять, однако думаю можно добавить LiveData на отслеживание списка изображений и обновлять кэш ОК
-        * *//*
-        //сам подход buildData поменялся. Теперь мы билдим не единоразовую информацию, а только полученную. Иными словами
-        //если раньше мы загружали весь список чатов для аккаунта который есть у нас, то теперь мы можем загружать его периодически
-        //что означает что обновлять и билдить нужно только response.body
-
-        сделать рейтинг в профиле
-        *//*
-
-        баги:
-        баг с переписками. Групповая переписка
-        баг. Иногда push не отправляется //как я понял основа этого не принятие запроса в сам контроллер но при этом сохранение сообщений
-        исключения e.printStackTrace(); крашат приложения хотя можно сделать так чтобы мы обрабатывали ситуацию а не крашили, сейчас это тестирование
-        баг который я так и не смог найти - изменение размера собственных item сообщений при пролистывании - вроде как какой то view перекрывает это
-
-        TODO протестировать открытие видео - есть некоторая задержка в загрузке сервером.
-
-        протестировать push с news и создание новости с видео.
-        */
+        
 
 
     }
@@ -391,15 +367,18 @@ public class Repository {
     /***** ImageService ******/
 
     protected void GetImage(String UUID, String type, ImageLoadCallback imageLoadCallback) {
-        ServerRepository.getInstance().getImage(UUID, type).enqueue(new Callback<Image>() {
+        ServerRepository.getInstance().getImages(UUID, type).enqueue(new Callback<List<Image>>() {
             @Override
-            public void onResponse(Call<Image> call, Response<Image> response) {
-                if (response.body() != null)
-                    imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+            public void onResponse(Call<List<Image>> call, Response<List<Image>> response) {
+                if (response.body() != null) {
+                    List<Image> images = response.body();
+                    for (Image image : images)
+                        imageLoadCallback.onImageLoaded(image.getImgEncode());
+                }
             }
 
             @Override
-            public void onFailure(Call<Image> call, Throwable t) {
+            public void onFailure(Call<List<Image>> call, Throwable t) {
                 System.err.println("RESPONSE FAILURE " + t.getMessage().toString());
 
             }
@@ -421,16 +400,21 @@ public class Repository {
         String UUID = GeneratorUUID.getInstance().generateUUIDForNews( //генерация uuid
                 DateUtil.getInstance().getDateToForm(news.getDate()), news.getGroup().getName());
 
-        Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID); //TODO or few
+        List<Image> images = CacheSystem.getCacheSystem().getImageByUuid(UUID);
+        //news.setNoImages(false); //TODO
+        //images = new ArrayList<>();
 
-        if (image != null) {
-            NewsImage newsImage = new NewsImage();
-            newsImage.setImage(image);
-            newsImage.setId_news(news.getId());
-            newsImage.setUuid(UUID);
-            news.getImages().getValue().add(newsImage);
+        if (!images.isEmpty()) { //в случае если в кэше есть изображение
+            for (Image image : images) {
+                NewsImage newsImage = new NewsImage();
+                newsImage.setImage(image);
+                newsImage.setId_news(news.getId());
+                newsImage.setUuid(UUID);
+                news.getImages().getValue().add(newsImage);
 
-            imageLoadCallback.onImageLoaded(image.getImgEncode());
+                imageLoadCallback.onImageLoaded(image.getImgEncode());
+            }
+
             news.setCompleted(true);
             return;
 
@@ -448,29 +432,31 @@ public class Repository {
                     if (count == 0)
                         news.setNoImages(true);
 
-                    for (int j = 0; j < count; j++) {
 
-                        ServerRepository.getInstance().getImage(UUID, "news_image").enqueue(new Callback<Image>() {
-                            @Override
-                            public void onResponse(Call<Image> call, Response<Image> response) {
-                                if (response.body() != null) {
+                    ServerRepository.getInstance().getImages(UUID, "news_image").enqueue(new Callback<List<Image>>() {
+                        @Override
+                        public void onResponse(Call<List<Image>> call, Response<List<Image>> response) {
+
+                            if (response.body() != null) {
+                                List<Image> images = response.body();
+                                for (Image image1 : images) {
                                     NewsImage newsImage = new NewsImage();
-                                    newsImage.setImage(response.body());
+                                    newsImage.setImage(image1);
                                     newsImage.setUuid(UUID);
 
                                     List<NewsImage> imageList = news.getImages().getValue();
                                     imageList.add(newsImage);
                                     news.getImages().postValue(imageList);
                                     news.setCompleted(true);
-                                    imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+                                    imageLoadCallback.onImageLoaded(image1.getImgEncode());
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<Image> call, Throwable t) {
-                            }
-                        });
-                    }
+                        @Override
+                        public void onFailure(Call<List<Image>> call, Throwable t) {
+                        }
+                    });
                 }
 
                 @Override
@@ -489,17 +475,19 @@ public class Repository {
 
         String UUID = GeneratorUUID.getInstance().generateUUIDForIcon(username);
 
-        ServerRepository.getInstance().getImage(UUID, "profile_icon").enqueue(new Callback<Image>() {
+        ServerRepository.getInstance().getImages(UUID, "profile_icon").enqueue(new Callback<List<Image>>() {
             @Override
-            public void onResponse(Call<Image> call, Response<Image> response) {
+            public void onResponse(Call<List<Image>> call, Response<List<Image>> response) {
                 if (response.body() != null) {
-                    account.setImageIcon(response.body());
-                    imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+                    List<Image> images = response.body();
+                    Image image = images.get(0);
+                    account.setImageIcon(image);
+                    imageLoadCallback.onImageLoaded(image.getImgEncode());
                 }
             }
 
             @Override
-            public void onFailure(Call<Image> call, Throwable t) {
+            public void onFailure(Call<List<Image>> call, Throwable t) {
 
             }
         });
@@ -521,18 +509,20 @@ public class Repository {
         String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
                 DateUtil.getInstance().getDateToForm(message.getDate()), account.getUsername());
 
-        Image image = CacheSystem.getCacheSystem().getImageByUuid(UUID);
+        List<Image> images = CacheSystem.getCacheSystem().getImageByUuid(UUID);
 
-        if (image != null) {
-            MessageImage messageImage = new MessageImage();
-            messageImage.setImage(image);
-            messageImage.setId_message(message.getId());
-            messageImage.setUuid(UUID);
-            if (message.getImages().getValue() == null)
-                message.getImages().setValue(new ArrayList<>());
-            message.getImages().getValue().add(messageImage);
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                MessageImage messageImage = new MessageImage();
+                messageImage.setImage(image);
+                messageImage.setId_message(message.getId());
+                messageImage.setUuid(UUID);
+                if (message.getImages().getValue() == null)
+                    message.getImages().setValue(new ArrayList<>());
+                message.getImages().getValue().add(messageImage);
 
-            imageLoadCallback.onImageLoaded(image.getImgEncode());
+                imageLoadCallback.onImageLoaded(image.getImgEncode());
+            }
         } else if (!message.isNoImages()) {
 
             ServerRepository.getInstance().getCountImages(message.getId(), "message_image").enqueue(new Callback<Integer>() {
@@ -543,37 +533,38 @@ public class Repository {
                     if (count == 0)
                         message.setNoImages(true);
 
-                    for (int j = 0; j < count; j++) {
-                        Account account = listAccounts.stream().filter(x -> x.getId()
-                                == message.getAuthor()).findAny().orElse(null);
-                        if (account == null) return;
-                        String author = account.getUsername();
 
-                        String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
-                                DateUtil.getInstance().getDateToForm(message.getDate()), author);
+                    Account account = listAccounts.stream().filter(x -> x.getId()
+                            == message.getAuthor()).findAny().orElse(null);
+                    if (account == null) return;
+                    String author = account.getUsername();
 
-                        ServerRepository.getInstance().getImage(UUID, "message_image").enqueue(new Callback<Image>() {
-                            @Override
-                            public void onResponse(Call<Image> call, Response<Image> response) {
-                                if (response.body() != null) {
+                    String UUID = GeneratorUUID.getInstance().generateUUIDForMessage(
+                            DateUtil.getInstance().getDateToForm(message.getDate()), author);
+
+                    ServerRepository.getInstance().getImages(UUID, "message_image").enqueue(new Callback<List<Image>>() {
+                        @Override
+                        public void onResponse(Call<List<Image>> call, Response<List<Image>> response) {
+                            if (response.body() != null) {
+                                List<Image> images = response.body();
+                                for (Image image1 : images) {
                                     MessageImage messageImage = new MessageImage();
-                                    messageImage.setImage(response.body());
+                                    messageImage.setImage(image1);
                                     messageImage.setUuid(UUID);
 
                                     List<MessageImage> messageImages = message.getImages().getValue();
                                     messageImages.add(messageImage);
                                     message.getImages().postValue(messageImages);
                                     message.setCompleted(true);
-                                    imageLoadCallback.onImageLoaded(response.body().getImgEncode());
+                                    imageLoadCallback.onImageLoaded(image1.getImgEncode());
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<Image> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<List<Image>> call, Throwable t) {}
+                    });
 
-                            }
-                        });
-                    }
                 }
 
                 @Override

@@ -73,7 +73,7 @@ public class ServerRepository {
 
     public Call<List<Event>> getEvents() { return Handler.getInstance().getApi().getEvents();}
 
-    public Call<Image> getImage(String UUID, String type) { return Handler.getInstance().getApi().getImage(UUID, type);}
+    public Call<List<Image>> getImages(String UUID, String type) { return Handler.getInstance().getApi().getImages(UUID, type);}
 
     public Call<Void> addIcon(IconImage img) { return Handler.getInstance().getApi().addIcon(img);}
 

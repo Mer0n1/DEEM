@@ -21,7 +21,6 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
@@ -38,7 +37,6 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,6 +74,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         holder.include_view.setVisibility(View.GONE);
         holder.item_date.setText("");
         holder.container.setVisibility(View.GONE);
+        holder.container.removeAllViews();
 
         current_position = position;
 
@@ -149,16 +148,15 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
             //Обновление Holder изображений
             if (message.isNoImages() || message.getImages().getValue() == null)
-                container.setVisibility(View.GONE);//recyclerView.setVisibility(View.GONE);
+                container.setVisibility(View.GONE);
 
             if (message.getImages().getValue().size() != 0) { //загружаем изображения те что есть
-                for (MessageImage image : message.getImages().getValue()) {
-                    setImageOnView(image.getImage().getImgEncode());
-                }
+                for (MessageImage image : message.getImages().getValue())
+                    addImageOnView(image.getImage().getImgEncode());
             } else {
                 APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
                     @Override
-                    public void onImageLoaded(String decodeStr) { setImageOnView(decodeStr);}
+                    public void onImageLoaded(String decodeStr) { System.err.println("=========="); addImageOnView(decodeStr);}
                 });
             }
 
@@ -230,7 +228,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             }
         }
 
-        private void setImageOnView(String decodeStr) {
+        private void addImageOnView(String decodeStr) {
             if (decodeStr == null) return;
             Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
 
@@ -239,7 +237,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageBitmap(getScaledBitmap(roundedBitmap));
 
-            container.removeAllViews();
+            //container.removeAllViews();
             container.setVisibility(View.VISIBLE);
             container.addView(imageView);
         }
@@ -274,7 +272,6 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
 
             int targetHeight = Math.round((float) bitmap.getHeight() * ((float) targetWidth / (float) bitmap.getWidth()));
 
-            System.err.println("0000000000 " + textMessage.getText() + " " + targetWidth + " " + targetHeight);
             return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
         }
     }

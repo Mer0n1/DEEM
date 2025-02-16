@@ -34,6 +34,7 @@ import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
 import com.example.restful.utils.HLS_ProtocolSystem;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,8 +77,9 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         private TextView content;
         private TextView name_group;
         private TextView icon;
-        private RecyclerView recyclerView;
-        private final int indent = 110; //test
+        //private RecyclerView recyclerView;
+        private FlexboxLayout container;
+        private final int indent = 50; //test
 
         //video
         private PlayerView playerView;
@@ -89,7 +91,8 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             content      = itemView.findViewById(R.id.news_content_info);
             date         = itemView.findViewById(R.id.news_date_info);
             name_group   = itemView.findViewById(R.id.news_namegroup_info);
-            recyclerView = itemView.findViewById(R.id.list_images);
+            //recyclerView = itemView.findViewById(R.id.list_images);
+            container    = itemView.findViewById(R.id.list_images);
             icon         = itemView.findViewById(R.id.icon_group_main);
             playerView   = itemView.findViewById(R.id.player_view);
 
@@ -129,7 +132,7 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 List<ImageView> imageViews = new ArrayList<>();
                 initRecycle(1, imageViews);
 
-                APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() { //TODO проверить обновление
+                APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
                     public void onImageLoaded(String decodeStr) {
                         imageLoad(imageViews, decodeStr);
@@ -137,7 +140,8 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 });
 
             } else
-                recyclerView.setVisibility(View.GONE); //если изображений нет то отключаем recycle
+                container.setVisibility(View.GONE); //если изображений нет то отключаем видимость
+                //recyclerView.setVisibility(View.GONE);
 
 
             //Video
@@ -202,16 +206,18 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 imageView.setImageBitmap(getScaledBitmap(bitmap));
                 imageViews.add(imageView);
 
-                recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
+                container.setVisibility(View.VISIBLE);
+                container.addView(imageView);
+                //recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
             }
         }
 
         private void initRecycle(int count, List<ImageView> views) {
-            recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), count));
+            /*recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), count));
             ImagesListRecycleAdapter imagesListRecycleAdapter =
                     new ImagesListRecycleAdapter(views, fragment.getContext());
             recyclerView.setAdapter(imagesListRecycleAdapter);
-            recyclerView.scrollToPosition(1);
+            recyclerView.scrollToPosition(1);*/
         }
 
         /** Задаем размер bitmap соответственно текущему устройству */

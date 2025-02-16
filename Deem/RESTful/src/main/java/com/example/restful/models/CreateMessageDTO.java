@@ -7,11 +7,12 @@ public class CreateMessageDTO {
     private String text;
     private Date date;
     private Long author;
-    private List<MessageImage> images;
     private Chat chat;
     private boolean newChat;
     private boolean thereVideo; //isThereVideo
     private String videoUUID;
+
+    private List<MessageImage> images;
 
     public CreateMessageDTO() {}
 

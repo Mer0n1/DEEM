@@ -1,5 +1,8 @@
 package com.example.deem.dialogs;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -45,12 +48,12 @@ public class CreateNewsDialog extends DialogFragment {
     private ConstraintLayout main_layout;
 
     //img
-    private static List<Drawable> listDrawables;
-    private static TextView imgInfo;
+    private List<Drawable> listDrawables;
+    private TextView imgInfo;
 
     //video
-    private static boolean isVideoLoaded;
-    private static VideoMetadata videoMetadata;
+    private boolean isVideoLoaded;
+    private VideoMetadata videoMetadata;
 
     private Account myAccount;
 
@@ -60,8 +63,18 @@ public class CreateNewsDialog extends DialogFragment {
         main_layout = (ConstraintLayout)inflater.inflate(R.layout.dialog_new_news, container, false);
         listDrawables = new ArrayList<>();
         imgInfo = main_layout.findViewById(R.id.test_image_loaded);
-
         myAccount = APIManager.getManager().getMyAccount();
+
+
+        main_layout.findViewById(R.id.layout_video_loaded).setVisibility(GONE);
+        main_layout.findViewById(R.id.button_close_video_loaded).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                main_layout.findViewById(R.id.layout_video_loaded).setVisibility(GONE);
+                isVideoLoaded = false;
+                videoMetadata = null;
+            }
+        });
 
         return main_layout;
     }
@@ -81,9 +94,6 @@ public class CreateNewsDialog extends DialogFragment {
         view.findViewById(R.id.image_loader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                //startActivityForResult(intent, 1);
-
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
                 String[] mimeTypes = {"image/*", "video/*"};
@@ -104,18 +114,6 @@ public class CreateNewsDialog extends DialogFragment {
             news.setIdGroup(myAccount.getGroup().getId());
             news.setImages(new MutableLiveData<>(new ArrayList<>()));
             news.setCompleted(true);
-
-            /*CreateNewsDTO news = new CreateNewsDTO();
-            news.setContent(((TextView)view.findViewById(R.id.editTextContentMessage)).getText().toString());
-            news.setDate(new Date(System.currentTimeMillis()));
-            news.setFaculty(myAccount.getGroup().getFaculty());
-            news.setIdAuthor(myAccount.getId());
-            news.setIdGroup(myAccount.getGroup().getId());
-            news.setImages(new ArrayList<>());
-
-            //convert to News
-            News NaturalNews = ConverterDTO.CreateNewsDTOToNews(news);
-            NaturalNews.setCompleted(true);*/
 
             //настройка видео
             if (isVideoLoaded) {
@@ -153,12 +151,13 @@ public class CreateNewsDialog extends DialogFragment {
         }
     }
 
+
     public void initialize(List<News> newsList, NewsListRecycleAdapter updateAddedNews) {
         this.newsListGroup = newsList;
         this.updateAddedNews = updateAddedNews;
     }
 
-    public static void addDrawable(Drawable drawable) {
+    public void addDrawable(Drawable drawable) {
         if (listDrawables == null)
             listDrawables = new ArrayList<>();
         listDrawables.add(drawable);
@@ -166,9 +165,11 @@ public class CreateNewsDialog extends DialogFragment {
         imgInfo.setText(String.valueOf(listDrawables.size()) + " изображений загружено");
     }
 
-    public static void initVideo(byte[] videoData) {
+    public void initVideo(byte[] videoData) {
         String videoUUID = GeneratorUUID.getInstance().generateUUIDforVideo(videoData);
         videoMetadata = new VideoMetadata(VideoMetadata.TypeVideoData.news_video, videoUUID, videoData);
         isVideoLoaded = true;
+
+        main_layout.findViewById(R.id.layout_video_loaded).setVisibility(View.VISIBLE);
     }
 }

@@ -80,7 +80,7 @@ public interface Base {
 
     //image
     @GET("/image/getImage")
-    Call<Image> getImage(@Query("UUID") String UUID, @Query("type") String type);
+    Call<List<Image>> getImages(@Query("UUID") String UUID, @Query("type") String type);
     @GET("/image/getCount")
     Call<Integer> getCount(@Query("id") Long id, @Query("type") String type);
     @POST("/image/addImageIcon")

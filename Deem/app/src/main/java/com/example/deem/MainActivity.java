@@ -1,5 +1,8 @@
 package com.example.deem;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -203,15 +206,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleImage(Intent data) {
-        InputStream inputStream = null;
-        Uri selectedImageUri = data.getData();
         try {
+            InputStream inputStream = null;
+            Uri selectedImageUri = data.getData();
+
             inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+            Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
+            CreateNewsDialog dialog = (CreateNewsDialog) getSupportFragmentManager().findFragmentByTag("creation_menu");
+            dialog.addDrawable(drawable);
+
         } catch (FileNotFoundException e) {
             Toast.makeText(this, "Ошибка загрузки изображения.", Toast.LENGTH_SHORT).show();
         }
-        Drawable drawable = Drawable.createFromStream(inputStream, selectedImageUri.toString());
-        CreateNewsDialog.addDrawable(drawable);
     }
 
     private void handleVideo(Intent data) {
@@ -226,7 +233,8 @@ public class MainActivity extends AppCompatActivity {
                 buffer.write(temp, 0, bytesRead);
 
             inputStream.close();
-            CreateNewsDialog.initVideo(buffer.toByteArray());
+            CreateNewsDialog dialog = (CreateNewsDialog) getSupportFragmentManager().findFragmentByTag("creation_menu");
+            dialog.initVideo(buffer.toByteArray());
 
         } catch (Exception e) {
             Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();

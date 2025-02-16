@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,5 +16,7 @@ public interface MessageImageRepository extends JpaRepository<MessageImage,Integ
     int getCount(@Param("id") Long id);
 
     PathImageProjection findByUuid(String UUID);
+
+    List<PathImageProjection> findAllByUuid(String UUID);
     MessageImage findTopByOrderByIdDesc();
 }

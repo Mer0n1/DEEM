@@ -1,5 +1,8 @@
 package com.example.deem;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -98,23 +101,17 @@ public class ChatActivity extends AppCompatActivity {
 
     private void init() {
         myAccount = APIManager.getManager().getMyAccount();
-
         FixedImages = new ArrayList<>();
         FixedImageViews = new ArrayList<>();
-        activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
 
-        activityChatBinding.buttonBackChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {finish();}
-        });
+        activityChatBinding.NameChat.setText(getIntent().getStringExtra("Nickname"));
+        findViewById(R.id.layout_video_loaded).setVisibility(GONE);
 
         if (APIManager.statusInfo.isChatsListGot() || APIManager.statusCacheInfo.isListChatsLoaded()) {
-            activityChatBinding.progressBar.setVisibility(View.GONE);
-            activityChatBinding.listMessages.setVisibility(View.VISIBLE);
-
+            activityChatBinding.progressBar.setVisibility(GONE);
+            activityChatBinding.listMessages.setVisibility(VISIBLE);
         } else
             return;
-
 
         loadChat();
         initRecycle();
@@ -188,10 +185,12 @@ public class ChatActivity extends AppCompatActivity {
             byte[] videoData = buffer.toByteArray();
             String videoUUID = GeneratorUUID.getInstance().generateUUIDforVideo(videoData);
 
+            findViewById(R.id.layout_video_loaded).setVisibility(VISIBLE);
             videoMetadata = new VideoMetadata(VideoMetadata.TypeVideoData.message_video, videoUUID, videoData);
             isVideoLoaded = true;
 
         } catch (Exception e) {
+            findViewById(R.id.layout_video_loaded).setVisibility(GONE);
             Toast.makeText(this, "Ошибка загрузки видео.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -226,6 +225,11 @@ public class ChatActivity extends AppCompatActivity {
 
     private void SetListeners() {
 
+        activityChatBinding.buttonBackChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {finish();}
+        });
+
         activityChatBinding.enterText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -246,9 +250,6 @@ public class ChatActivity extends AppCompatActivity {
         activityChatBinding.imageExample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 0);*/
-
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
                 String[] mimeTypes = {"image/*", "video/*"};
@@ -267,6 +268,16 @@ public class ChatActivity extends AppCompatActivity {
                     intent.putExtra("Nickname", account.getUsername());
                     startActivity(intent);
                 }
+            }
+        });
+
+        //Удаление загруженного видео
+        activityChatBinding.buttonCloseVideoLoaded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.layout_video_loaded).setVisibility(GONE);
+                isVideoLoaded = false;
+                videoMetadata = null;
             }
         });
 
@@ -399,9 +410,9 @@ public class ChatActivity extends AppCompatActivity {
 
     private void updateRecyclerViewVisibility() {
         if (FixedImageViews.isEmpty()) {
-            imagesLoadedRecycle.setVisibility(View.GONE);
+            imagesLoadedRecycle.setVisibility(GONE);
         } else {
-            imagesLoadedRecycle.setVisibility(View.VISIBLE);
+            imagesLoadedRecycle.setVisibility(VISIBLE);
         }
     }
 

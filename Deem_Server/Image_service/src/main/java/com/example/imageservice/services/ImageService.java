@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,29 @@ public class ImageService {
             image.setImgEncode(encodeImage(path));
 
         return image;
+    }
+
+    public List<Image> getImages(String UUID, String type) throws Exception {
+        List<Image> images = new ArrayList<>();
+        List<PathImageProjection> projections = new ArrayList<>();
+
+        if (type.equals("news_image"))
+            projections = newsImageRepository.findAllByUuid(UUID);
+        if (type.equals("profile_icon"))
+            projections = List.of(newProjection(UUID));
+        if (type.equals("message_image"))
+            projections = messageImageRepository.findAllByUuid(UUID);
+
+        for (PathImageProjection projection : projections) {
+            String path = projection.getPath();
+            if (!path.isEmpty()) {
+                Image image = new Image();
+                image.setImgEncode(encodeImage(path));
+                images.add(image);
+            }
+        }
+
+        return images;
     }
 
     private PathImageProjection newProjection(String uuid) {
