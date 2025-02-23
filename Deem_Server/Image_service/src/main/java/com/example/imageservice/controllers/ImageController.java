@@ -46,7 +46,7 @@ public class ImageController {
                           @RequestParam("type") String type) {
         try {
             return imageService.getImages(UUID, type);
-        } catch (Exception e) {
+        } catch (Exception e) { 
             return new ArrayList<>();
         }
     }

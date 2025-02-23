@@ -73,10 +73,6 @@ public class MainContainer {
         System.out.println("try send");
 
         jsonMessage = "{\"Protocol\":\"" + type + "\",\"Type\":" + jsonMessage + "}";
-        /*if (type == Type.Message)
-            jsonMessage = "{\"Protocol\":\"Message\",\"Type\":" + jsonMessage + "}";
-        if (type == Type.Event)
-            jsonMessage = "{\"Protocol\":\"Event\",\"Type\":" + jsonMessage + "}";*/
 
         if (session.isOpen()) {
 

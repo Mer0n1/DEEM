@@ -24,7 +24,7 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_identefication_form);
-        CacheSystem.initialize(this.getApplicationContext()); //TODO
+        CacheSystem.initialize(this.getApplicationContext());
         Repository.getInstance().initialize();
 
         if (checkRemember()) {
@@ -55,7 +55,7 @@ public class AuthActivity extends AppCompatActivity {
                     Intent intent = new Intent(AuthActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Не удалось авторизироваться" ,
+                    Toast.makeText(getApplicationContext(), "Не удалось авторизироваться." ,
                             Toast.LENGTH_LONG).show();
                 }
             }

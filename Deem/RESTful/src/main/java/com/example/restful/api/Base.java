@@ -1,5 +1,6 @@
 package com.example.restful.api;
 
+import com.example.restful.BuildConfig;
 import com.example.restful.models.Account;
 import com.example.restful.models.AuthRequest;
 import com.example.restful.models.Chat;
@@ -35,8 +36,9 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+
 public interface Base {
-    String BASE_URL ="http://192.168.0.103:8081/";
+    String BASE_URL ="http://" + BuildConfig.API_BASE_URL + ":" + BuildConfig.API_BASE_PORT + "/";
 
     //auth
     @POST("/auth/login")

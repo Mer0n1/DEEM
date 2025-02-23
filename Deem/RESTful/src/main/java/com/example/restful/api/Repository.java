@@ -150,8 +150,8 @@ public class Repository {
                     stri = str.execute();
                     PublicAccountDTO dto = stri.body();
                     myAccount = convertToAccount(dto);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Error auth " + e.getMessage());
                 }
             }
         });
@@ -634,6 +634,7 @@ public class Repository {
     }
 
     protected void getVideo(VideoCallback callback, String VideoUUID) {
+
         ServerRepository.getInstance().getManifestVideo(VideoUUID).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

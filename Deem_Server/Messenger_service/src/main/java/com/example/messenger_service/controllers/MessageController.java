@@ -39,7 +39,8 @@ public class MessageController {
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody @Valid CreateMessageDTO dto,
-                                      BindingResult bindingResult) throws JsonProcessingException {
+                                      BindingResult bindingResult,
+                                      @AuthenticationPrincipal PersonDetails personDetails) throws JsonProcessingException {
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
@@ -48,7 +49,7 @@ public class MessageController {
 
         //проверим существует ли чат этого сообщения или нет
         if (dto.isNewChat()) { //создаем новый чат если не существует
-            List<Message> messageList = new ArrayList<>(); //TODO на случай проверить account_chat на наличие переписки
+            List<Message> messageList = new ArrayList<>();
             messageList.add(message);
             dto.getChat().setMessages(messageList);
             chatService.CreateNewChat(dto.getChat()); 

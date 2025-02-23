@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -24,6 +25,7 @@ import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
+import com.example.deem.dialogs.FullScreenImageDialog;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.ImageLoadCallback;
@@ -37,17 +39,18 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.MessageViewHolder> {
 
     private List<Message> list;
-    private Activity activity;
+    private AppCompatActivity activity;
 
     private int current_position;
 
-    public ChatRecycleAdapter(List<Message> list, Activity activity) {
+    public ChatRecycleAdapter(List<Message> list, AppCompatActivity activity) {
         this.list = list;
         this.activity = activity;
         current_position = -1;
@@ -75,6 +78,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         holder.item_date.setText("");
         holder.container.setVisibility(View.GONE);
         holder.container.removeAllViews();
+        holder.imageViews.clear();
 
         current_position = position;
 
@@ -102,6 +106,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         private FlexboxLayout container;
         private View include_view;
         private TextView item_date;
+        private List<ImageView> imageViews;
 
         private boolean isMyMessage;
         private View itview;
@@ -121,6 +126,8 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             include_view = itemView.findViewById(R.id.item_date_include);
             item_date    = include_view.findViewById(R.id.text_chat_date);
             playerView   = itemView.findViewById(R.id.player_view);
+
+            imageViews = new ArrayList<>();
         }
 
         public void setData(Message message) {
@@ -236,10 +243,25 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             Bitmap roundedBitmap = getRoundedBitmap(bitmap, radiusImage);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageBitmap(getScaledBitmap(roundedBitmap));
+            imageViews.add(imageView);
 
             //container.removeAllViews();
             container.setVisibility(View.VISIBLE);
             container.addView(imageView);
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int n = 0;
+                    for (int j = 0; j < imageViews.size(); j++)
+                        if (imageViews.get(j) == imageView)
+                            n = j;
+
+                    FullScreenImageDialog dialog = new FullScreenImageDialog();
+                    dialog.initialize(imageViews, n);
+                    dialog.show(activity.getSupportFragmentManager(), "full_screen_dialog");
+                }
+            });
         }
 
         /** Округлить изображение */

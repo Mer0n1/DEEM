@@ -437,6 +437,7 @@ public class ChatActivity extends AppCompatActivity {
         Chat chatformessage = new Chat();
         chatformessage.setId(currentChat.getId());
         message.setChat(chatformessage);
+        chatformessage.setUsers(currentChat.getUsers());
         messages.add(message);
 
         //Настройка видео
@@ -459,6 +460,7 @@ public class ChatActivity extends AppCompatActivity {
         message.setChat(currentChat);
         message.setCompleted(true);
         updateRecyclerViewVisibility();
+        findViewById(R.id.layout_video_loaded).setVisibility(GONE);
     }
 
 

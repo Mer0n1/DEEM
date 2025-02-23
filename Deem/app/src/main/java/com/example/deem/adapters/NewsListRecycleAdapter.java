@@ -3,6 +3,7 @@ package com.example.deem.adapters;
 import static java.security.AccessController.getContext;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.MainActivity;
 import com.example.deem.R;
+import com.example.deem.dialogs.FullScreenImageDialog;
 import com.example.restful.models.VideoCallback;
 import com.example.restful.utils.DateTranslator;
 import com.example.deem.utils.ImageUtil;
@@ -63,6 +65,13 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
     @Override
     public void onBindViewHolder(@NonNull ItemNews holder, int position) {
+        holder.date.setText("");
+        holder.content.setText("");
+        holder.name_group.setText("");
+        holder.icon.setText("");
+        holder.container.removeAllViews();
+        holder.container.setVisibility(View.GONE);
+
         holder.setData(newsList.get(position));
     }
 
@@ -77,7 +86,6 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
         private TextView content;
         private TextView name_group;
         private TextView icon;
-        //private RecyclerView recyclerView;
         private FlexboxLayout container;
         private final int indent = 50; //test
 
@@ -91,7 +99,6 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
             content      = itemView.findViewById(R.id.news_content_info);
             date         = itemView.findViewById(R.id.news_date_info);
             name_group   = itemView.findViewById(R.id.news_namegroup_info);
-            //recyclerView = itemView.findViewById(R.id.list_images);
             container    = itemView.findViewById(R.id.list_images);
             icon         = itemView.findViewById(R.id.icon_group_main);
             playerView   = itemView.findViewById(R.id.player_view);
@@ -126,11 +133,8 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
                 for (NewsImage newsImage : news.getImages().getValue())
                     imageLoad(imageViews, newsImage.getImage().getImgEncode());
 
-                initRecycle(imageViews.size(), imageViews);
-
             } else if (!news.isCompleted()) { //загружаем новые изображения из сервера или кэша
                 List<ImageView> imageViews = new ArrayList<>();
-                initRecycle(1, imageViews);
 
                 APIManager.getManager().getNewsImagesLazy(news, new ImageLoadCallback() {
                     @Override
@@ -141,7 +145,6 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
             } else
                 container.setVisibility(View.GONE); //если изображений нет то отключаем видимость
-                //recyclerView.setVisibility(View.GONE);
 
 
             //Video
@@ -208,16 +211,21 @@ public class NewsListRecycleAdapter extends RecyclerView.Adapter<NewsListRecycle
 
                 container.setVisibility(View.VISIBLE);
                 container.addView(imageView);
-                //recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), imageViews.size()));
-            }
-        }
 
-        private void initRecycle(int count, List<ImageView> views) {
-            /*recyclerView.setLayoutManager(new GridLayoutManager(fragment.getActivity(), count));
-            ImagesListRecycleAdapter imagesListRecycleAdapter =
-                    new ImagesListRecycleAdapter(views, fragment.getContext());
-            recyclerView.setAdapter(imagesListRecycleAdapter);
-            recyclerView.scrollToPosition(1);*/
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int n = 0;
+                        for (int j = 0; j < imageViews.size(); j++)
+                            if (imageViews.get(j) == imageView)
+                                n = j;
+
+                        FullScreenImageDialog dialog = new FullScreenImageDialog();
+                        dialog.initialize(imageViews, n);
+                        dialog.show(fragment.getActivity().getSupportFragmentManager(), "full_screen_dialog");
+                    }
+                });
+            }
         }
 
         /** Задаем размер bitmap соответственно текущему устройству */

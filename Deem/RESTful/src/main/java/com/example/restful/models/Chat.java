@@ -56,8 +56,6 @@ public class Chat {
     public String toString() {
         return "Chat{" +
                 "id=" + id +
-                ", messages=" + messages +
-                ", users=" + users +
                 '}';
     }
 }

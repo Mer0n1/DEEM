@@ -6,9 +6,16 @@ android {
     namespace "com.example.restful"
     compileSdkVersion 34
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 34
+
+        buildConfigField "String", "API_BASE_URL", "\"${API_BASE_URL}\""
+        buildConfigField "String", "API_BASE_PORT", "\"${API_BASE_PORT}\""
+        buildConfigField "String", "API_WS_PORT", "\"${API_WS_PORT}\""
     }
 
     compileOptions {

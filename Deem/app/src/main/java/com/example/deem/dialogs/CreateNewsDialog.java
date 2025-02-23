@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +22,16 @@ import com.example.deem.adapters.NewsListRecycleAdapter;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
-import com.example.restful.models.CreateNewsDTO;
 import com.example.restful.models.Image;
 import com.example.restful.models.News;
 import com.example.restful.models.NewsImage;
-import com.example.restful.models.StandardCallback;
 import com.example.restful.models.VideoMetadata;
-import com.example.restful.utils.ConverterDTO;
 import com.example.restful.utils.DateUtil;
 import com.example.restful.utils.GeneratorUUID;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 
 public class CreateNewsDialog extends DialogFragment {

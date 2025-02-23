@@ -2,6 +2,7 @@ package com.example.restful.api;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.restful.BuildConfig;
 import com.example.restful.api.APIManager;
 import com.example.restful.api.Repository;
 import com.example.restful.models.Chat;
@@ -36,7 +37,7 @@ public class PushClient {
     public PushClient() {
         client = new OkHttpClient();
 
-        Request request = new Request.Builder().url("ws://192.168.0.103:8025/ws/login").build();
+        Request request = new Request.Builder().url("ws://" + BuildConfig.API_BASE_URL + ":" + BuildConfig.API_WS_PORT + "/ws/login").build();
 
 
         webSocket = client.newWebSocket(request, new WebSocketListener() {
@@ -55,8 +56,6 @@ public class PushClient {
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     try {
-                        //CreateMessageDTO dto = objectMapper.readValue(jsonObject.get("Type").toString(), CreateMessageDTO.class);
-                        //Message message = ConverterDTO.CreateMessageDTOToMessage(dto);
 
                         ReceiveMessageDto dto = objectMapper.readValue(jsonObject.get("Type").toString(), ReceiveMessageDto.class);
                         Message message = ConverterDTO.CreateMessageDTOToMessage(dto);
@@ -69,7 +68,7 @@ public class PushClient {
 
                         if (chat != null)
                             chat.getMessages().add(message);
-                        else {
+                        else { //если чата еще не существует и это первое сообщение отправленное нам
                             Chat chat1 = message.getChat();
                             chat1.setMessages(new ArrayList<>());
                             chat1.getMessages().add(message);

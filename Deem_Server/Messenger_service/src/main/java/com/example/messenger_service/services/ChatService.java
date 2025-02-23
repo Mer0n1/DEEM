@@ -80,6 +80,8 @@ public class ChatService {
         chatDAO.saveInAccount_chat(chat);
     }
 
-
+    public boolean checkExistsOfChat(Long idAccount, Long chatId) {
+        return chatDAO.IsThereSuchAChat(idAccount, chatId);
+    }
 
 }
