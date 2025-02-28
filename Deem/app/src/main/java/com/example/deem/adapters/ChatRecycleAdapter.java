@@ -26,8 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.deem.R;
 import com.example.deem.dialogs.FullScreenImageDialog;
+import com.example.deem.utils.ImageLoadUtil;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
+import com.example.restful.models.Account;
 import com.example.restful.models.ImageLoadCallback;
 import com.example.restful.models.Message;
 import com.example.restful.models.MessageImage;
@@ -42,6 +44,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.MessageViewHolder> {
 
@@ -107,6 +111,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         private View include_view;
         private TextView item_date;
         private List<ImageView> imageViews;
+        private CircleImageView icon;
 
         private boolean isMyMessage;
         private View itview;
@@ -126,6 +131,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             include_view = itemView.findViewById(R.id.item_date_include);
             item_date    = include_view.findViewById(R.id.text_chat_date);
             playerView   = itemView.findViewById(R.id.player_view);
+            icon         = itemView.findViewById(R.id.icon_message);
 
             imageViews = new ArrayList<>();
         }
@@ -133,6 +139,7 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
         public void setData(Message message) {
             textMessage.setText(message.getText());
             message_time.setText(DateTranslator.getInstance().TimeToString(message.getDate()));
+            message.setRead(true); //делаем сообщение прочитанным так как оно отрисовалось
 
             if (message.getAuthor().equals(APIManager.getManager().getMyAccount().getId()))
                 isMyMessage = true;
@@ -163,12 +170,14 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
             } else {
                 APIManager.getManager().getMessageImagesLazy(message, new ImageLoadCallback() {
                     @Override
-                    public void onImageLoaded(String decodeStr) { System.err.println("=========="); addImageOnView(decodeStr);}
+                    public void onImageLoaded(String decodeStr) { addImageOnView(decodeStr);}
                 });
             }
 
             //Video
             DoVideo(message);
+
+            DoImageIcon(message);
         }
 
         @SuppressLint("UnsafeOptInUsageError")
@@ -232,6 +241,20 @@ public class ChatRecycleAdapter extends RecyclerView.Adapter<ChatRecycleAdapter.
                         System.out.println("FINISHED VIDEO");
                         break;
                 }
+            }
+        }
+
+        private void DoImageIcon(Message message) {
+            if (message.getAuthor() != APIManager.getManager().getMyAccount().getId()) {
+                Account account = null;
+
+                for (Account account1 : APIManager.getManager().getListAccounts())
+                    if (account1.getId() == message.getAuthor()) {
+                        account = account1;
+                        break;
+                    }
+
+                ImageLoadUtil.getInstance().LoadImageIcon(icon, account);
             }
         }
 

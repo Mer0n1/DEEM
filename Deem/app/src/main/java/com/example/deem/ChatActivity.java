@@ -29,6 +29,7 @@ import com.example.deem.adapters.ChatRecycleAdapter;
 import com.example.deem.adapters.ImagesListRecycleAdapter;
 import com.example.deem.adapters.ImagesLoaderRecycleAdapter;
 import com.example.deem.databinding.ActivityChatBinding;
+import com.example.deem.utils.ImageLoadUtil;
 import com.example.restful.models.CreateMessageDTO;
 import com.example.restful.models.Group;
 import com.example.restful.models.ImageLoadCallback;
@@ -58,6 +59,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /** Обязательное extra - Nickname:value. Название группы/аккаунта */
 public class ChatActivity extends AppCompatActivity {
@@ -116,6 +119,7 @@ public class ChatActivity extends AppCompatActivity {
         loadChat();
         initRecycle();
         SetListeners();
+        loadIcon();
 
         //Подпись на наблюдение за новыми сообщениями
         APIManager.getManager().getListChats().observeForever(new Observer<List<Chat>>() {
@@ -145,6 +149,14 @@ public class ChatActivity extends AppCompatActivity {
                     APIManager.getManager().getIconImageLazy(account_with_chat, imageLoadCallback);
             }
         }
+    }
+
+    //Загрузка иконки чата внутри активити
+    public void loadIcon() {
+        if (currentChat.getUsers().size() > 2)
+            ((CircleImageView)(findViewById(R.id.icon_chat))).setImageBitmap(
+                    ImageLoadUtil.getInstance().generateLetterIcon(
+                            APIManager.getManager().getMyAccount().getGroup().getName(), getBaseContext()));
     }
 
     /** Загрузка видео и изображения. */

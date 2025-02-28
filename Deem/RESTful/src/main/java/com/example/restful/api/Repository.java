@@ -478,18 +478,18 @@ public class Repository {
         ServerRepository.getInstance().getImages(UUID, "profile_icon").enqueue(new Callback<List<Image>>() {
             @Override
             public void onResponse(Call<List<Image>> call, Response<List<Image>> response) {
-                if (response.body() != null) {
+                if (response.body() != null && !response.body().isEmpty()) {
                     List<Image> images = response.body();
                     Image image = images.get(0);
                     account.setImageIcon(image);
+                    account.setThereImageIcon(true);
                     imageLoadCallback.onImageLoaded(image.getImgEncode());
-                }
+                } else
+                    account.setThereImageIcon(false);
             }
 
             @Override
-            public void onFailure(Call<List<Image>> call, Throwable t) {
-
-            }
+            public void onFailure(Call<List<Image>> call, Throwable t) {}
         });
     }
 

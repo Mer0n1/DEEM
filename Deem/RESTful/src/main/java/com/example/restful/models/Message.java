@@ -37,6 +37,11 @@ public class Message {
     private Long author;
     @ColumnInfo(name = "video_uuid")
     private String videoUUID;
+    @ColumnInfo(name = "chatId", index = true)
+    private Long chatId;
+    @ColumnInfo(name = "isRead")
+    @JsonIgnore
+    private boolean isRead; //todo
 
     @Ignore
     private Chat chat;
@@ -63,8 +68,6 @@ public class Message {
     @JsonIgnore
     private VideoMetadata videoMetadata;
 
-    @ColumnInfo(name = "chatId", index = true)
-    private Long chatId;
 
     public Message() {}
 
@@ -168,6 +171,14 @@ public class Message {
 
     public void setVideoMetadata(VideoMetadata videoMetadata) {
         this.videoMetadata = videoMetadata;
+    }
+
+    public boolean getRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 
     @Override

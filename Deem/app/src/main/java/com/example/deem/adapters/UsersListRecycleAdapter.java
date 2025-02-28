@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.deem.ChatActivity;
 import com.example.deem.ProfileActivity;
 import com.example.deem.R;
+import com.example.deem.utils.ImageLoadUtil;
 import com.example.deem.utils.ImageUtil;
 import com.example.restful.api.APIManager;
 import com.example.restful.models.Account;
@@ -114,21 +115,7 @@ public class UsersListRecycleAdapter extends RecyclerView.Adapter<UsersListRecyc
             typePerson_info.setText("Студент");
             icon.setImageResource(R.drawable.icon_person_elon);
 
-            //Загрузка изображения
-            ImageLoadCallback imageLoadCallback = new ImageLoadCallback() {
-                @Override
-                public void onImageLoaded(String decodeStr) {
-                    Bitmap bitmap = ImageUtil.getInstance().ConvertToBitmap(decodeStr);
-                    icon.setImageBitmap(bitmap);
-                }
-            };
-
-            if (user.getImageIcon() != null) {
-                imageLoadCallback.onImageLoaded(user.getImageIcon().getImgEncode());
-            } else
-                APIManager.getManager().getIconImageLazy(user, imageLoadCallback);
-
-
+            ImageLoadUtil.getInstance().LoadImageIcon(icon, user);
         }
 
     }

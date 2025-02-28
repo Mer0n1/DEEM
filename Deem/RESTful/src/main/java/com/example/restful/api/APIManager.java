@@ -95,10 +95,10 @@ public class APIManager {
     public void sendMessage(Message message, boolean isNewChat) {
         CreateMessageDTO dto = ConverterDTO.MessageToCreateMessageDTO(message);
         dto.setNewChat(isNewChat);
-System.err.println("+++++++++++ " + dto.getDate() + " " + dto.isNewChat() + " " + dto.getChat() + " " + dto.getText());
+
         ServerRepository.getInstance().sendMessage(dto).enqueue(new Callback<Long>() {
             @Override
-            public void onResponse(Call<Long> call, Response<Long> response) { //TODO проверить на Failure вариант
+            public void onResponse(Call<Long> call, Response<Long> response) { 
                 //в случае удачи если у нас есть видео то отправляем видео в видеосервис
                 if (response.isSuccessful() && message.getThereVideo()) {
                     Long id = response.body();

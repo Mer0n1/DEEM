@@ -1,5 +1,6 @@
 package com.example.deem.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class ChatsContainerFragment extends Fragment {
             @Override
             public void onChanged(List<Chat> newsList) {
                 containerChatsRecycleAdapter.notifyDataSetChanged();
-                recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+                recyclerView.scrollToPosition(0);
             }
         });
     }
@@ -79,6 +80,15 @@ public class ChatsContainerFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         containerChatsRecycleAdapter = new ContainerChatsRecycleAdapter(listChats, this);
         recyclerView.setAdapter(containerChatsRecycleAdapter);
-        recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+        recyclerView.scrollToPosition(0);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (containerChatsRecycleAdapter != null)
+            containerChatsRecycleAdapter.notifyDataSetChanged();
     }
 }

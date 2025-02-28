@@ -2,6 +2,7 @@ package com.example.restful.datebase;
 
 import static com.example.restful.datebase.AppDatabase.MIGRATION_1_2;
 import static com.example.restful.datebase.AppDatabase.MIGRATION_2_3;
+import static com.example.restful.datebase.AppDatabase.MIGRATION_3_4;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -82,6 +83,7 @@ public class CacheSystem {
                     AppDatabase.class, "deemdatabase.db")
                     .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_3_4)
                     .build();
             FilesDir = applicationContext.getFilesDir();
 
@@ -157,7 +159,6 @@ public class CacheSystem {
         newThread(()-> {
             if (APIManager.getManager().getListChats().getValue() != null)
                 for (Chat chat : APIManager.getManager().getListChats().getValue()) {
-                    System.err.println("--- " + chat.getMessages().toString());
                     messageDao.upsertAll(chat.getMessages());
                 }
         });

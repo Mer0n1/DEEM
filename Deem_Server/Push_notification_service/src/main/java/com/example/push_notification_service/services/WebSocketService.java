@@ -54,14 +54,18 @@ public class WebSocketService {
 
         //
         Set<Client> clientSet = MainContainer.clients;
-        Optional<Client> client = clientSet.stream().filter(s->s.getPersonDetails() //TODO если в чате более 2 человек то не работает, убедиться
-                .getUsername().equals(list.get(0))).findAny();
 
-        if (!client.isEmpty()) {
-            String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
-                    .writeValueAsString(messagePush.getMessage());
+        for (int j = 0; j < list.size(); j++) {
+            String username = list.get(j);
+            Optional<Client> client = clientSet.stream().filter(s -> s.getPersonDetails() //TODO если в чате более 2 человек то не работает, убедиться
+                    .getUsername().equals(username)).findAny();
 
-            MainContainer.send(client.get().getSession(), jsonMessage, MainContainer.Type.Message);
+            if (!client.isEmpty()) {
+                String jsonMessage = (new ObjectMapper().writer().withDefaultPrettyPrinter())
+                        .writeValueAsString(messagePush.getMessage());
+
+                MainContainer.send(client.get().getSession(), jsonMessage, MainContainer.Type.Message);
+            }
         }
 
     }

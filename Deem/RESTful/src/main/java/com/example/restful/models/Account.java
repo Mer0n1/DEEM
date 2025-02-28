@@ -1,5 +1,6 @@
 package com.example.restful.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +19,8 @@ public class Account {
 
     private Image imageIcon;
 
+    @JsonIgnore
+    private Boolean isThereImageIcon;
 
     public Long getId() {
         return id;
@@ -105,5 +108,13 @@ public class Account {
 
     public void setId_club(Long id_club) {
         this.id_club = id_club;
+    }
+
+    public Boolean isThereImageIcon() {
+        return isThereImageIcon;
+    }
+
+    public void setThereImageIcon(Boolean thereImageIcon) {
+        isThereImageIcon = thereImageIcon;
     }
 }
