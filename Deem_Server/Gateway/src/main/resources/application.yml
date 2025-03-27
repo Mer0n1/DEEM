@@ -93,6 +93,11 @@ spring:
            - Path=/club/**
          filters:
            - AuthenticationFilter
+           #- name: RequestRateLimiter
+           #  args:
+           #    redis-rate-limiter.replenishRate: 1
+           #    redis-rate-limiter.burstCapacity: 2
+           #    redis-rate-limiter.requestedTokens: 1
 
        - id: Statistics_service
          uri: lb://statistics
@@ -123,6 +128,10 @@ spring:
            - AuthenticationFilter
  application:
    name: Gateway
+ #data:
+ #  redis:
+ #    host: localhost
+ #    port: 6379
 
 eureka:
   client:

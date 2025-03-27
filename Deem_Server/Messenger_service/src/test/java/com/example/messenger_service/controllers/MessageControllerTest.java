@@ -40,9 +40,6 @@ class MessageControllerTest {
     private MessageService messageService;
 
     @Mock
-    private MessengerServiceClient messengerServiceClient;
-
-    @Mock
     private ChatService chatService;
 
     @Mock
@@ -52,53 +49,55 @@ class MessageControllerTest {
     private ModelMapper modelMapper;
 
     @Test
-    void sendMessage_ItsNewChat_NoImages() throws JsonProcessingException { //TODO
-        /*BindingResult bindingResult = mock(BindingResult.class);
+    void sendMessage_ItsNewChat_NoImages() throws JsonProcessingException {
+        BindingResult bindingResult = mock(BindingResult.class);
         CreateMessageDTO dto = new CreateMessageDTO();
         dto.setNewChat(true);
         dto.setChat(new Chat());
         Message message = new Message();
         message.setImages(new ArrayList<>());
+        message.setChat(new Chat());
+        message.getChat().setId(1L);
+        message.getChat().setUsers(new ArrayList<>());
 
         when(modelMapper.map(dto, Message.class)).thenReturn(message);
-        doNothing().when(chatService).CreateNewChat(dto.getChat());
+        doNothing().when(chatService).CreateNewChat(any());
         when(messageService.save(message)).thenReturn(message);
-        doNothing().when(messengerServiceClient).pushMessageTo(message);
+        doNothing().when(messageService).doImage(any(), any());
+        doNothing().when(messageService).pushMessage(any(), any());
+        when(chatService.getChat(message.getChat().getId())).thenReturn(message.getChat());
 
-        ResponseEntity<?> response = messageController.sendMessage(dto, bindingResult);
+        ResponseEntity<?> response = messageController.sendMessage(dto, bindingResult, new PersonDetails());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(chatService).CreateNewChat(dto.getChat());
         verify(messageService).save(message);
-        verify(messengerServiceClient).pushMessageTo(message);*/
+        verify(messageService).pushMessage(message, message.getChat().getUsers());
     }
 
     @Test
-    void sendMessage_ItsNewChat_ThereAreImages() throws JsonProcessingException { //TODO
-       /* BindingResult bindingResult = mock(BindingResult.class);
+    void sendMessage_ItsNotANewChat() throws JsonProcessingException {
+        BindingResult bindingResult = mock(BindingResult.class);
         CreateMessageDTO dto = new CreateMessageDTO();
         dto.setNewChat(true);
         dto.setChat(new Chat());
         Message message = new Message();
-
-        List<MessageImage> messageImages = new ArrayList<>();
-        MessageImage messageImage = new MessageImage();
-        messageImages.add(messageImage);
-        message.setImages(messageImages);
+        message.setImages(new ArrayList<>());
+        message.setChat(new Chat());
+        message.getChat().setId(1L);
+        message.getChat().setUsers(new ArrayList<>());
 
         when(modelMapper.map(dto, Message.class)).thenReturn(message);
-        doNothing().when(chatService).CreateNewChat(dto.getChat());
         when(messageService.save(message)).thenReturn(message);
-        doNothing().when(messengerServiceClient).pushMessageTo(message);
-        when(messengerServiceClient.addImagesNews(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        doNothing().when(messageService).doImage(any(), any());
+        doNothing().when(messageService).pushMessage(any(), any());
+        when(chatService.getChat(message.getChat().getId())).thenReturn(message.getChat());
 
-        ResponseEntity<?> response = messageController.sendMessage(dto, bindingResult);
+        ResponseEntity<?> response = messageController.sendMessage(dto, bindingResult, new PersonDetails());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(chatService).CreateNewChat(dto.getChat());
         verify(messageService).save(message);
-        verify(messengerServiceClient).pushMessageTo(message);
-        verify(messengerServiceClient).addImagesNews(anyList());*/
+        verify(messageService).pushMessage(message, message.getChat().getUsers());
     }
 
     /*@Test
@@ -148,6 +147,5 @@ class MessageControllerTest {
         assertNull(list);
     }
 
-    /*@Test
-    void getLastMessages() {}*/
+
 }

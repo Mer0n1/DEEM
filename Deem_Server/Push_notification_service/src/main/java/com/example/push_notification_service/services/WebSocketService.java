@@ -57,7 +57,7 @@ public class WebSocketService {
 
         for (int j = 0; j < list.size(); j++) {
             String username = list.get(j);
-            Optional<Client> client = clientSet.stream().filter(s -> s.getPersonDetails() //TODO если в чате более 2 человек то не работает, убедиться
+            Optional<Client> client = clientSet.stream().filter(s -> s.getPersonDetails() //TODO если в чате более 2 человек то не работает, убедиться 
                     .getUsername().equals(username)).findAny();
 
             if (!client.isEmpty()) {
