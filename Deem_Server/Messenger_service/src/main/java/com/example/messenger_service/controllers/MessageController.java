@@ -2,9 +2,12 @@ package com.example.messenger_service.controllers;
 
 import com.example.messenger_service.config.PersonDetails;
 import com.example.messenger_service.dao.ChatDAO;
+import com.example.messenger_service.models.Chat;
 import com.example.messenger_service.models.CreateMessageDTO;
 import com.example.messenger_service.models.Message;
+import com.example.messenger_service.models.MessagePush;
 import com.example.messenger_service.services.ChatService;
+import com.example.messenger_service.services.KafkaMessagePublisher;
 import com.example.messenger_service.services.MessageService;
 import com.example.messenger_service.services.MessengerServiceClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,6 +39,27 @@ public class MessageController {
     private ModelMapper modelMapper;
     @Autowired
     private ChatDAO chatDAO;
+    @Autowired
+    private KafkaMessagePublisher kafkaMessagePublisher;
+
+    @PostMapping("/testKafka")
+    public void testKafka() {
+        Message message = new Message();
+        message.setId(1L);
+        message.setImages(null);
+        message.setDate(null);
+        message.setAuthor(1L);
+        message.setChat(new Chat());
+        message.setThereVideo(false);
+        message.setVideoUUID("gfsg");
+
+        MessagePush messagePush = new MessagePush();
+        messagePush.setMessage(message);
+        messagePush.setReceivers(List.of(1L));
+
+        kafkaMessagePublisher.pushMessageTo(messagePush);
+    }
+
 
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestBody @Valid CreateMessageDTO dto,

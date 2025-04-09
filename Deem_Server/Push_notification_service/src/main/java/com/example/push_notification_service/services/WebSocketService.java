@@ -7,7 +7,12 @@ import com.example.push_notification_service.models.MessagePush;
 import com.example.push_notification_service.models.News;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -111,4 +116,25 @@ public class WebSocketService {
                 }
     }
 
+    @KafkaListener(topics = "message_push",groupId = "gr1")
+    public void sendMessageToClientKafka(MessagePush messagePush) {
+        System.out.println("push message " + messagePush.toString());
+
+        /*try {
+            sendMessageToClient(messagePush);
+        } catch (JsonProcessingException e) {
+
+        }*/
+    }
+
+    @KafkaListener(topics = "news_push",groupId = "gr1")
+    public void sendNewsToClient(News news) {
+        System.out.println("push news " + news.toString());
+
+        try {
+            sendNews(news);
+        } catch (JsonProcessingException e) {
+
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.example.news_service.controllers;
 import com.example.news_service.config.PersonDetails;
 import com.example.news_service.models.CreateNewsDTO;
 import com.example.news_service.models.News;
+import com.example.news_service.services.KafkaMessagePublisher;
 import com.example.news_service.services.NewsService;
 import com.example.news_service.services.RestTemplateService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +27,8 @@ public class NewsController {
     private NewsService newsService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private KafkaMessagePublisher kafkaMessagePublisher;
 
 
    /* @GetMapping("/getAllNews")
@@ -37,6 +40,22 @@ public class NewsController {
 
         return newsService.getNews(personDetails.getFaculty());
     }*/
+   @PostMapping("/testKafka")
+   public void testKafka() {
+       News news = new News();
+       news.setId(1L);
+       news.setContent("fsdgfvsd");
+       news.setCourse(1);
+       news.setFaculty("1");
+       news.setImages(null);
+       news.setDate(null);
+       news.setIdAuthor(1L);
+       news.setIdGroup(1L);
+       news.setThereVideo(false);
+       news.setVideoUUID("gfsg");
+
+       kafkaMessagePublisher.pushNewsTo(news);
+   }
 
     /** Отправляет обновленный список новостей для текущего курса и факультета. Все админ-новости также отправляем*/
     @GetMapping("/getNewsFeed")
@@ -83,7 +102,8 @@ public class NewsController {
         }
 
         try {
-            newsService.pushNewsTo(news);
+            kafkaMessagePublisher.pushNewsTo(news);
+            //newsService.pushNewsTo(news);
         } catch (Exception e) {}
 
         return ResponseEntity.ok().body(actualNews.getId());

@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: newss
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.example.news_service.util.CustomJsonSerializer
 
 eureka:
   client:

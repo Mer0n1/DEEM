@@ -4,6 +4,19 @@ server:
 spring:
   application:
     name: pushs
+  kafka:
+      consumer:
+        bootstrap-servers: localhost:9092
+        group-id: gr1
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: com.example.push_notification_service.util.CustomJsonDeserializer
+        properties:
+          spring.json.type.mapping: "News:com.example.push_notification_service.models.News"
+          spring.json.trusted.packages: "*"
+          #spring:
+          #  json:
+          #    trusted:
+          #      packages : "*"
 
 eureka:
   client:
