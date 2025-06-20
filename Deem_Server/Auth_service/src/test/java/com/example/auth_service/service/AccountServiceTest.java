@@ -344,7 +344,7 @@ class AccountServiceTest {
 
         when(repository.findById(form.getId_student())).thenReturn(optionalAccount);
 
-        accountService.changeRoleClub(form);
+        accountService.changeRole(form);
 
         assertEquals(account.getRole(), "ROLE_" + form.getNewRole());
     }
@@ -357,7 +357,7 @@ class AccountServiceTest {
         when(repository.findById(form.getId_student())).thenReturn(optionalAccount);
 
         Exception exception = assertThrows(Exception.class, () -> {
-            accountService.changeRoleClub(form);
+            accountService.changeRole(form);
         });
 
         assertEquals(exception.getMessage(), "Такого аккаунта не существует");

@@ -16,7 +16,7 @@ public class Exam {
     private String type;
     private String description;
     private String duration;
-    private String AddressToExamService;
+    private String addressToExamService;
 
     private Time time;
 
@@ -41,7 +41,7 @@ public class Exam {
     }
 
     public String getAddressToExamService() {
-        return AddressToExamService;
+        return addressToExamService;
     }
 
     public void setId(Long id) {
@@ -74,7 +74,7 @@ public class Exam {
     }
 
     public void setAddressToExamService(String addressToExamService) {
-        AddressToExamService = addressToExamService;
+        this.addressToExamService = addressToExamService;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Exam {
                 ", type='" + type + '\'' +
                 ", description='" + description + '\'' +
                 ", duration='" + duration + '\'' +
-                ", AddressToExamService='" + AddressToExamService + '\'' +
+                ", AddressToExamService='" + addressToExamService + '\'' +
                 ", time=" + time +
                 '}';
     }

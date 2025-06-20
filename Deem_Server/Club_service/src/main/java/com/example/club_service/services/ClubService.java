@@ -1,7 +1,10 @@
 package com.example.club_service.services;
 
+import com.example.club_service.config.PersonDetails;
 import com.example.club_service.models.Club;
+import com.example.club_service.models.ClubForm;
 import com.example.club_service.repositories.ClubRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -14,14 +17,14 @@ public class ClubService {
 
     private final ClubRepository clubRepository;
 
-    public static Long id_labor_club;
-    public static Long id_journalism_club;
+    private Long id_labor_club;
+    private Long id_journalism_club;
 
 
     public ClubService(ClubRepository clubRepository) {
         this.clubRepository = clubRepository;
 
-        id_labor_club = this.clubRepository.findByName("Клуб Труда").get().getId(); //TODO
+        id_labor_club = this.clubRepository.findByName("Клуб Труда").get().getId();
         id_journalism_club = this.clubRepository.findByName("Клуб Журналистики").get().getId();
     }
 
@@ -44,5 +47,26 @@ public class ClubService {
         club.setId_leader(id_leader);
 
         return save(club);
+    }
+
+    public void addStudentToClub(ClubForm form, PersonDetails account) throws Exception {
+        checkRights(form, account);
+
+        //...
+    }
+
+    public void expelStudentClub(ClubForm form, PersonDetails account) throws Exception {
+        checkRights(form, account);
+
+        //...
+    }
+
+    /** Проверяет имеет ли пользователь запрашиваемой формы права.
+     * Например глава клуба журналистики не может добавить участника в другой клуб. */
+    public void checkRights(ClubForm form, PersonDetails account) throws Exception {
+        if (!(form.getId_club() == id_journalism_club && account.equals("JOURNALISM_LEAD")))
+            throw new Exception("Вы не являетесь главой клуба журналистики для добавления участника.");
+        if (!(form.getId_club() == id_labor_club && account.equals("LABOR_LEAD")))
+            throw new Exception("Вы не являетесь главой клуба труда для добавления участника.");
     }
 }

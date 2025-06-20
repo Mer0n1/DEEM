@@ -17,7 +17,7 @@
             android:orientation="horizontal"
             android:gravity="left|center"
             android:padding="10dp"
-            android:background="@color/white">
+            android:background="@drawable/border_style">
 
             <ImageView
                 android:id="@+id/icon_search"
@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
+                android:hint="Поиск"
                 android:background="@color/white"
                 android:inputType="textPersonName"
                 />
