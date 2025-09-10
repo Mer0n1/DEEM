@@ -76,4 +76,3 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI
 <img src="img/10.jpg" alt="drawing" width="200"/>
 <img src="img/11.jpg" alt="drawing" width="200"/>
 <img src="img/12.jpg" alt="drawing" width="200"/>
-<img src="img/13.jpg" alt="drawing" width="200"/>

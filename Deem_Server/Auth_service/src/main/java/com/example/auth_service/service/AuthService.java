@@ -6,6 +6,7 @@ import com.example.auth_service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -19,6 +20,7 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Transactional
     public String saveUser(Account credential) {
         credential.setPassword(passwordEncoder.encode(credential.getPassword()));
         repository.save(credential);
