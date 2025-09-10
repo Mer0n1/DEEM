@@ -1,6 +1,7 @@
 package com.example.club_service.util;
 
 import com.example.club_service.models.Account;
+import com.example.club_service.models.ClubForm;
 import com.example.club_service.services.ClubService;
 
 public class RoleValidator {
@@ -17,20 +18,13 @@ public class RoleValidator {
         return true;
     }
 
-
-    public static void validateCorrectRequest(Account account, String newRole) throws Exception {
-        if (account.getId_club() == null)
-            throw new Exception("Студент не состоит ни в каком в клубе");
-        if (newRole.equals("PRESIDENT_LABOR") && account.getId_club() != ClubService.id_labor_club)
-            throw new Exception("Студент не состоит в клубе труда");
-        if (newRole.equals("PRESIDENT_JOURNALISM") && account.getId_club() != ClubService.id_journalism_club)
-            throw new Exception("Студент не состоит в клубе журналистики");
-    }
-
-    public static boolean isStudentRole(String role) {
-        if (role.equals("ROLE_STUDENT"))
-            return true;
-        else
+    public static boolean checkForAddingSCOUNCIL(String role) {
+        if (role.equals("ROLE_PRESIDENT_COUNCIL") ||
+            role.equals("ROLE_ADMIN") ||
+            role.equals("ROLE_TEACHER"))
             return false;
+        else
+            return true;
     }
+
 }

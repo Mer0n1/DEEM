@@ -26,26 +26,21 @@
 </head>
 <body>
 <h1>Пример страницы с кнопками</h1>
-<p>Нажмите кнопку, чтобы отправить запрос:</p>
+<p>Обновлено. тестирование.</p>
 
-<button onclick="window.location.href='http://192.168.0.103:7001/main/site2'">Отправить запрос 1</button>
-<button onclick="sendRequest('http://192.168.0.103:7001/main/site2')">Отправить запрос 2</button>
+<button onclick="sendRequest('http://localhost:8089/event/test')">Ответ 1</button>
+<button onclick="sendRequest('http://localhost:7001/main')">Ответ 2</button>
+<button onclick="sendRequest('http://localhost:7001/main')">Ответ 3</button>
 
 <div id="response"></div>
 
 <script>
-
-    let jwtToken = "";
-
-    function setJwt(token) {
-        jwtToken = token;
-    }
     function sendRequest(url) {
         fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + jwtToken
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJ1c2VybmFtZSI6IlRhbyIsImlkIjo0LCJST0xFIjoiUk9MRV9ISUdIIiwiY291cnNlIjoxLCJmYWN1bHR5IjoiRVBGIiwiaWF0IjoxNzAyNjM0NzUyLCJpc3MiOiJtZXJvbmkiLCJleHAiOjIwNjI2MzQ3NTJ9.5YdyXgKdeyigRDfc7kTjKUW8gKcfItg4YQon_rPtnwM'
 
             }
         })

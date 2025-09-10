@@ -52,6 +52,9 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } else {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            httpServletResponse.getWriter().write("JWT token is missing");
         }
     }
 

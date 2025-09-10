@@ -46,7 +46,8 @@ public class AdminController {
         exclusionStoryService.save(form);
         return ResponseEntity.ok().build();
     }
-  
+
+    /** Перевод студента в другую группу. */
     @PostMapping("/transferStudent")
     public ResponseEntity<?> transferStudent(@RequestBody @Valid TransferForm form,
                                 BindingResult bindingResult) {
@@ -65,6 +66,7 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    /** Создание аккаунта. */
     @PostMapping("/createAccount")
     public ResponseEntity<?> createStudent(@RequestBody @Valid EnrollmentForm form,
                               BindingResult bindingResult) throws JsonProcessingException {
@@ -85,6 +87,7 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    /** Создание группы. */
     @PostMapping("/createGroup")
     public ResponseEntity<?> createGroup(@RequestBody @Valid GroupCreationForm form,
                             BindingResult bindingResult) throws JsonProcessingException {
@@ -99,6 +102,7 @@ public class AdminController {
         //groupCreationFormService.save(form); //TODO?
     }
 
+    /** Отправка очков студенту. */
     @PostMapping("/sendScore")
     public ResponseEntity<?> sendScore(@RequestBody @Valid SubmissionForm form,
                                           BindingResult bindingResult) throws JsonProcessingException {
@@ -129,6 +133,7 @@ public class AdminController {
         return restTemplateService.releaseEvent(form);
     }
 
+    /** Добавление занятия (обращение в учительский сервис) */
     @PostMapping("/addClass")
     public ResponseEntity<?> addClass(@RequestBody @Valid Class cl,
                                          BindingResult bindingResult) throws JsonProcessingException {

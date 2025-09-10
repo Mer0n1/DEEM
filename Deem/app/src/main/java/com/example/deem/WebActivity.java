@@ -29,8 +29,8 @@ public class WebActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web);
 
         webView = findViewById(R.id.Web);
-        webView.setWebViewClient(new MyWebViewClient());
-        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new MyWebViewClient()); //открытие будет внутри webView а не в браузере
+        webView.getSettings().setJavaScriptEnabled(true); //поддержка js
 
         Long examId = getIntent().getLongExtra("EXAM_ID",0);
         event = APIManager.getManager().getListEvents().getValue().stream().filter(x->x.getId()==examId).findAny().orElse(null);
@@ -62,22 +62,30 @@ public class WebActivity extends AppCompatActivity {
                     return super.shouldInterceptRequest(view, request);
                 }
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                String js = "window.setJwt && setJwt('" + APIManager.getManager().getJwtKey() + "');";
+                webView.evaluateJavascript(js, null);
+            }
         });
 
-        webView.loadUrl(event.getExam().getAddressToExamService(), extraHeaders);
+        webView.loadUrl(event.getExam().getAddressToExamService() + "/main", extraHeaders); 
     }
 
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             view.loadUrl(request.getUrl().toString());
-            return true; // Возвращаем true, чтобы не передавать управление системному браузеру
+            return true;
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
-            return true; // Возвращаем true, чтобы не передавать управление системному браузеру
+            return true;
         }
     }
 }

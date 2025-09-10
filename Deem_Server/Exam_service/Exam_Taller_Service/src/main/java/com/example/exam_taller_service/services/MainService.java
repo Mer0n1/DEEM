@@ -1,5 +1,6 @@
 package com.example.exam_taller_service.services;
 
+import com.example.exam_taller_service.config.PersonDetails;
 import com.example.exam_taller_service.models.List_element;
 import com.example.exam_taller_service.repositories.ListAccountsRepository;
 import jakarta.el.ELContextEvent;
@@ -55,6 +56,7 @@ public class MainService {
         repository.deleteAll(elements);
         update();
     }
+
 
     public List<Long> getMembers() {
         return members;

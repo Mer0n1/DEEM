@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +19,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,13 +179,13 @@ public class AccountController {
 
     @PreAuthorize("hasRole('HIGH')")
     @PostMapping("/changeRoleClub")
-    public ResponseEntity<?> ChangeRoleClub(@RequestBody @Valid ChangeRoleForm form, BindingResult bindingResult) {
+    public ResponseEntity<?> ChangeRole(@RequestBody @Valid ChangeRoleForm form, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(getErrors(bindingResult));
 
         try {
-            accountService.changeRoleClub(form);
+            accountService.changeRole(form);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

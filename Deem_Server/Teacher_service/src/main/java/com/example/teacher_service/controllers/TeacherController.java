@@ -13,7 +13,7 @@ import static com.example.teacher_service.util.ResponseValidator.getErrors;
 
 @RestController
 @RequestMapping("/teacher")
-@PreAuthorize("hasAnyRole('ADMIN', 'HIGH','TEACHER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'HIGH')")
 public class TeacherController {
 
     @Autowired

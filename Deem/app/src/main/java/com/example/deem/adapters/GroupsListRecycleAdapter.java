@@ -34,7 +34,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
     @NonNull
     @Override
     public Group_info onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_info, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_info_2, parent, false);
 
         return new Group_info(view);
     }
@@ -57,7 +57,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
         private TextView group_name;
         private TextView icon;
         private TextView rank;
-        private TextView score;
+        //private TextView score;
 
         public Group_info(@NonNull View itemView) {
             super(itemView);
@@ -67,7 +67,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             group_name = itemView.findViewById(R.id.group_word_ingo);
             icon       = itemView.findViewById(R.id.icon_group_main);
             rank       = itemView.findViewById(R.id.group_hierarchy_ingo);
-            score      = itemView.findViewById(R.id.text_score);
+            //score      = itemView.findViewById(R.id.text_score);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -87,7 +87,7 @@ public class GroupsListRecycleAdapter extends RecyclerView.Adapter<GroupsListRec
             group_name.setText(group.getName());
             rank.setText(String.valueOf(group.getRank()));
             icon.setText(group.getName());
-            score.setText(String.valueOf(group.getScore()));
+            //score.setText(String.valueOf(group.getScore()));
         }
 
     }

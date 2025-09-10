@@ -39,10 +39,6 @@ public class JWTFilter extends OncePerRequestFilter {
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 DecodedJWT jwtDec = jwtUtil.validateTokenAndRetrieveClaim(jwt);
 
-                if (isDisable)
-                    if (jwtDec.getClaim("ROLE").asString().equals("STUDENT"))
-                        throw new IOException("Страница отключена");
-
                 details = new PersonDetails();
                 details.setUsername(jwtDec.getClaim("username").asString());
                 details.setPassword(jwtDec.getClaim("password").asString());
@@ -61,11 +57,15 @@ public class JWTFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
+            //Если экзамен в данный момент отключен то запрещаем доступ
+            if (isDisable)
+                if (details.getROLE().equals("ROLE_STUDENT"))
+                    throw new IOException("Страница отключена");
+
             //Ограничение по участникам
             if (!(details.getROLE().equals("ROLE_HIGH") || details.getROLE().equals("ROLE_ADMIN") ||
                     details.getROLE().equals("ROLE_PRESIDENT_COUNCIL"))) { //администраторов пропускаем к доступу
                 List<Long> members = service.getMembers();
-
 
                 if (!members.contains(details.getId()))
                     throw new IOException("Вы не являетесь участником экзамена");

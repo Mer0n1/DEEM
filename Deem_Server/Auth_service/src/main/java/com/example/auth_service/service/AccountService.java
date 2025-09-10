@@ -1,6 +1,5 @@
 package com.example.auth_service.service;
 
-import com.example.auth_service.dto.PrivateAccountDTO;
 import com.example.auth_service.models.Account;
 import com.example.auth_service.models.ChangeRoleForm;
 import com.example.auth_service.models.ClubForm;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountService {
@@ -99,7 +97,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void changeRoleClub(ChangeRoleForm form) throws Exception {
+    public void changeRole(ChangeRoleForm form) throws Exception {
         Account account = repository.findById(form.getId_student())
                 .orElseThrow(() -> new Exception("Такого аккаунта не существует"));
 

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,8 @@ public class ClubController {
         return clubService.getClubs();
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')")
+    /** Согласно делигистической программе только президент студсовета может создавать клубы */
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL', 'HIGH')")
     @PostMapping("/addClub")
     public ResponseEntity<?> addClub(@RequestParam("name") String name, @RequestParam("shortName") String shortName,
                                      @AuthenticationPrincipal PersonDetails personDetails) {
@@ -53,7 +55,7 @@ public class ClubController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')")
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL', 'HIGH')")
     @PostMapping("/deleteClub")
     public ResponseEntity<?> deleteClub(@RequestParam("name") String name) {
         Club club = clubService.getClub(name);
@@ -67,38 +69,61 @@ public class ClubController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')") //TODO also president other clubs with the rights
+    /** Добавлять студента в клуб может только глава этого клуба или президент студсовета */
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL', 'HIGH', 'JOURNALISM_LEAD', 'LABOR_LEAD')")
     @PostMapping("/addStudentToClub")
-    public ResponseEntity<?> addStudentToClub(@RequestBody ClubForm form) {
+    public ResponseEntity<?> addStudentToClub(@RequestBody ClubForm form,
+                                              @AuthenticationPrincipal PersonDetails personDetails,
+                                              BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest().body("Invalid request");
+
+        try {
+            clubService.addStudentToClub(form, personDetails);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
         return restTemplateService.addStudentToClub(form);
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')")
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL', 'HIGH', 'JOURNALISM_LEAD', 'LABOR_LEAD')")
     @PostMapping("/expelStudentClub")
-    public ResponseEntity<?> ExpelStudentClub(@RequestBody ClubForm form) {
+    public ResponseEntity<?> ExpelStudentClub(@RequestBody ClubForm form,
+                                              @AuthenticationPrincipal PersonDetails personDetails,
+                                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest().body("Invalid request");
+
+        try {
+            clubService.expelStudentClub(form, personDetails);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
         return restTemplateService.expelStudentClub(form);
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')")
+    /** Добавлять студента в студсовет может только президент студсовета */
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL')")
     @PostMapping("/addStudentCouncil")
     public ResponseEntity<?> addStudentCouncil(@RequestParam("id_account") Long id_account) {
-        //SCOUNCIL присуждается автоматически после принятия студента в студсовет и не контролируется текущим методом ChangeRole
 
         try {
             Account account = restTemplateService.getAccount(id_account);
 
-            if (!RoleValidator.isStudentRole(account.getRole()))
+            if (!RoleValidator.checkForAddingSCOUNCIL(account.getRole()))
                 throw new Exception("Начальная роль должна быть STUDENT");
 
             studentCouncilService.addNewMember(account);
 
-            return restTemplateService.ChangeRole(new ChangeRoleForm(account.getId(), "SCOUNCIL")); //kafka
+            return restTemplateService.ChangeRole(new ChangeRoleForm(account.getId(), "SCOUNCIL")); //kafka //TODO лучше вынести роли или сделать перечисление
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PreAuthorize("hasRole('PRESIDENT_COUNCIL')")
+    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL')")
     @PostMapping("/expelStudentCouncil")
     public ResponseEntity<?> ExpelStudentCouncil(@RequestParam("id_account") Long id_account) {
 
@@ -112,7 +137,7 @@ public class ClubController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL','HIGH')")
+    /*@PreAuthorize("hasAnyRole('PRESIDENT_COUNCIL','HIGH')")
     @PostMapping("/ChangeRole")
     public ResponseEntity<?> ChangeRole(@RequestBody ChangeRoleForm form) {
 
@@ -127,6 +152,6 @@ public class ClubController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
+    }*/
 }
 
